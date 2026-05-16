@@ -1,14 +1,13 @@
 // ══════════════════════════════════════════════════════════════
 //  HealthAPP — Service Worker
 //  Estrategia: Cache-first para recursos estáticos + actualización
-//  automática en background (stale-while-revalidate para index.html)
+//  manual controlada por el usuario (banner)
 // ══════════════════════════════════════════════════════════════
 
-const APP_VERSION   = 'healthapp-v17';
+const APP_VERSION   = 'healthapp-v18';
 const CACHE_STATIC  = `${APP_VERSION}-static`;
 const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
 
-// Recursos que se cachean en el install (shell de la app)
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -20,18 +19,23 @@ const STATIC_ASSETS = [
 ];
 
 // ── INSTALL ──────────────────────────────────────────────────
+// ⚠️  NO llamamos a self.skipWaiting() aquí.
+//     Si lo hiciéramos, el SW nuevo se activaría solo sin que el
+//     usuario lo pida, dejando la página cargada con recursos
+//     del SW anterior → pantalla rota + banner fantasma en cada carga.
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_STATIC).then(cache => {
-      // Cacheamos recursos uno a uno para que un fallo no rompa todo
-      return Promise.allSettled(
+    caches.open(CACHE_STATIC).then(cache =>
+      Promise.allSettled(
         STATIC_ASSETS.map(url =>
           cache.add(url).catch(err =>
             console.warn('[SW] No se pudo cachear:', url, err)
           )
         )
-      );
-    }).then(() => self.skipWaiting()) // Activa el nuevo SW sin esperar
+      )
+    )
+    // Sin self.skipWaiting() → el SW queda en "waiting" hasta que
+    // el usuario pulse "Actualizar" en el banner.
   );
 });
 
@@ -47,7 +51,7 @@ self.addEventListener('activate', event => {
             return caches.delete(key);
           })
       )
-    ).then(() => self.clients.claim()) // Toma control de todas las tabs abiertas
+    ).then(() => self.clients.claim())
   );
 });
 
@@ -56,7 +60,6 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // No interceptamos llamadas a la API de Anthropic ni a Supabase
   if (
     url.hostname === 'api.anthropic.com' ||
     url.hostname.includes('supabase.co') ||
@@ -67,17 +70,15 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // index.html → Stale-While-Revalidate: sirve caché rápido pero actualiza en background
   if (
     url.pathname === '/' ||
     url.pathname === '/index.html' ||
     url.pathname.endsWith('/')
   ) {
-    event.respondWith(staleWhileRevalidate(request, CACHE_STATIC));
+    event.respondWith(networkFirst(request, CACHE_STATIC));
     return;
   }
 
-  // Iconos y manifest → Cache-first (no cambian sin cambiar nombre)
   if (
     url.pathname.startsWith('/icons/') ||
     url.pathname === '/manifest.json'
@@ -86,7 +87,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Fuentes de Google → Cache-first con caché dinámica
   if (
     url.hostname === 'fonts.googleapis.com' ||
     url.hostname === 'fonts.gstatic.com'
@@ -95,13 +95,11 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Resto → Network-first con fallback a caché
   event.respondWith(networkFirst(request, CACHE_DYNAMIC));
 });
 
 // ── ESTRATEGIAS DE CACHÉ ──────────────────────────────────────
 
-// Cache-first: devuelve caché si existe, si no descarga y cachea
 async function cacheFirst(request, cacheName) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -117,7 +115,6 @@ async function cacheFirst(request, cacheName) {
   }
 }
 
-// Network-first: intenta red, si falla devuelve caché
 async function networkFirst(request, cacheName) {
   try {
     const response = await fetch(request);
@@ -132,36 +129,9 @@ async function networkFirst(request, cacheName) {
   }
 }
 
-// Stale-While-Revalidate: sirve caché al instante y actualiza en background
-// Si no hay caché, descarga de red. Al terminar, notifica a las tabs abiertas
-// para que muestren el banner "Nueva versión disponible".
-async function staleWhileRevalidate(request, cacheName) {
-  const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-
-  const fetchPromise = fetch(request)
-    .then(async response => {
-      if (!response.ok) return response;
-      const cachedResponse = await cache.match(request);
-      const newEtag  = response.headers.get('ETag') || response.headers.get('Last-Modified') || '';
-      const oldBytes = cachedResponse ? await cachedResponse.clone().text().catch(() => '') : '';
-      const newBytes = await response.clone().text().catch(() => '');
-
-      await cache.put(request, response.clone());
-
-      // Notificar a los clientes que hay actualización disponible
-      if (cached && oldBytes && newBytes && oldBytes !== newBytes) {
-        const clients = await self.clients.matchAll({ type: 'window' });
-        clients.forEach(client => client.postMessage({ type: 'SW_UPDATE_AVAILABLE' }));
-      }
-      return response;
-    })
-    .catch(() => null);
-
-  return cached || (await fetchPromise) || new Response('Sin conexión', { status: 503 });
-}
-
 // ── MENSAJES DESDE LA APP ─────────────────────────────────────
+// El único sitio donde se llama skipWaiting es aquí,
+// cuando el usuario pulsa "Actualizar" en el banner.
 self.addEventListener('message', event => {
   if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
