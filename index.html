@@ -1133,6 +1133,7 @@
 
     /* Hide scrollbars cleanly */
     *::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+    #widgets-grid::-webkit-scrollbar { display: none !important; }
 
     /* Smooth tab transition */
     @keyframes apFade { from{opacity:0;transform:translateY(4px);filter:blur(4px)} to{opacity:1;transform:none;filter:none} }
@@ -1520,47 +1521,7 @@
   </div>
 
   <!-- QUIZ SELECTOR SHEET -->
-  <div id="quiz-selector-overlay" onclick="closeQuizSelector()" style="position:fixed;inset:0;z-index:490;background:rgba(0,0,0,0);backdrop-filter:blur(0px);pointer-events:none;transition:background .25s,backdrop-filter .25s;display:flex;align-items:flex-end;justify-content:center"></div>
-  <div id="quiz-selector-sheet" style="position:fixed;bottom:0;left:0;right:0;max-width:500px;margin:0 auto;background:var(--surface);border-radius:24px 24px 0 0;border-top:3px solid var(--teal-400);z-index:491;transform:translateY(100%);transition:transform .3s cubic-bezier(.25,.46,.45,.94);padding:0 0 calc(var(--safe-bottom)+20px)">
-    <div style="width:36px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto 0"></div>
-    <div style="padding:14px 20px 6px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-weight:800;font-size:17px;color:var(--text)">Editar perfil</div>
-      <button onclick="closeQuizSelector()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-family:inherit"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div style="padding:4px 20px 0;font-size:12px;color:var(--muted);margin-bottom:12px">La IA usará estas respuestas para personalizar tu coach, dieta y rutina.</div>
-    <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px">
-      <button onclick="closeQuizSelector();setTimeout(()=>reopenHealthQuiz(),200)" style="display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;border:none;background:none;cursor:pointer;font-family:inherit;width:100%;text-align:left;-webkit-tap-highlight-color:transparent;transition:background .15s" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background='none'">
-        <div style="width:38px;height:38px;background:var(--primary-bg);border:1px solid var(--teal-100);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--text)">Perfil de salud</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Objetivo, actividad, dieta, estrés…</div>
-        </div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button onclick="closeQuizSelector();setTimeout(()=>reopenDietQuiz(),200)" style="display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;border:none;background:none;cursor:pointer;font-family:inherit;width:100%;text-align:left;-webkit-tap-highlight-color:transparent;transition:background .15s" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background='none'">
-        <div style="width:38px;height:38px;background:var(--orange-bg);border:1px solid rgba(224,122,42,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--text)">Perfil de dieta</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Objetivo nutricional, restricciones, presupuesto…</div>
-        </div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-      <button onclick="closeQuizSelector();setTimeout(()=>reopenRutinaQuiz(),200)" style="display:flex;align-items:center;gap:14px;padding:14px 12px;border-radius:14px;border:none;background:none;cursor:pointer;font-family:inherit;width:100%;text-align:left;-webkit-tap-highlight-color:transparent;transition:background .15s" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background='none'">
-        <div style="width:38px;height:38px;background:var(--blue-bg);border:1px solid rgba(58,127,191,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 9.5v5"/><path d="M21 9.5v5"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:var(--text)">Perfil de entrenamiento</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:1px">Nivel, objetivo, equipamiento, días…</div>
-        </div>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
+  <!-- quiz-selector-sheet eliminado: el botón ? abre el último slide del banner de la pestaña activa -->
 
   <!-- SETTINGS SHEET -->
   <div id="settings-overlay" onclick="closeSettingsModal()"></div>
@@ -2186,11 +2147,12 @@ function setTab(tab){
   updateTabUI(tab);
   bindEvents();
   drawWeekChart();
-  // Trigger quiz popup on first visit per tab
+  // Mostrar banner intro en la primera visita a cada pestaña.
+  // El quiz se lanza solo desde el botón del banner o desde el "?", nunca automáticamente.
   setTimeout(()=>{
-    if(tab === 'asesoria')  maybeShowHealthQuiz();
-    if(tab === 'nutricion') maybeShowDietQuiz();
-    if(tab === 'rutina')    maybeShowRutinaQuiz();
+    if(tab === 'asesoria')  maybeShowIntro('asesoria');
+    if(tab === 'nutricion') maybeShowIntro('nutricion');
+    if(tab === 'rutina')    maybeShowIntro('rutina');
   }, 120);
 }
 
@@ -2340,22 +2302,13 @@ function rInicio(){
       ondragover="widgetDragOver(event,'${key}')"
       ondrop="widgetDrop(event,'${key}')"
       ondragleave="widgetDragLeave(event)"
-      style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);cursor:pointer">
-      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
-        <div style="width:28px;height:28px;border-radius:8px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${m.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.icon}</svg>
-        </div>
-        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">${m.label}</span>
-        <svg style="margin-left:auto;opacity:.3" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
+      style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 10px;box-shadow:var(--shadow);cursor:pointer;flex:0 0 calc(25% - 5px);min-width:72px;max-width:96px">
+      <div style="width:28px;height:28px;border-radius:8px;background:${m.bg};display:flex;align-items:center;justify-content:center;margin-bottom:7px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${m.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.icon}</svg>
       </div>
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:6px">
-        <div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1.1">${m.val}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:3px">${m.sub}</div>
-        </div>
-        ${m.sparkId ? `<canvas id="${m.sparkId}" class="sparkline-canvas" width="60" height="24" style="opacity:.85;flex-shrink:0"></canvas>` : ''}
-      </div>
-      ${m.pct!=null?`<div style="margin-top:8px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.min(100,m.pct)}%;height:100%;background:${m.color};border-radius:2px;transition:width .6s ease"></div></div>`:''}
+      <div style="font-family:ui-monospace,'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:2px">${m.val.replace(' kcal','').replace(' ml','')}</div>
+      <div style="font-size:9px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.label}</div>
+      ${m.pct!=null?`<div style="margin-top:6px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.min(100,m.pct)}%;height:100%;background:${m.color};border-radius:2px;transition:width .6s ease"></div></div>`:''}
     </div>`;
   }
 
@@ -2412,7 +2365,7 @@ function rInicio(){
 
   <!-- ══ WIDGETS REORDENABLES ══ -->
   <div class="section-label">Métricas de hoy <span style="font-size:9px;color:var(--muted2);font-weight:500">· mantén para reordenar</span></div>
-  <div id="widgets-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+  <div id="widgets-grid" style="display:flex;flex-direction:row;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
     ${widgetOrder.filter(k=>widgetDefs[k]).map(k=>buildWidget(k)).join('')}
   </div>
   ${!hr&&!dist&&!sueno&&!peso?`<div style="font-size:11px;color:var(--muted);text-align:center;padding:4px 0">Los datos se sincronizan automáticamente vía Google Health</div>`:''}
@@ -3813,7 +3766,18 @@ Adapta ESTRICTAMENTE al nivel, lugar, equipo disponible y limitaciones. Incluye 
 // TAB: AJUSTES
 // ═══════════════════════════════════════════════════
 function rAjustes(){
+  const hasUpdate = window._pwaUpdateReady === true;
   return `<div>
+  <!-- Actualización disponible -->
+  ${hasUpdate ? `<div style="background:linear-gradient(135deg,var(--ios-blue),#5AC8FA);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,122,255,.25)">
+    <span style="font-size:22px;flex-shrink:0">🔄</span>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:700;color:#fff;line-height:1.2">Nueva versión disponible</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.75);margin-top:2px">Actualiza para obtener las últimas mejoras</div>
+    </div>
+    <button onclick="pwaApplyUpdate()" style="background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);border-radius:9px;padding:7px 13px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;font-family:inherit;-webkit-tap-highlight-color:transparent">Actualizar</button>
+  </div>` : ''}
+
   <!-- Apariencia -->
   <div class="section-label">Apariencia</div>
   <div class="card" style="margin-bottom:14px;padding:0 20px">
@@ -3911,6 +3875,44 @@ function rAjustes(){
     </div>
   </div>
 
+  <!-- Google Fit -->
+  <div class="section-label">Google Fit</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Sincronización con Google Fit
+    </div>
+    ${S.googleFit?.connected ? `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 12px;background:rgba(34,197,94,.08);border-radius:10px;border:1px solid rgba(34,197,94,.2)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--green-700)">Conectado</div>
+        ${S.googleFit.lastSync ? `<div style="font-size:10px;color:var(--muted);margin-top:1px">Última sync: ${new Date(S.googleFit.lastSync).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button id="sync-fit-btn" onclick="syncGoogleFit()" class="btn btn-full" style="flex:1;font-size:13px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Sincronizar hoy
+      </button>
+    </div>
+    <button id="fit-history-btn" onclick="syncGoogleFitHistory()" class="btn btn-full" style="margin-bottom:8px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);font-size:13px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      ${S.googleFit?.historyImported ? 'Reimportar historial (30 días)' : 'Importar historial (30 días)'}
+    </button>
+    ${S.googleFit?.historyImported ? `<div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:8px">Historial importado el ${new Date(S.googleFit.historyImported).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})}</div>` : `<div style="font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px">Trae los últimos 30 días de pasos, sueño, FC, calorías y distancia de Google Fit.</div>`}
+    <button onclick="disconnectGoogleFit()" class="btn btn-full btn-ghost" style="color:var(--red);border-color:rgba(217,79,61,.25);font-size:12px">Desconectar Google Fit</button>
+    ` : `
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6">Conecta Google Fit para sincronizar automáticamente pasos, sueño, frecuencia cardíaca y más.</div>
+    <div style="margin-bottom:10px">
+      <label class="field-label">Client ID de Google</label>
+      <input id="fit-client-id" type="text" placeholder="xxxx.apps.googleusercontent.com" value="${S.googleFit?.clientId||''}" autocomplete="off" spellcheck="false"/>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">Crea un proyecto en <strong style="color:var(--green-700)">console.cloud.google.com</strong> y habilita la Fitness API</div>
+    </div>
+    <button onclick="saveAndConnectFit()" class="btn btn-full">Conectar Google Fit</button>
+    `}
+  </div>
+
   <!-- Datos -->
   <div class="section-label">Datos</div>
   <div class="card" style="padding:0 20px">
@@ -3921,6 +3923,13 @@ function rAjustes(){
       </div>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
     </div>
+    ${(S.logs.some(l=>l.isDemo)||S.meals.some(m=>m.isDemo)) ? `<div class="settings-row">
+      <div>
+        <div class="settings-label">Datos de demo</div>
+        <div class="settings-sub">${S.logs.filter(l=>l.isDemo).length} registros · ${S.meals.filter(m=>m.isDemo).length} comidas de ejemplo</div>
+      </div>
+      <button onclick="clearDemoData()" class="btn btn-sm btn-ghost" style="color:var(--orange);border-color:var(--orange-bg)">Limpiar</button>
+    </div>` : ''}
     <div class="settings-row" style="border-bottom:none">
       <div>
         <div class="settings-label">Borrar todos los datos</div>
@@ -4598,12 +4607,12 @@ window.connectGoogleFit=async()=>{
   }
 })();
 
-window.syncGoogleFit=async()=>{
+window.syncGoogleFit=async(silent=false)=>{
   const token=S.googleFit?.accessToken;
-  if(!token){toast('Google Fit no conectado'); return;}
+  if(!token){if(!silent) toast('Google Fit no conectado'); return;}
   const btn=document.getElementById('sync-fit-btn');
   const btn2=document.getElementById('sync-fit-btn2');
-  [btn,btn2].forEach(b=>{if(b){b.disabled=true; b.textContent='Sincronizando…';}});
+  if(!silent) [btn,btn2].forEach(b=>{if(b){b.disabled=true; b.textContent='Sincronizando…';}});
 
   try{
     // Time range: medianoche local → ahora
@@ -4640,7 +4649,7 @@ window.syncGoogleFit=async()=>{
     if(res.status===401){
       S.googleFit={...S.googleFit, connected:false, accessToken:''};
       saveState();
-      toast('Token de Google Fit expirado — reconecta en Ajustes');
+      if(!silent) toast('Token de Google Fit expirado — reconecta en Ajustes');
       return;
     }
 
@@ -4704,12 +4713,12 @@ window.syncGoogleFit=async()=>{
       kcalBurned>50?`${Math.round(kcalBurned)} kcal`:'',
       sleepMin>30?`${(sleepMin/60).toFixed(1)}h sueño`:'',
     ].filter(Boolean);
-    toast(parts.length?`Sincronizado: ${parts.slice(0,3).join(', ')}`:'Sin datos nuevos hoy');
+    if(!silent) toast(parts.length?`Sincronizado: ${parts.slice(0,3).join(', ')}`:'Sin datos nuevos hoy');
     render();
   }catch(e){
-    toast('Error al sincronizar. Revisa tu conexión.');
+    if(!silent) toast('Error al sincronizar. Revisa tu conexión.');
   }finally{
-    [btn,btn2].forEach(b=>{if(b){b.disabled=false; b.textContent='Sincronizar';}});
+    if(!silent) [btn,btn2].forEach(b=>{if(b){b.disabled=false; b.textContent='Sincronizar';}});
   }
 };
 
@@ -4729,6 +4738,141 @@ window.disconnectGoogleFit=()=>{
   if(!confirm('¿Desconectar Google Fit? Los datos ya registrados se conservan.')) return;
   S.googleFit={connected:false,accessToken:'',lastSync:'',clientId:S.googleFit?.clientId||''};
   saveState(); toast('Google Fit desconectado'); render();
+};
+
+// Guarda el clientId del input y lanza el OAuth
+window.saveAndConnectFit = () => {
+  const input = document.getElementById('fit-client-id');
+  if(input) {
+    const val = input.value.trim();
+    if(!val) { toast('Introduce el Client ID primero'); return; }
+    S.googleFit = {...(S.googleFit||{}), clientId: val};
+    saveState();
+  }
+  connectGoogleFit();
+};
+
+// ── IMPORTAR HISTORIAL DE GOOGLE FIT (últimos 30 días) ──
+window.syncGoogleFitHistory = async () => {
+  const token = S.googleFit?.accessToken;
+  if(!token) { toast('Google Fit no conectado'); return; }
+
+  const btn = document.getElementById('fit-history-btn');
+  if(btn) { btn.disabled = true; btn.textContent = 'Importando…'; }
+
+  try {
+    const now     = Date.now();
+    const DAYS    = 30;
+    const startMs = now - DAYS * 24 * 60 * 60 * 1000;
+
+    const body = {
+      aggregateBy: [
+        {dataTypeName:'com.google.step_count.delta'},
+        {dataTypeName:'com.google.calories.expended'},
+        {dataTypeName:'com.google.sleep.segment'},
+        {dataTypeName:'com.google.heart_rate.bpm'},
+        {dataTypeName:'com.google.distance.delta'},
+        {dataTypeName:'com.google.weight'},
+      ],
+      bucketByTime: { durationMillis: 86400000 },  // 1 bucket por día
+      startTimeMillis: startMs,
+      endTimeMillis:   now,
+    };
+
+    const res = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+      method: 'POST',
+      headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+    });
+
+    if(res.status === 401) {
+      S.googleFit = {...S.googleFit, connected:false, accessToken:''};
+      saveState();
+      toast('Token expirado — reconecta Google Fit');
+      return;
+    }
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    let imported = 0;
+
+    (data.bucket || []).forEach(bucket => {
+      // Fecha del bucket en zona local (startTimeMillis → fecha YYYY-MM-DD)
+      const bucketDate = new Date(parseInt(bucket.startTimeMillis));
+      const dateStr = [
+        bucketDate.getFullYear(),
+        String(bucketDate.getMonth()+1).padStart(2,'0'),
+        String(bucketDate.getDate()).padStart(2,'0'),
+      ].join('-');
+
+      // No sobrescribir hoy — syncGoogleFit() se ocupa de eso
+      const todayStr = today();
+      if(dateStr === todayStr) return;
+
+      let steps=0, kcalBurned=0, sleepMin=0, hrValues=[], distanceM=0, weightKg=0;
+
+      (bucket.dataset || []).forEach(ds => {
+        (ds.point || []).forEach(pt => {
+          const dtn = ds.dataSourceId || '';
+          if(dtn.includes('step_count'))   steps      += (pt.value||[]).reduce((a,v)=>a+(v.intVal||0),0);
+          else if(dtn.includes('calories')) kcalBurned += (pt.value||[]).reduce((a,v)=>a+(v.fpVal||0),0);
+          else if(dtn.includes('sleep')) {
+            const durMs = (parseInt(pt.endTimeNanos)-parseInt(pt.startTimeNanos))/1e6;
+            sleepMin += durMs/60000;
+          }
+          else if(dtn.includes('heart_rate')) (pt.value||[]).forEach(v=>{ if(v.fpVal>0) hrValues.push(v.fpVal); });
+          else if(dtn.includes('distance'))   distanceM  += (pt.value||[]).reduce((a,v)=>a+(v.fpVal||0),0);
+          else if(dtn.includes('weight')) {
+            const w = (pt.value||[]).find(v=>v.fpVal>0);
+            if(w) weightKg = w.fpVal;
+          }
+        });
+      });
+
+      // Si el día no tiene ningún dato relevante, saltar
+      if(!steps && !kcalBurned && !sleepMin && !hrValues.length && !distanceM && !weightKg) return;
+
+      const avgHR  = hrValues.length ? Math.round(hrValues.reduce((a,b)=>a+b,0)/hrValues.length) : 0;
+      const distKm = distanceM > 0 ? +(distanceM/1000).toFixed(2) : 0;
+
+      // Eliminar logs fitSync anteriores de ese día para evitar duplicados
+      S.logs = S.logs.filter(l => !(l.fecha === dateStr && l.fitSync));
+
+      // Insertar nuevos
+      if(steps>0)        S.logs.push({id:uid(), tipo:'pasos',              valor:Math.round(steps),          fecha:dateStr, fitSync:true});
+      if(kcalBurned>50)  S.logs.push({id:uid(), tipo:'kcalQuemadas',       valor:Math.round(kcalBurned),     fecha:dateStr, fitSync:true});
+      if(sleepMin>30)    S.logs.push({id:uid(), tipo:'sueno',              valor:+(sleepMin/60).toFixed(1),  fecha:dateStr, fitSync:true});
+      if(avgHR>40)       S.logs.push({id:uid(), tipo:'frecuenciaCardiaca', valor:avgHR,                      fecha:dateStr, fitSync:true});
+      if(distKm>0)       S.logs.push({id:uid(), tipo:'distancia',          valor:distKm,                     fecha:dateStr, fitSync:true});
+      if(weightKg>20)    S.logs.push({id:uid(), tipo:'peso',               valor:+weightKg.toFixed(1),       fecha:dateStr, fitSync:true});
+
+      imported++;
+    });
+
+    S.googleFit = {...S.googleFit, historyImported: new Date().toISOString()};
+    saveState();
+    render();
+
+    // Refrescar el panel de ajustes si está abierto
+    const settingsBody = document.getElementById('settings-sheet-body');
+    if(settingsBody && settingsBody.innerHTML) settingsBody.innerHTML = rAjustes();
+
+    toast(imported > 0
+      ? `Historial importado: ${imported} días con datos`
+      : 'No se encontraron datos en los últimos 30 días');
+
+    haptic('success');
+
+  } catch(e) {
+    console.error('syncGoogleFitHistory error:', e);
+    toast('Error al importar historial: ' + (e.message||'desconocido'));
+  } finally {
+    const btn2 = document.getElementById('fit-history-btn');
+    if(btn2) {
+      btn2.disabled = false;
+      btn2.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Reimportar historial (30 días)`;
+    }
+  }
 };
 
 // ═══════════════════════════════════════════════════
@@ -4897,33 +5041,30 @@ window.skipQuizModal = () => {
 // Close on overlay click
 document.addEventListener('click', (e) => {
   const overlay = document.getElementById('quiz-modal-overlay');
-  if(e.target === overlay) skipQuizModal();
+  if(e.target === overlay) {
+    if(_introTab) dismissIntro();
+    else skipQuizModal();
+  }
 });
 
 // ═══════════════════════════════════════════════════
 // QUIZ SELECTOR (botón "?" del header)
+// Abre directamente el último slide del banner de la pestaña activa
 // ═══════════════════════════════════════════════════
 window.openQuizSelector = () => {
-  const overlay = document.getElementById('quiz-selector-overlay');
-  const sheet   = document.getElementById('quiz-selector-sheet');
-  if(!overlay||!sheet) return;
-  overlay.style.pointerEvents = 'all';
-  overlay.style.background = 'rgba(0,0,0,.4)';
-  overlay.style.backdropFilter = 'blur(6px)';
-  overlay.style.webkitBackdropFilter = 'blur(6px)';
-  sheet.style.transform = 'translateY(0)';
+  const tab = S.tab || 'inicio';
+  if(!['nutricion','asesoria','rutina'].includes(tab)) return; // Inicio no tiene banner
+  const cfg = INTRO_CONFIGS[tab];
+  if(!cfg) return;
+  // Abrir en el último paso; marcar que viene del botón ? (no resetear introDone al cerrar)
+  _introTab = tab;
+  _introStep = cfg.steps.length - 1;
+  _introFromBtn = true;
+  renderIntro();
+  const overlay = document.getElementById('quiz-modal-overlay');
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-};
-window.closeQuizSelector = () => {
-  const overlay = document.getElementById('quiz-selector-overlay');
-  const sheet   = document.getElementById('quiz-selector-sheet');
-  if(!overlay||!sheet) return;
-  overlay.style.pointerEvents = 'none';
-  overlay.style.background = 'rgba(0,0,0,0)';
-  overlay.style.backdropFilter = 'blur(0px)';
-  overlay.style.webkitBackdropFilter = 'blur(0px)';
-  sheet.style.transform = 'translateY(100%)';
-  document.body.style.overflow = '';
+  haptic('light');
 };
 
 window.reopenRutinaQuiz = () => {
@@ -4938,6 +5079,247 @@ window.reopenRutinaQuiz = () => {
     title: 'Tu perfil de entrenamiento',
   });
 };
+
+// ═══════════════════════════════════════════════════
+// INTRO BANNERS — presentación de cada pestaña
+// Se muestran una sola vez (guardado en S.introDone)
+// Mismo contenedor visual que el quiz modal
+// ═══════════════════════════════════════════════════
+
+const INTRO_CONFIGS = {
+  nutricion: {
+    stateKey: 'introDoneNutricion',
+    accent: { g1:'#1B6B3A', g2:'#0C4A28', icon:'#6CC8A0' },
+    emoji: '🥗',
+    title: 'Tu centro de nutrición',
+    steps: [
+      {
+        icon: '<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>',
+        color: '#34C759',
+        title: 'Registra tus comidas',
+        desc: 'Añade cada comida con sus calorías y macros. Puedes usar el botón + o buscar en el catálogo de alimentos.',
+      },
+      {
+        icon: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+        color: '#FF9500',
+        title: 'Menú semanal con IA',
+        desc: 'La IA genera 7 días de recetas adaptadas a tu dieta y presupuesto, con la lista de la compra de Aldi incluida.',
+      },
+      {
+        icon: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+        color: '#007AFF',
+        title: 'Seguimiento de macros',
+        desc: 'Proteínas, carbohidratos y grasas visualizados en tiempo real. Ajusta tus objetivos calóricos con ayuda de la IA.',
+      },
+    ],
+  },
+  asesoria: {
+    stateKey: 'introDoneAsesoria',
+    accent: { g1:'#3A1E6B', g2:'#220C4A', icon:'#BEB0F8' },
+    emoji: '🤖',
+    title: 'Tu coach de salud IA',
+    steps: [
+      {
+        icon: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+        color: '#AF52DE',
+        title: 'Chat personalizado',
+        desc: 'Pregúntale cualquier cosa sobre tu salud, dieta o entrenamiento. El coach recuerda tu perfil y datos del día.',
+      },
+      {
+        icon: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+        color: '#BF5AF2',
+        title: 'Análisis semanal',
+        desc: 'Cada semana la IA genera un informe con tus progresos, lo que fue bien y un reto concreto para mejorar.',
+      },
+      {
+        icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+        color: '#5856D6',
+        title: 'Completa tu perfil primero',
+        desc: 'Cuanto más sepas de ti el coach, mejores consejos recibirás. Responde el quiz de salud con el botón "?" del header.',
+      },
+    ],
+  },
+  rutina: {
+    stateKey: 'introDoneRutina',
+    accent: { g1:'#6B1E1E', g2:'#4A0C0C', icon:'#F4B0AA' },
+    emoji: '💪',
+    title: 'Tu rutina de entrenamiento',
+    steps: [
+      {
+        icon: '<path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 9.5v5"/><path d="M21 9.5v5"/>',
+        color: '#FF9500',
+        title: 'Rutina generada por IA',
+        desc: 'Responde 6 preguntas sobre tu nivel, equipo y objetivos. La IA diseña una rutina semanal completa con ejercicios, series y consejos.',
+      },
+      {
+        icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+        color: '#FF6B6B',
+        title: 'Sesiones por día',
+        desc: 'Cada día del plan tiene sus ejercicios, calentamiento y vuelta a la calma. Los días de descanso también están planificados.',
+      },
+      {
+        icon: '<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>',
+        color: '#FF453A',
+        title: 'Regenera cuando quieras',
+        desc: 'Si la rutina no se adapta a ti, pulsa "Nueva" para que la IA genere una alternativa. Puedes hacerlo tantas veces como necesites.',
+      },
+    ],
+  },
+};
+
+let _introStep = 0;
+let _introTab = null;
+let _introFromBtn = false; // true cuando se abre desde el botón ?, para no resetear introDone al cerrar
+
+function openIntro(tab) {
+  const cfg = INTRO_CONFIGS[tab];
+  if(!cfg) return;
+  _introTab = tab;
+  _introStep = 0;
+  renderIntro();
+  const overlay = document.getElementById('quiz-modal-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderIntro() {
+  const cfg = INTRO_CONFIGS[_introTab];
+  if(!cfg) return;
+  const step = _introStep;
+  const total = cfg.steps.length;
+  const s = cfg.steps[step];
+  const inner = document.getElementById('quiz-modal-inner');
+  if(!inner) return;
+
+  inner.innerHTML = `
+    <!-- Cabecera con gradiente -->
+    <div style="background:linear-gradient(160deg,${cfg.accent.g1},${cfg.accent.g2});border-radius:24px 24px 0 0;padding:28px 22px 24px;position:relative;overflow:hidden">
+      <svg style="position:absolute;right:-28px;top:-28px;opacity:.07;pointer-events:none" width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="60" fill="none" stroke="#fff" stroke-width="24"/>
+      </svg>
+      <button onclick="dismissIntro()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div style="font-size:36px;margin-bottom:10px">${cfg.emoji}</div>
+      <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:4px">${cfg.title}</div>
+      <div style="display:flex;gap:5px;margin-top:14px">
+        ${cfg.steps.map((_,i) => `<div style="height:3px;flex:1;border-radius:99px;background:${i<=step?'rgba(255,255,255,.9)':'rgba(255,255,255,.25)'};transition:background .3s ease"></div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Contenido del paso -->
+    <div style="padding:24px 22px 8px">
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="width:44px;height:44px;border-radius:14px;background:${s.color}18;border:1.5px solid ${s.color}30;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${s.icon}</svg>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px;line-height:1.25">${s.title}</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.65">${s.desc}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de navegación -->
+    <div style="padding:16px 22px 24px;display:flex;flex-direction:column;gap:10px">
+      ${step === total - 1 ? `
+      <!-- Último paso: atrás | Hacer test | Más tarde en una sola fila -->
+      <div style="display:flex;gap:8px;align-items:stretch">
+        ${step > 0 ? `
+        <button onclick="introBack()" style="flex:0 0 48px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s" onmousedown="this.style.opacity='.7'" onmouseup="this.style.opacity='1'" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>` : ''}
+        <button onclick="introDoQuiz()" style="flex:1;min-height:52px;border-radius:14px;border:none;background:${s.color};color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;line-height:1.2;padding:0 12px;text-align:center" onmousedown="this.style.opacity='.85'" onmouseup="this.style.opacity='1'" ontouchstart="this.style.opacity='.85'" ontouchend="this.style.opacity='1'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Hacer el test
+        </button>
+        <button onclick="introNext()" style="flex:0 0 auto;min-height:52px;padding:0 14px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;white-space:nowrap;transition:background .15s" onmousedown="this.style.opacity='.7'" onmouseup="this.style.opacity='1'" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+          Más tarde
+        </button>
+      </div>
+      ` : `
+      <!-- Pasos intermedios: atrás + Siguiente -->
+      <div style="display:flex;gap:8px">
+        ${step > 0 ? `
+        <button onclick="introBack()" style="flex:0 0 48px;height:50px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>` : ''}
+        <button onclick="introNext()" style="flex:1;height:50px;border-radius:14px;border:none;background:${s.color};color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;transition:opacity .15s">
+          Siguiente →
+        </button>
+      </div>
+      `}
+    </div>
+  `;
+}
+
+window.introNext = () => {
+  const cfg = INTRO_CONFIGS[_introTab];
+  if(!cfg) return;
+  if(_introStep < cfg.steps.length - 1) {
+    _introStep++;
+    renderIntro();
+    haptic('light');
+  } else {
+    dismissIntro();
+  }
+};
+
+// Abre el quiz asociado a la pestaña del intro actual y cierra el banner
+window.introDoQuiz = () => {
+  const tab = _introTab;
+  dismissIntro();
+  setTimeout(() => {
+    if(tab === 'nutricion') {
+      S.dietWizardDone = false;
+      if(!S.dietProfile) S.dietProfile = {};
+      S.dietProfile._step = 0;
+      saveState();
+      openQuizModal({ questions: DIET_QUESTIONS, stateKey: 'dietProfile', doneKey: 'dietWizardDone', title: 'Tu perfil de dieta' });
+    } else if(tab === 'asesoria') {
+      S.healthQuizDone = false;
+      if(!S.profile) S.profile = { answers:{} };
+      S.profile._step = 0;
+      saveState();
+      openQuizModal({ questions: HEALTH_QUESTIONS, stateKey: 'profile', doneKey: 'healthQuizDone', title: 'Tu perfil de salud' });
+    } else if(tab === 'rutina') {
+      S.rutinaWizardDone = false;
+      if(!S.rutinaProfile) S.rutinaProfile = {};
+      S.rutinaProfile._step = 0;
+      saveState();
+      openQuizModal({ questions: RUTINA_QUESTIONS, stateKey: 'rutinaProfile', doneKey: 'rutinaWizardDone', title: 'Tu perfil de entrenamiento' });
+    }
+    haptic('medium');
+  }, 350);
+};
+
+window.introBack = () => {
+  if(_introStep > 0) { _introStep--; renderIntro(); haptic('light'); }
+};
+
+window.dismissIntro = () => {
+  if(_introTab && !_introFromBtn) {
+    // Solo marcar como visto si es la primera vez (no cuando se abre desde el botón ?)
+    S['introDone' + _introTab.charAt(0).toUpperCase() + _introTab.slice(1)] = true;
+    saveState();
+  }
+  _introTab = null;
+  _introFromBtn = false;
+  const overlay = document.getElementById('quiz-modal-overlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  setTimeout(() => {
+    const inner = document.getElementById('quiz-modal-inner');
+    if(inner) inner.innerHTML = '';
+  }, 350);
+};
+
+function maybeShowIntro(tab) {
+  const cfg = INTRO_CONFIGS[tab];
+  if(!cfg) return;
+  const key = cfg.stateKey;
+  if(!S[key]) openIntro(tab);
+}
 
 // ── TAB-TRIGGERED QUIZ OPENERS ──
 function maybeShowHealthQuiz(){
@@ -5728,8 +6110,13 @@ window.syncGoogleHealth = window.syncHealthConnect;
 window.checkHealthConnectAvailability = async () => isCapacitor() && !!HC();
 
 // ═══════════════════════════════════════════════════
-// PREVENT ZOOM (pinch & double-tap)
+// AUTO-SYNC GOOGLE FIT AL ACTIVAR LA APP
 // ═══════════════════════════════════════════════════
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible' && S.googleFit?.connected && S.googleFit?.accessToken) {
+    syncGoogleFit(true); // silencioso: sin toast ni spinner
+  }
+});
 document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
@@ -5753,22 +6140,35 @@ document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
 // SEED DEMO DATA
 // ═══════════════════════════════════════════════════
 function seedDemoData(){
+  // No sembrar demo si Google Fit ya está conectado (tenemos datos reales)
+  if(S.googleFit?.connected) return;
   const d=today();
   const y=new Date(); y.setDate(y.getDate()-1); const yd=y.toISOString().slice(0,10);
   S.logs.push(
-    {id:uid(),tipo:'pasos',valor:7430,fecha:d},
-    {id:uid(),tipo:'agua',valor:1200,fecha:d},
-    {id:uid(),tipo:'pasos',valor:9200,fecha:yd},
-    {id:uid(),tipo:'agua',valor:2600,fecha:yd},
-    ...[2,3,4,5,6].map(i=>{ const dd=new Date(); dd.setDate(dd.getDate()-i); return {id:uid(),tipo:'pasos',valor:Math.floor(5000+Math.random()*6000),fecha:dd.toISOString().slice(0,10)}; })
+    {id:uid(),tipo:'pasos',valor:7430,fecha:d,isDemo:true},
+    {id:uid(),tipo:'agua',valor:1200,fecha:d,isDemo:true},
+    {id:uid(),tipo:'pasos',valor:9200,fecha:yd,isDemo:true},
+    {id:uid(),tipo:'agua',valor:2600,fecha:yd,isDemo:true},
+    ...[2,3,4,5,6].map(i=>{ const dd=new Date(); dd.setDate(dd.getDate()-i); return {id:uid(),tipo:'pasos',valor:Math.floor(5000+Math.random()*6000),fecha:dd.toISOString().slice(0,10),isDemo:true}; })
   );
   S.meals.push(
-    {id:uid(),nombre:'Avena con frutos rojos',kcal:320,prot:12,carbs:54,fat:6,comida:'desayuno',fecha:d},
-    {id:uid(),nombre:'Pechuga a la plancha',kcal:280,prot:38,carbs:2,fat:8,comida:'almuerzo',fecha:d},
-    {id:uid(),nombre:'Arroz integral con verduras',kcal:350,prot:9,carbs:68,fat:5,comida:'almuerzo',fecha:d},
+    {id:uid(),nombre:'Avena con frutos rojos',kcal:320,prot:12,carbs:54,fat:6,comida:'desayuno',fecha:d,isDemo:true},
+    {id:uid(),nombre:'Pechuga a la plancha',kcal:280,prot:38,carbs:2,fat:8,comida:'almuerzo',fecha:d,isDemo:true},
+    {id:uid(),nombre:'Arroz integral con verduras',kcal:350,prot:9,carbs:68,fat:5,comida:'almuerzo',fecha:d,isDemo:true},
   );
   saveState();
 }
+
+window.clearDemoData = () => {
+  const demoLogs  = S.logs.filter(l => l.isDemo).length;
+  const demoMeals = S.meals.filter(m => m.isDemo).length;
+  if(!demoLogs && !demoMeals){ toast('No hay datos de demo que eliminar'); return; }
+  S.logs  = S.logs.filter(l => !l.isDemo);
+  S.meals = S.meals.filter(m => !m.isDemo);
+  saveState(); render();
+  toast(`Datos de demo eliminados (${demoLogs} registros, ${demoMeals} comidas)`);
+  haptic('success');
+};
 
 // ═══════════════════════════════════════════════════
 // INIT PANELS (separado para llamar desde bootApp)
@@ -5847,13 +6247,7 @@ supa.auth.onAuthStateChange(async (event, session) => {
 })();
 </script>
 
-<!-- ══ PWA UPDATE BANNER ══ -->
-<div id="pwa-update-banner" role="alert" aria-live="polite">
-  <span style="font-size:20px">🔄</span>
-  <div class="upd-text">Nueva versión disponible</div>
-  <button class="upd-btn" onclick="pwaApplyUpdate()">Actualizar</button>
-  <button class="upd-close" onclick="pwaDismissBanner()" aria-label="Cerrar">×</button>
-</div>
+<!-- ══ PWA UPDATE BANNER — eliminado del overlay flotante, ahora en Ajustes ══ -->
 
 <!-- ══ SERVICE WORKER + BANNER DE ACTUALIZACIÓN ══ -->
 <script>
@@ -5862,15 +6256,20 @@ supa.auth.onAuthStateChange(async (event, session) => {
 
   let _reg = null;
 
-  function showBanner() {
-    // No mostrar si el usuario ya lo descartó en esta sesión
-    if (sessionStorage.getItem('pwa-banner-dismissed') === '1') return;
-    document.getElementById('pwa-update-banner')?.classList.add('show');
+  // Señal global: hay actualización disponible
+  window._pwaUpdateReady = false;
+
+  function markUpdateReady() {
+    window._pwaUpdateReady = true;
+    // Si el panel de ajustes está abierto, refrescarlo para mostrar el aviso
+    const body = document.getElementById('settings-sheet-body');
+    if (body && document.getElementById('settings-sheet')?.classList.contains('open')) {
+      body.innerHTML = rAjustes();
+    }
   }
 
   window.pwaApplyUpdate = function () {
-    sessionStorage.removeItem('pwa-banner-dismissed');
-    document.getElementById('pwa-update-banner')?.classList.remove('show');
+    window._pwaUpdateReady = false;
     if (_reg?.waiting) {
       _reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), { once: true });
@@ -5879,19 +6278,12 @@ supa.auth.onAuthStateChange(async (event, session) => {
     }
   };
 
-  window.pwaDismissBanner = function () {
-    document.getElementById('pwa-update-banner')?.classList.remove('show');
-    // Recordar que se descartó para no volver a molestarlo en esta sesión
-    sessionStorage.setItem('pwa-banner-dismissed', '1');
-  };
-
   navigator.serviceWorker.register('./sw.js').then(reg => {
     _reg = reg;
 
-    // Solo mostrar banner si hay SW esperando Y ya había un SW controlando la página
-    // (es decir, no es la primera instalación)
+    // Solo marcar si hay SW esperando Y ya había un SW controlando la página
     if (reg.waiting && navigator.serviceWorker.controller) {
-      showBanner();
+      markUpdateReady();
       return;
     }
 
@@ -5899,9 +6291,8 @@ supa.auth.onAuthStateChange(async (event, session) => {
     reg.addEventListener('updatefound', () => {
       const sw = reg.installing;
       sw.addEventListener('statechange', () => {
-        // Solo si ya había un SW activo (no es la primera instalación)
         if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-          showBanner();
+          markUpdateReady();
         }
       });
     });
@@ -6113,8 +6504,8 @@ function buildSkeletonInicio() {
         </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      ${[1,2,3,4].map(()=>`<div class="skeleton-card" style="padding:14px"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line medium"></div></div>`).join('')}
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      ${[1,2,3,4].map(()=>`<div class="skeleton-card" style="flex:1;padding:12px 10px;min-width:72px"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line medium"></div></div>`).join('')}
     </div>
     <div class="skeleton-card"><div class="skeleton skeleton-rect"></div></div>
   </div>`;
