@@ -520,6 +520,70 @@
     .water-btn{flex:1;min-width:60px;padding:8px 6px;border-radius:10px;border:1.5px solid var(--border2);background:var(--blue-bg);color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;-webkit-tap-highlight-color:transparent;text-align:center}
     .water-btn:active{transform:scale(.95)}
 
+    /* ── WATER DROPS (hidratación táctil) ── */
+    .water-drops-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;padding:4px 0}
+    .water-drop-btn{width:36px;height:44px;border:none;background:none;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent;transition:transform .15s var(--ap-spring)}
+    .water-drop-btn:active{transform:scale(.88)}
+    .water-drop-svg path{transition:fill .25s ease,filter .25s ease}
+    .water-drop-btn.filled .water-drop-svg path{fill:var(--ios-blue,#007AFF);filter:drop-shadow(0 2px 4px rgba(0,122,255,.35))}
+    .water-drop-btn.filled .water-drop-svg .drop-outline{stroke:rgba(0,122,255,.6)}
+    .water-drop-btn .water-drop-svg path{fill:var(--ap-fill-t,rgba(120,120,128,.12))}
+    .water-drop-btn .water-drop-svg .drop-outline{stroke:var(--ap-hairline,rgba(60,60,67,.16))}
+    .water-drop-label{font-size:10px;color:var(--muted);font-weight:600;text-align:center;margin-top:6px}
+
+    /* ── DRAG & DROP WIDGETS ── */
+    .widget-grid{display:contents}
+    .widget-card{position:relative;touch-action:none}
+    .widget-card.dragging{opacity:.4;transform:scale(.96)}
+    .widget-card.drag-over{outline:2px dashed var(--ap-accent);outline-offset:3px;border-radius:16px}
+    .drag-handle{position:absolute;top:10px;right:10px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:var(--ap-fill-q);border-radius:6px;cursor:grab;z-index:5;opacity:0;transition:opacity .2s}
+    .widget-card:hover .drag-handle,.widget-card.long-press .drag-handle{opacity:1}
+
+    /* ── CONCENTRIC RINGS (Health Score Apple Fitness style) ── */
+    .fitness-rings-wrap{position:relative;width:96px;height:96px;flex-shrink:0;cursor:pointer}
+    .fitness-rings-svg{position:absolute;inset:0;transform:rotate(-90deg)}
+    .fitness-ring-track{fill:none;stroke-linecap:round}
+    .fitness-ring-fill{fill:none;stroke-linecap:round;stroke-dasharray:0 999;transition:stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1)}
+    .fitness-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;line-height:1.1}
+
+    /* ── WEEK CHART TOOLTIP ── */
+    .chart-tooltip{
+      position:absolute;background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:9px 12px;font-size:11px;color:var(--text);
+      box-shadow:0 8px 28px rgba(0,0,0,.18);pointer-events:none;
+      opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease;
+      z-index:20;min-width:110px;white-space:nowrap;
+    }
+    .chart-tooltip.visible{opacity:1;transform:translateY(0)}
+    .week-bar-col{cursor:pointer}
+    .week-bar-col.selected .week-bar-fill{filter:brightness(1.2);transform:scaleY(1.03);transform-origin:bottom}
+
+    /* ── STREAK FIRE COUNTER ── */
+    .streak-hero{display:flex;align-items:center;gap:12px;padding:4px 0 10px}
+    .streak-fire-badge{font-size:36px;line-height:1;animation:firePulse 2s ease-in-out infinite}
+    @keyframes firePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .streak-count{font-family:ui-monospace,'JetBrains Mono',monospace;font-size:36px;font-weight:800;color:var(--orange);line-height:1;letter-spacing:-.03em}
+    .streak-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+    .streak-mini-cal{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+    .streak-dot-v2{width:12px;height:12px;border-radius:50%;background:var(--ap-fill-t);transition:background .3s,transform .2s}
+    .streak-dot-v2.done{background:var(--ios-orange,#FF9500)}
+    .streak-dot-v2.today{background:var(--ios-orange,#FF9500);box-shadow:0 0 0 3px rgba(255,149,0,.28);transform:scale(1.25)}
+
+    /* ── MACRO ANIMATED SEGMENTED BAR ── */
+    .macro-seg-bar{width:100%;height:14px;border-radius:99px;overflow:hidden;display:flex;margin:10px 0 14px;background:var(--ap-fill-q)}
+    .macro-seg-prot{background:#4DC882;height:100%;transition:width 1s cubic-bezier(.4,0,.2,1);border-radius:99px 0 0 99px}
+    .macro-seg-carbs{background:#FF9500;height:100%;transition:width 1s cubic-bezier(.4,0,.2,1) .1s}
+    .macro-seg-fat{background:#007AFF;height:100%;transition:width 1s cubic-bezier(.4,0,.2,1) .2s;border-radius:0 99px 99px 0}
+    .macro-seg-labels{display:flex;justify-content:space-between;gap:6px;margin-bottom:4px}
+    .macro-seg-label{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ap-text-2)}
+    .macro-seg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .macro-seg-val{font-family:ui-monospace,'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--ap-text)}
+
+    /* ── SWIPE RIGHT (DUPLICATE) ── */
+    .swipe-row-dup-bg{position:absolute;right:auto;left:0;top:0;bottom:0;background:var(--ios-green,#34C759);display:flex;align-items:center;justify-content:flex-start;padding:0 16px;border-radius:14px 0 0 14px;width:0;overflow:hidden;transition:none}
+    .swipe-row-dup-bg.visible{background:var(--ios-green,#34C759)}
+    .swipe-row{position:relative;overflow:hidden;border-radius:14px}
+
     /* ── WEIGHT HISTORY CHART ── */
     .weight-chart-wrap{position:relative;height:100px;margin-top:8px}
     .weight-chart-wrap canvas{width:100%!important}
@@ -544,6 +608,705 @@
   </style>
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       APPLE DESIGN LAYER — Designed by Apple in California ✦
+       This stylesheet overrides the legacy theme with an iOS/macOS
+       inspired aesthetic. SF Pro typography, system color palette,
+       hairline separators, subtle springs, glass blur.
+       ═══════════════════════════════════════════════════════════ -->
+  <style id="apple-design-layer">
+
+    /* ===== SF Pro typography stack ===== */
+    html, body, button, input, select, textarea {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                   "Inter", "Segoe UI", Roboto, system-ui, sans-serif !important;
+      font-feature-settings: "ss01", "ss02", "cv01", "cv11";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    .font-mono, [style*="JetBrains"], .stat-value, .hero-value,
+    .macro-val, .macro-legend-val, .log-value {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace !important;
+      font-feature-settings: "tnum", "zero";
+      letter-spacing: -.01em;
+    }
+
+    /* ===== Apple system tokens ===== */
+    :root {
+      /* Light */
+      --ap-bg: #F2F2F7;
+      --ap-bg-elev: #FFFFFF;
+      --ap-surface: #FFFFFF;
+      --ap-surface-2: #F2F2F7;
+      --ap-surface-3: #E5E5EA;
+      --ap-hairline: rgba(60,60,67,.16);
+      --ap-hairline-strong: rgba(60,60,67,.29);
+      --ap-text: #000000;
+      --ap-text-2: rgba(60,60,67,.62);
+      --ap-text-3: rgba(60,60,67,.42);
+      --ap-fill-q: rgba(120,120,128,.08);
+      --ap-fill-t: rgba(120,120,128,.12);
+      --ap-fill-s: rgba(120,120,128,.16);
+      --ap-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 28px rgba(0,0,0,.06);
+      --ap-shadow-lg: 0 4px 14px rgba(0,0,0,.06), 0 18px 60px rgba(0,0,0,.10);
+
+      /* iOS system colors – light */
+      --ios-blue:#007AFF;
+      --ios-green:#34C759;
+      --ios-indigo:#5856D6;
+      --ios-orange:#FF9500;
+      --ios-pink:#FF2D55;
+      --ios-purple:#AF52DE;
+      --ios-red:#FF3B30;
+      --ios-teal:#30B0C7;
+      --ios-yellow:#FFCC00;
+      --ios-gray:#8E8E93;
+
+      /* Dynamic accent (per-tab) – default blue */
+      --ap-accent: var(--ios-blue);
+      --ap-accent-soft: rgba(0,122,255,.12);
+      --ap-accent-soft-2: rgba(0,122,255,.20);
+      --ap-accent-grad-1: #007AFF;
+      --ap-accent-grad-2: #5AC8FA;
+
+      --ap-radius-card: 18px;
+      --ap-radius-control: 12px;
+      --ap-radius-pill: 999px;
+      --ap-spring: cubic-bezier(.32,.72,0,1);
+      --ap-spring-soft: cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Dark theme overrides */
+    body.dark, .dark {
+      --ap-bg: #000000;
+      --ap-bg-elev: #1C1C1E;
+      --ap-surface: #1C1C1E;
+      --ap-surface-2: #2C2C2E;
+      --ap-surface-3: #3A3A3C;
+      --ap-hairline: rgba(84,84,88,.40);
+      --ap-hairline-strong: rgba(84,84,88,.65);
+      --ap-text: #FFFFFF;
+      --ap-text-2: rgba(235,235,245,.60);
+      --ap-text-3: rgba(235,235,245,.30);
+      --ap-fill-q: rgba(120,120,128,.18);
+      --ap-fill-t: rgba(120,120,128,.24);
+      --ap-fill-s: rgba(120,120,128,.36);
+      --ap-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 12px 36px rgba(0,0,0,.50);
+      --ap-shadow-lg: 0 0 0 1px rgba(255,255,255,.06), 0 24px 72px rgba(0,0,0,.65);
+
+      --ios-blue:#0A84FF;
+      --ios-green:#30D158;
+      --ios-indigo:#5E5CE6;
+      --ios-orange:#FF9F0A;
+      --ios-pink:#FF375F;
+      --ios-purple:#BF5AF2;
+      --ios-red:#FF453A;
+      --ios-teal:#40C8E0;
+      --ios-yellow:#FFD60A;
+      --ios-gray:#8E8E93;
+
+      --ap-accent: var(--ios-blue);
+      --ap-accent-soft: rgba(10,132,255,.18);
+      --ap-accent-soft-2: rgba(10,132,255,.28);
+    }
+
+    /* ===== Accent per tab ===== */
+    body.tab-inicio    { --ap-accent: var(--ios-blue);   --ap-accent-soft: rgba(0,122,255,.12);  --ap-accent-soft-2: rgba(0,122,255,.20);  --ap-accent-grad-1:#0A84FF;--ap-accent-grad-2:#64D2FF; }
+    body.tab-nutricion { --ap-accent: var(--ios-green);  --ap-accent-soft: rgba(52,199,89,.14);  --ap-accent-soft-2: rgba(52,199,89,.22);  --ap-accent-grad-1:#34C759;--ap-accent-grad-2:#A7E081; }
+    body.tab-asesoria  { --ap-accent: var(--ios-purple); --ap-accent-soft: rgba(175,82,222,.14); --ap-accent-soft-2: rgba(175,82,222,.22); --ap-accent-grad-1:#AF52DE;--ap-accent-grad-2:#FF6FA8; }
+    body.tab-rutina    { --ap-accent: var(--ios-orange); --ap-accent-soft: rgba(255,149,0,.14);  --ap-accent-soft-2: rgba(255,149,0,.22);  --ap-accent-grad-1:#FF9500;--ap-accent-grad-2:#FF375F; }
+    body.dark.tab-inicio    { --ap-accent-soft: rgba(10,132,255,.20);   --ap-accent-soft-2: rgba(10,132,255,.32); }
+    body.dark.tab-nutricion { --ap-accent-soft: rgba(48,209,88,.22);    --ap-accent-soft-2: rgba(48,209,88,.32); }
+    body.dark.tab-asesoria  { --ap-accent-soft: rgba(191,90,242,.22);   --ap-accent-soft-2: rgba(191,90,242,.32); }
+    body.dark.tab-rutina    { --ap-accent-soft: rgba(255,159,10,.22);   --ap-accent-soft-2: rgba(255,159,10,.32); }
+
+    /* ===== Map legacy vars to Apple tokens (overrides) ===== */
+    :root, body, body.dark {
+      --bg: var(--ap-bg) !important;
+      --surface: var(--ap-surface) !important;
+      --surface2: var(--ap-surface-2) !important;
+      --surface3: var(--ap-surface-3) !important;
+      --border: var(--ap-hairline) !important;
+      --border2: var(--ap-hairline-strong) !important;
+      --muted: var(--ap-text-2) !important;
+      --muted2: var(--ap-text-3) !important;
+      --text: var(--ap-text) !important;
+      --text2: var(--ap-text-2) !important;
+      --shadow: var(--ap-shadow) !important;
+      --shadow-md: var(--ap-shadow-lg) !important;
+      --radius: var(--ap-radius-card) !important;
+      --radius-sm: var(--ap-radius-control) !important;
+
+      --primary: var(--ap-accent) !important;
+      --primary2: var(--ap-accent) !important;
+      --primary-bg: var(--ap-accent-soft) !important;
+      --tab-accent: var(--ap-accent) !important;
+      --tab-accent2: var(--ap-accent) !important;
+      --tab-dark: var(--ap-accent) !important;
+      --tab-h1: var(--ap-accent) !important;
+      --tab-h2: var(--ap-accent) !important;
+      --tab-light: var(--ap-accent-soft) !important;
+      --tab-light2: var(--ap-accent-soft-2) !important;
+      --tab-medium: var(--ap-accent) !important;
+      --tab-primary-bg: var(--ap-accent-soft) !important;
+
+      --teal-50: var(--ap-accent-soft) !important;
+      --teal-100: var(--ap-accent-soft) !important;
+      --teal-200: var(--ap-accent-soft-2) !important;
+      --teal-300: var(--ap-accent) !important;
+      --teal-400: var(--ap-accent) !important;
+      --teal-500: var(--ap-accent) !important;
+      --teal-600: var(--ap-accent) !important;
+      --teal-700: var(--ap-accent) !important;
+      --teal-800: var(--ap-accent) !important;
+      --teal-900: var(--ap-accent) !important;
+      --green-50: var(--ap-accent-soft) !important;
+      --green-100: var(--ap-accent-soft) !important;
+      --green-200: var(--ap-accent-soft-2) !important;
+      --green-400: var(--ap-accent) !important;
+      --green-500: var(--ap-accent) !important;
+      --green-600: var(--ap-accent) !important;
+      --green-700: var(--ap-accent) !important;
+      --green-900: var(--ap-accent) !important;
+
+      --red: var(--ios-red) !important;
+      --red-bg: rgba(255,59,48,.10) !important;
+      --orange: var(--ios-orange) !important;
+      --orange-bg: rgba(255,149,0,.10) !important;
+      --blue: var(--ios-blue) !important;
+      --blue-bg: rgba(0,122,255,.10) !important;
+      --purple: var(--ios-purple) !important;
+      --purple-bg: rgba(175,82,222,.10) !important;
+    }
+    body.dark { --red-bg: rgba(255,69,58,.16) !important; --orange-bg: rgba(255,159,10,.16) !important; --blue-bg: rgba(10,132,255,.16) !important; --purple-bg: rgba(191,90,242,.16) !important; }
+
+    /* ===== App container ===== */
+    html, body { background: var(--ap-bg) !important; color: var(--ap-text) !important; }
+    #app { background: var(--ap-bg) !important; max-width: 520px !important; }
+
+    /* ===== HEADER — clean, no colored gradient ===== */
+    .header {
+      background: var(--ap-bg) !important;
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: .5px solid var(--ap-hairline);
+      padding: max(env(safe-area-inset-top), 10px) 18px 0 !important;
+      position: sticky; top: 0;
+    }
+    .header-top { padding-bottom: 8px !important; gap: 12px !important; }
+    .logo {
+      width: 32px !important; height: 32px !important;
+      background: linear-gradient(135deg, var(--ap-accent-grad-1), var(--ap-accent-grad-2)) !important;
+      border: none !important;
+      border-radius: 9px !important;
+      box-shadow: 0 4px 12px var(--ap-accent-soft-2);
+    }
+    .logo svg { stroke: #fff !important; }
+    .logo-title {
+      color: var(--ap-text) !important;
+      font-size: 17px !important;
+      font-weight: 700 !important;
+      letter-spacing: -.43px !important;
+    }
+    .logo-sub { color: var(--ap-text-2) !important; font-size: 11px !important; margin-top: 0 !important; font-weight: 500; }
+
+    /* Header circular icon buttons — Apple style */
+    #account-btn, #quiz-btn, #settings-btn {
+      background: var(--ap-fill-q) !important;
+      border: none !important;
+      width: 32px !important; height: 32px !important;
+      border-radius: 50% !important;
+      transition: background .2s var(--ap-spring), transform .2s var(--ap-spring);
+    }
+    #account-btn:active, #quiz-btn:active, #settings-btn:active {
+      background: var(--ap-fill-t) !important;
+      transform: scale(.92);
+    }
+    #account-btn svg, #quiz-btn svg, #settings-btn svg {
+      stroke: var(--ap-text) !important;
+      width: 16px !important; height: 16px !important;
+    }
+    /* Hide the redundant quiz button — moved into account menu */
+    #quiz-btn { display: none !important; }
+
+    /* ===== TOP NAV — Apple segmented pill bar ===== */
+    .top-nav {
+      background: var(--ap-fill-q) !important;
+      border-radius: 10px !important;
+      padding: 3px !important;
+      gap: 0 !important;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .tnav-item {
+      flex: 1 !important;
+      padding: 7px 4px !important;
+      border-radius: 8px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      letter-spacing: -.08px !important;
+      text-transform: none !important;
+      color: var(--ap-text-2) !important;
+      background: transparent !important;
+      transition: color .25s var(--ap-spring), background .35s var(--ap-spring), transform .2s var(--ap-spring);
+      gap: 5px !important;
+    }
+    .tnav-item svg { width: 14px !important; height: 14px !important; opacity: .9 !important; }
+    .tnav-item.active {
+      background: var(--ap-surface) !important;
+      color: var(--ap-accent) !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 3px 8px rgba(0,0,0,.06);
+    }
+    body.dark .tnav-item.active { background: var(--ap-surface-3) !important; color: var(--ap-text) !important; }
+    .tnav-item.active svg { color: var(--ap-accent); stroke: var(--ap-accent); opacity: 1 !important; }
+    .tnav-item:active { transform: scale(.96); }
+
+    /* ===== Tab panels ===== */
+    .tab-panel { padding: 14px 16px calc(env(safe-area-inset-bottom) + 96px) !important; background: var(--ap-bg) !important; }
+    .tab-panel > * { margin-bottom: 14px !important; }
+
+    /* ===== CARDS — Apple grouped style ===== */
+    .card {
+      background: var(--ap-surface) !important;
+      border: .5px solid var(--ap-hairline) !important;
+      border-radius: var(--ap-radius-card) !important;
+      box-shadow: var(--ap-shadow) !important;
+      padding: 18px !important;
+    }
+    body.dark .card { border-color: var(--ap-hairline) !important; }
+    .card-title {
+      color: var(--ap-text) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      letter-spacing: -.31px !important;
+      margin-bottom: 12px !important;
+      text-transform: none !important;
+    }
+    .card-accent { background: var(--ap-surface) !important; border-color: var(--ap-hairline) !important; }
+
+    /* ===== HERO CARD — colored accent with gradient ===== */
+    .hero-card {
+      background: linear-gradient(135deg, var(--ap-accent-grad-1), var(--ap-accent-grad-2)) !important;
+      border-radius: 20px !important;
+      padding: 22px !important;
+      box-shadow: 0 12px 36px var(--ap-accent-soft-2) !important;
+      color: #fff !important;
+    }
+    .hero-label { font-size: 12px !important; letter-spacing: -.08px !important; text-transform: none !important; opacity: .85 !important; font-weight: 500 !important; }
+    .hero-value { font-size: 44px !important; font-weight: 700 !important; letter-spacing: -.02em !important; }
+    .hero-sub { font-size: 13px !important; opacity: .78 !important; }
+
+    /* ===== STAT CARDS ===== */
+    .stat-card {
+      background: var(--ap-surface) !important;
+      border: .5px solid var(--ap-hairline) !important;
+      border-left: .5px solid var(--ap-hairline) !important;
+      border-radius: 14px !important;
+      box-shadow: var(--ap-shadow) !important;
+      padding: 14px 14px !important;
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ""; position: absolute; left: 0; top: 14%; bottom: 14%; width: 3px;
+      background: var(--ap-accent); border-radius: 0 3px 3px 0;
+    }
+    .stat-label { font-size: 11px !important; letter-spacing: -.06px !important; text-transform: none !important; color: var(--ap-text-2) !important; font-weight: 500 !important; }
+    .stat-value { font-size: 22px !important; font-weight: 700 !important; letter-spacing: -.02em !important; }
+    .stat-unit { font-size: 11px !important; color: var(--ap-text-2) !important; }
+
+    /* ===== BUTTONS — Apple system style ===== */
+    .btn {
+      background: var(--ap-accent) !important;
+      color: #fff !important;
+      border-radius: 12px !important;
+      padding: 13px 18px !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      letter-spacing: -.24px !important;
+      box-shadow: none !important;
+      transition: opacity .15s, transform .15s var(--ap-spring), filter .15s !important;
+    }
+    .btn:hover { background: var(--ap-accent) !important; filter: brightness(1.05); }
+    .btn:active { transform: scale(.97); opacity: .85; }
+    .btn-ghost {
+      background: var(--ap-fill-q) !important;
+      color: var(--ap-accent) !important;
+      border: none !important;
+    }
+    .btn-outline {
+      background: transparent !important;
+      color: var(--ap-accent) !important;
+      border: 1px solid var(--ap-accent) !important;
+    }
+    .btn-danger {
+      background: var(--ap-fill-q) !important;
+      color: var(--ios-red) !important;
+      border: none !important;
+    }
+    .btn-sm { padding: 8px 14px !important; font-size: 13px !important; border-radius: 10px !important; }
+
+    /* ===== INPUTS ===== */
+    input, select, textarea {
+      background: var(--ap-fill-q) !important;
+      border: none !important;
+      border-radius: 10px !important;
+      padding: 12px 14px !important;
+      font-size: 15px !important;
+      color: var(--ap-text) !important;
+      transition: background .2s, box-shadow .2s !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      background: var(--ap-surface) !important;
+      box-shadow: 0 0 0 3px var(--ap-accent-soft) !important;
+    }
+    input::placeholder, textarea::placeholder { color: var(--ap-text-3) !important; }
+    .field-label {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: var(--ap-text-2) !important;
+      letter-spacing: -.08px !important;
+      text-transform: none !important;
+      margin-bottom: 6px !important;
+    }
+
+    /* ===== CHIP FILTERS — iOS pills ===== */
+    .chip {
+      background: var(--ap-fill-q) !important;
+      border: none !important;
+      color: var(--ap-text-2) !important;
+      border-radius: var(--ap-radius-pill) !important;
+      padding: 7px 14px !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      transition: background .2s, color .2s, transform .15s var(--ap-spring) !important;
+    }
+    .chip.active {
+      background: var(--ap-accent) !important;
+      color: #fff !important;
+      border-color: transparent !important;
+    }
+    .chip:active { transform: scale(.95); }
+
+    /* ===== LOG ITEMS ===== */
+    .log-item {
+      background: var(--ap-surface) !important;
+      border: .5px solid var(--ap-hairline) !important;
+      border-radius: 14px !important;
+      padding: 12px 14px !important;
+      box-shadow: var(--ap-shadow) !important;
+    }
+    .log-icon { border-radius: 10px !important; }
+    .log-name { font-size: 15px !important; font-weight: 500 !important; letter-spacing: -.24px !important; }
+    .log-meta { color: var(--ap-text-2) !important; font-size: 12px !important; }
+    .log-value { font-size: 15px !important; }
+
+    /* ===== SECTION LABEL — Apple uppercase tracked ===== */
+    .section-label {
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      letter-spacing: -.08px !important;
+      text-transform: none !important;
+      color: var(--ap-text-2) !important;
+      padding-left: 4px !important;
+      margin-bottom: 8px !important;
+    }
+
+    /* ===== FAB ===== */
+    .fab {
+      width: 56px !important; height: 56px !important;
+      background: var(--ap-accent) !important;
+      box-shadow: 0 8px 24px var(--ap-accent-soft-2), 0 2px 6px rgba(0,0,0,.12) !important;
+      bottom: calc(env(safe-area-inset-bottom) + 24px) !important;
+      transition: transform .2s var(--ap-spring), box-shadow .2s var(--ap-spring) !important;
+    }
+    .fab:active { transform: scale(.92); }
+
+    /* ===== MODALS — Apple sheet style ===== */
+    .modal-overlay { background: rgba(0,0,0,.40) !important; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .modal {
+      background: var(--ap-bg-elev) !important;
+      border-top: none !important;
+      border-radius: 18px 18px 0 0 !important;
+      box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+    }
+    body.dark .modal { background: var(--ap-surface) !important; }
+    .modal-handle { background: var(--ap-text-3) !important; }
+    .modal-title { font-size: 17px !important; font-weight: 700 !important; letter-spacing: -.43px !important; color: var(--ap-text) !important; }
+    .modal-close {
+      background: var(--ap-fill-q) !important;
+      border: none !important;
+      border-radius: 50% !important;
+      color: var(--ap-text-2) !important;
+    }
+    .modal-close svg { stroke: var(--ap-text-2); }
+
+    /* ===== TOGGLE — Apple iOS switch ===== */
+    .toggle { width: 51px !important; height: 31px !important; }
+    .toggle-slider { background: var(--ap-fill-s) !important; border-radius: 31px !important; }
+    .toggle-slider:before {
+      width: 27px !important; height: 27px !important;
+      left: 2px !important; top: 2px !important;
+      box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 3px 1px rgba(0,0,0,.06) !important;
+      transition: transform .35s var(--ap-spring) !important;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--ios-green) !important; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px) !important; }
+
+    /* ===== Chat bubbles ===== */
+    .chat-bubble.user { background: var(--ap-accent) !important; color: #fff !important; }
+    .chat-bubble.ai { background: var(--ap-fill-q) !important; border: none !important; color: var(--ap-text) !important; }
+
+    /* ===== Settings sheet ===== */
+    #settings-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; border-radius: 18px 18px 0 0 !important; }
+    body.dark #settings-sheet { background: var(--ap-surface) !important; }
+    .settings-row { border-bottom: .5px solid var(--ap-hairline) !important; padding: 14px 0 !important; }
+    .settings-label { font-size: 15px !important; font-weight: 500 !important; letter-spacing: -.24px !important; }
+    .settings-sub { font-size: 13px !important; color: var(--ap-text-2) !important; }
+
+    /* ===== Account menu ===== */
+    #account-menu {
+      background: var(--ap-bg-elev) !important;
+      border: .5px solid var(--ap-hairline) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18) !important;
+    }
+    body.dark #account-menu { background: var(--ap-surface) !important; }
+    .acct-menu-item { font-size: 15px !important; font-weight: 500 !important; padding: 13px 16px !important; }
+    .acct-menu-header { border-bottom: .5px solid var(--ap-hairline) !important; }
+
+    /* ===== Splash ===== */
+    #splash {
+      background: linear-gradient(160deg, var(--ios-blue), #5856D6) !important;
+    }
+    body.dark #splash { background: linear-gradient(160deg, #000, #1C1C1E) !important; }
+    .splash-logo {
+      background: rgba(255,255,255,.18) !important;
+      border: .5px solid rgba(255,255,255,.25) !important;
+      border-radius: 18px !important;
+    }
+    .splash-name { font-weight: 700 !important; letter-spacing: -.6px !important; }
+
+    /* ===== Login ===== */
+    .login-logo {
+      background: linear-gradient(135deg, var(--ios-blue), #5AC8FA) !important;
+      border-radius: 22px !important;
+      box-shadow: 0 12px 36px rgba(0,122,255,.30) !important;
+    }
+    .login-title { font-weight: 700 !important; letter-spacing: -.6px !important; }
+    .btn-google {
+      background: var(--ap-surface) !important;
+      border: .5px solid var(--ap-hairline) !important;
+      border-radius: 12px !important;
+      font-weight: 600 !important;
+    }
+    body.dark .btn-google { background: var(--ap-surface-2) !important; }
+
+    /* ===== Quiz modal ===== */
+    #quiz-modal-box { background: var(--ap-bg-elev) !important; border-radius: 24px !important; }
+    body.dark #quiz-modal-box { background: var(--ap-surface) !important; border-radius: 24px !important; }
+
+    /* ===== Macro pills ===== */
+    .macro-pill {
+      background: var(--ap-fill-q) !important;
+      border: none !important;
+      border-radius: 12px !important;
+      padding: 10px 8px !important;
+    }
+    .macro-name { font-size: 11px !important; letter-spacing: -.06px !important; text-transform: none !important; color: var(--ap-text-2) !important; font-weight: 500 !important; }
+    .macro-val { font-size: 16px !important; color: var(--ap-text) !important; }
+
+    /* ===== Misc tweaks ===== */
+    .swipe-dot { background: var(--ap-text-3) !important; }
+    .swipe-dot.active { background: var(--ap-accent) !important; }
+    .ring-track { stroke: var(--ap-fill-t) !important; }
+    .ring-fill { stroke: var(--ap-accent) !important; }
+    .prog-track { background: var(--ap-fill-q) !important; }
+    .prog-fill { background: var(--ap-accent) !important; }
+    .week-bar-fill { background: var(--ap-accent) !important; border-radius: 6px 6px 0 0 !important; }
+    .streak-dot { background: var(--ap-fill-t) !important; }
+    .streak-dot.done { background: var(--ap-accent) !important; }
+    .streak-dot.today { background: var(--ap-accent) !important; box-shadow: 0 0 0 3px var(--ap-accent-soft-2) !important; }
+
+    .filter-row { gap: 8px !important; padding: 4px 0 !important; }
+
+    /* Hide scrollbars cleanly */
+    *::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
+
+    /* Smooth tab transition */
+    @keyframes apFade { from{opacity:0;transform:translateY(4px);filter:blur(4px)} to{opacity:1;transform:none;filter:none} }
+    .tab-anim { animation: apFade .35s var(--ap-spring) !important; }
+
+    /* Selection */
+    ::selection { background: var(--ap-accent-soft-2); color: var(--ap-text); }
+
+    /* ══ SKELETON LOADERS ══ */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, var(--ap-fill-q) 25%, var(--ap-fill-t) 50%, var(--ap-fill-q) 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      border-radius: 8px;
+    }
+    .skeleton-card {
+      background: var(--ap-surface);
+      border: 1px solid var(--ap-hairline);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .skeleton-line { height: 12px; margin-bottom: 10px; }
+    .skeleton-line.short { width: 40%; }
+    .skeleton-line.medium { width: 65%; }
+    .skeleton-line.full { width: 100%; }
+    .skeleton-circle { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; }
+    .skeleton-rect { height: 80px; border-radius: 12px; }
+
+    /* ══ SWIPE TO DELETE ══ */
+    .swipe-row {
+      position: relative;
+      overflow: hidden;
+      border-radius: 13px;
+    }
+    .swipe-row-delete-bg {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 80px;
+      background: var(--ios-red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0 13px 13px 0;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .swipe-row-delete-bg.visible { opacity: 1; }
+    .swipe-row-content {
+      position: relative;
+      transition: transform .25s cubic-bezier(.25,.46,.45,.94);
+      background: var(--ap-surface);
+      z-index: 1;
+    }
+    .swipe-row-content.swiping { transition: none; }
+
+    /* ══ SPARKLINE ══ */
+    .sparkline-wrap { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+    .sparkline-canvas { display: block; }
+
+    /* ══ MICRO-ANIMATION: REGISTER BOUNCE ══ */
+    @keyframes regBounce {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.08); }
+      60%  { transform: scale(.96); }
+      100% { transform: scale(1); }
+    }
+    .reg-bounce { animation: regBounce .4s var(--ap-spring) forwards; }
+
+    /* ══ CONFETTI PARTICLE ══ */
+    .confetti-particle {
+      position: fixed;
+      width: 7px; height: 7px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: confettiFall 0.9s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(.4); }
+    }
+
+    /* ══ TABLET / LANDSCAPE SIDEBAR ══ */
+    @media (min-width: 700px) and (orientation: landscape),
+           (min-width: 900px) {
+      body { overflow: hidden; }
+      #app {
+        flex-direction: row !important;
+        max-width: 1000px !important;
+        height: 100dvh;
+      }
+      /* Sidebar */
+      .header {
+        width: 220px !important;
+        flex-shrink: 0 !important;
+        height: 100dvh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: max(env(safe-area-inset-top),16px) 16px 16px !important;
+        border-bottom: none !important;
+        border-right: .5px solid var(--ap-hairline) !important;
+        position: sticky !important;
+        top: 0 !important;
+        overflow: visible !important;
+      }
+      .header-top {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding-bottom: 20px !important;
+      }
+      .logo-title { font-size: 18px !important; }
+      .logo-sub { font-size: 12px !important; }
+      /* Move action buttons below title */
+      .header-top > div:last-child {
+        margin-left: 0 !important;
+        margin-top: 8px !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+      }
+      /* Top nav becomes vertical */
+      .top-nav {
+        flex-direction: column !important;
+        gap: 4px !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        flex: 1 !important;
+      }
+      .tnav-item {
+        justify-content: flex-start !important;
+        padding: 10px 12px !important;
+        border-radius: 10px !important;
+        font-size: 13px !important;
+        gap: 10px !important;
+        white-space: nowrap !important;
+      }
+      .tnav-item svg { width: 16px !important; height: 16px !important; }
+      /* Hide swipe dots in desktop */
+      .swipe-dots { display: none !important; }
+      /* Main content area */
+      .tabs-viewport {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+      }
+      .tab-panel {
+        padding: 20px 28px 40px !important;
+      }
+    }
+
+    /* Toast */
+    #toast {
+      background: rgba(28,28,30,.92) !important;
+      color: #fff !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 14px !important;
+      padding: 12px 22px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,.30) !important;
+    }
+    body.dark #toast { background: rgba(58,58,60,.95) !important; }
+
+    /* Recipe modal */
+    #recipe-modal-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; border-radius: 18px 18px 0 0 !important; }
+    body.dark #recipe-modal-sheet { background: var(--ap-surface) !important; }
+
+  </style>
 </head>
 <body>
 <div id="app">
@@ -588,6 +1351,7 @@
             Cerrar sesión
           </button>
         </div>
+
         <!-- Botón ? -->
         <button onclick="openQuizSelector()" id="quiz-btn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s" title="Editar perfil">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -1053,6 +1817,17 @@ function defaultState(){
     shoppingList: [],
     shoppingListDate: '',
     shoppingListChecked: {},       // { itemKey: true } para tachar items
+    // Análisis semanal IA
+    weeklyReport: null,            // { texto, fecha, semana }
+    weeklyReportLoading: false,
+    weeklyReportError: '',
+    // Ajuste dinámico de macros
+    macroAdjust: null,             // { kcalSugeridas, razon, fecha }
+    macroAdjustLoading: false,
+    // Expansión de receta
+    expandedRecipe: null,          // { nombre, ingredientes, pasos, macros, dia, comida }
+    expandedRecipeLoading: false,
+    expandedRecipeError: '',
   };
 }
 
@@ -1251,10 +2026,23 @@ function toast(msg){
 // ═══════════════════════════════════════════════════
 function applyDark(){
   document.body.classList.toggle('dark', S.dark);
+  // Update theme toggle icon (sun in dark mode, moon in light)
+  var ic = document.getElementById('theme-toggle-icon');
+  if(ic){
+    if(S.dark){
+      ic.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+    } else {
+      ic.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
+  }
+  // Update theme-color meta for status bar
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', S.dark ? '#000000' : '#F2F2F7');
 }
 function toggleDark(){
-  S.dark=!S.dark; applyDark(); saveState(); haptic('light');
+  S.dark=!S.dark; applyDark(); saveState(); haptic && haptic('light');
 }
+function toggleTheme(){ toggleDark(); }
 
 // ═══════════════════════════════════════════════════
 // TAB ORDER
@@ -1386,19 +2174,41 @@ function rInicio(){
   const pasos = todayTotal('pasos');
   const kcal  = todayMeals().reduce((a,m)=>a+parseFloat(m.kcal||0),0);
   const sueno = todayTotal('sueno');
+  const agua  = todayTotal('agua');
   const peso  = todayLogs('peso').slice(-1)[0]?.valor || null;
   const hr    = S.logs.filter(l=>l.fecha===today()&&l.tipo==='frecuenciaCardiaca').slice(-1)[0]?.valor || null;
   const dist  = S.logs.filter(l=>l.fecha===today()&&l.tipo==='distancia').slice(-1)[0]?.valor || null;
-  const gPasos=S.goals.pasos, gKcal=S.goals.kcal;
+  const gPasos=S.goals.pasos, gKcal=S.goals.kcal, gAgua=S.goals.agua||2500;
   const pPasos=pct(pasos,gPasos), pKcal=pct(kcal,gKcal);
   const days  = last7Days();
   const maxPasos = Math.max(...days.map(d=>d.pasos),1);
   const streak = calcStreak();
   const score  = calcHealthScore();
   const si     = healthScoreColor(score);
-  const R=42, C=2*Math.PI*R, dash=C*(score/100), gap=C-dash;
   const weightLogs = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(-14);
   const fitSync = S.logs.some(l=>l.fecha===today()&&l.fitSync);
+
+  // ── Widget order (drag-reorder, saved in localStorage) ──
+  const WIDGET_KEYS = ['pasos','kcal','sueno','agua'];
+  let widgetOrder = (() => {
+    try { return JSON.parse(localStorage.getItem('healthapp_widget_order')) || WIDGET_KEYS; }
+    catch(e) { return WIDGET_KEYS; }
+  })();
+  // Guard: ensure all keys present
+  WIDGET_KEYS.forEach(k => { if(!widgetOrder.includes(k)) widgetOrder.push(k); });
+
+  // ── Concentric rings geometry ──
+  const CX=50, CY=50;
+  const rings = [
+    {r:40, sw:7, pct:pPasos,          color:'#30D158', label:'Pasos',  trackAlpha:.18},  // outer — steps
+    {r:30, sw:7, pct:pKcal,            color:'#FF9F0A', label:'Kcal',   trackAlpha:.18},  // middle — calories
+    {r:20, sw:7, pct:pct(sueno,S.goals.sueno), color:'#BF5AF2', label:'Sueño', trackAlpha:.18},  // inner — sleep
+  ];
+  function ringDash(r,pctVal){
+    const C2=2*Math.PI*r;
+    const d=C2*(Math.max(0,pctVal)/100);
+    return `${d.toFixed(1)} ${(C2-d).toFixed(1)}`;
+  }
 
   // ── Plan semanal helpers ──
   const wmp = S.weeklyMealPlan;
@@ -1412,69 +2222,128 @@ function rInicio(){
   const slTotal = sl.length;
   const slDone  = Object.values(slChecked).filter(Boolean).length;
 
-  return `<div>
-  <!-- ══ HEALTH SCORE HERO ══ -->
-  <div class="hero-card" style="padding:18px 20px 20px">
-    <div style="display:flex;align-items:center;gap:18px">
-      <div class="score-ring-wrap score-ring-tap" onclick="openScorePanel()" style="position:relative;flex-direction:column;gap:4px">
-        <svg class="score-ring-svg" width="96" height="96" viewBox="0 0 100 100">
-          <circle class="score-ring-track" cx="50" cy="50" r="${R}" stroke-width="8"/>
-          <circle class="score-ring-fill" cx="50" cy="50" r="${R}" stroke-width="8"
-            stroke="${si.stroke}" stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-dashoffset="0"/>
-        </svg>
-        <div class="score-ring-label" style="pointer-events:none">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700">${score}</div>
-          <div style="font-size:9px;opacity:.75;font-weight:700;letter-spacing:.4px">${si.label}</div>
-        </div>
+  // ── Water drops (8 drops = goal) ──
+  const mlPerDrop = Math.round(gAgua / 8);
+  const dropsFilledCount = Math.min(8, Math.floor(agua / mlPerDrop));
+  function dropSVG(filled){
+    return `<svg class="water-drop-svg" width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 2C18 2 4 16.5 4 26C4 34.28 10.27 41 18 41C25.73 41 32 34.28 32 26C32 16.5 18 2 18 2Z"
+        fill="${filled?'#007AFF':'rgba(120,120,128,.12)'}" class="drop-outline"
+        stroke="${filled?'rgba(0,122,255,.5)':'rgba(60,60,67,.18)'}" stroke-width="1.5"/>
+      ${filled?`<path d="M12 30C12 30 11 27 14 25" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-linecap="round"/>`:``}
+    </svg>`;
+  }
 
-      </div>
-      <div style="flex:1">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.65;font-weight:700;margin-bottom:10px">Score de salud · hoy</div>
-        <div style="display:flex;flex-direction:column;gap:7px">
-          ${[
-            {label:'Pasos', v:pPasos, color:'rgba(255,255,255,.9)'},
-            {label:'Kcal',  v:pKcal,  color:'rgba(212,137,90,.9)'},
-            {label:'Sueño', v:pct(sueno,S.goals.sueno), color:'rgba(168,136,208,.9)'},
-          ].map(r=>`<div>
-            <div style="display:flex;justify-content:space-between;font-size:10px;opacity:.75;margin-bottom:3px"><span>${r.label}</span><span>${r.v}%</span></div>
-            <div style="height:4px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden"><div style="width:${r.v}%;height:100%;background:${r.color};border-radius:3px;transition:width .7s ease"></div></div>
-          </div>`).join('')}
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:space-between">
-      <div style="display:flex;align-items:center;gap:5px;font-size:11px;opacity:.75">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Racha: <strong>${streak} días</strong>
-      </div>
-      <div style="font-size:11px;opacity:.7">${new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'})}</div>
-    </div>
-  </div>
+  const widgetDefs = {
+    pasos:  {label:'Pasos',    val:fmt(pasos),          sub:pPasos+'% objetivo',    color:'#007AFF', icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>',                                                                                     pct:pPasos,  bg:'rgba(0,122,255,.1)', sparkId:'spark-pasos'},
+    kcal:   {label:'Calorías', val:fmt(kcal)+' kcal',   sub:pKcal+'% objetivo',     color:'#FF9500', icon:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',                                                                                         pct:pKcal,   bg:'rgba(255,149,0,.1)', sparkId:'spark-kcal'},
+    sueno:  sueno?{label:'Sueño',   val:sueno+'h',          sub:'Anoche',               color:'#BF5AF2', icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',                                                                   pct:null,    bg:'rgba(191,90,242,.1)'}:null,
+    agua:   {label:'Hidratación', val:Math.round(agua)+' ml', sub:Math.round((agua/gAgua)*100)+'% del objetivo', color:'#30B0C7', icon:'<path d="M12 2C12 2 4 9.5 4 15a8 8 0 0 0 16 0C20 9.5 12 2 12 2z"/>',                                   pct:Math.round((agua/gAgua)*100), bg:'rgba(48,176,199,.1)'},
+  };
 
-  <!-- ══ MÉTRICAS HOY (sincronizadas) ══ -->
-  <div class="section-label">Métricas de hoy</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-    ${[
-      {label:'Pasos', val:fmt(pasos), sub:pPasos+'% objetivo', color:'var(--teal-500)', icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>', pct:pPasos, bg:'var(--teal-50,#EAF8FB)'},
-      {label:'Calorías', val:fmt(kcal)+' kcal', sub:pKcal+'% objetivo', color:'var(--orange)', icon:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>', pct:pKcal, bg:'var(--orange-bg)'},
-      hr?{label:'Frec. cardíaca', val:hr+' bpm', sub:'Última lectura', color:'var(--red)', icon:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', pct:null, bg:'var(--red-bg)'}:null,
-      dist?{label:'Distancia', val:dist+' km', sub:'Hoy', color:'var(--blue)', icon:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', pct:null, bg:'var(--blue-bg)'}:null,
-      sueno?{label:'Sueño', val:sueno+'h', sub:'Anoche', color:'var(--purple)', icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>', pct:null, bg:'var(--purple-bg)'}:null,
-      peso?{label:'Peso', val:peso+' kg', sub:S.goals.peso?'Obj. '+S.goals.peso+' kg':'Último', color:'var(--green-700)', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>', pct:null, bg:'var(--primary-bg)'}:null,
-    ].filter(Boolean).map(m=>`
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow)">
+  function buildWidget(key) {
+    const m = widgetDefs[key];
+    if(!m) return '';
+    return `<div class="widget-card" data-widget="${key}"
+      draggable="true"
+      ondragstart="widgetDragStart(event,'${key}')"
+      ondragover="widgetDragOver(event,'${key}')"
+      ondrop="widgetDrop(event,'${key}')"
+      ondragleave="widgetDragLeave(event)"
+      style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);cursor:grab">
       <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
         <div style="width:28px;height:28px;border-radius:8px;background:${m.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${m.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${m.icon}</svg>
         </div>
         <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">${m.label}</span>
+        <svg style="margin-left:auto;opacity:.3" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="8" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
       </div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1.1">${m.val}</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:3px">${m.sub}</div>
-      ${m.pct!=null?`<div style="margin-top:8px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${m.pct}%;height:100%;background:${m.color};border-radius:2px;transition:width .6s ease"></div></div>`:''}
-    </div>`).join('')}
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:6px">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1.1">${m.val}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px">${m.sub}</div>
+        </div>
+        ${m.sparkId ? `<canvas id="${m.sparkId}" class="sparkline-canvas" width="60" height="24" style="opacity:.85;flex-shrink:0"></canvas>` : ''}
+      </div>
+      ${m.pct!=null?`<div style="margin-top:8px;height:3px;background:var(--border);border-radius:2px;overflow:hidden"><div style="width:${Math.min(100,m.pct)}%;height:100%;background:${m.color};border-radius:2px;transition:width .6s ease"></div></div>`:''}
+    </div>`;
+  }
+
+  // ── Chart day data with tooltip ──
+  const chartDaysHTML = days.map((d,i)=>{
+    const h=maxPasos>0?Math.max(Math.round((d.pasos/maxPasos)*100),3):3;
+    const isToday=d.date===today();
+    const reached=d.pasos>=gPasos;
+    const color=reached?'#34C759':isToday?'#007AFF':'rgba(120,120,128,.28)';
+    return `<div class="week-bar-col" data-idx="${i}" onclick="showChartTooltip(event,${i})"
+      style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;position:relative">
+      <div class="week-bar-fill" style="width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:3px;height:${h}%;background:${color}"></div>
+      <div class="week-bar-label" style="font-size:9px;color:var(--muted);font-weight:${isToday?800:700};color:${isToday?color:'var(--muted)'}">${d.label}</div>
+    </div>`;
+  }).join('');
+
+  return `<div>
+  <!-- ══ HEALTH SCORE HERO — Triple concentric rings ══ -->
+  <div class="hero-card" style="padding:18px 20px 20px">
+    <div style="display:flex;align-items:center;gap:18px">
+      <!-- Apple Fitness–style concentric rings -->
+      <div class="fitness-rings-wrap" onclick="openScorePanel()">
+        <svg class="fitness-rings-svg" width="96" height="96" viewBox="0 0 100 100">
+          ${rings.map(rn=>`
+          <circle class="fitness-ring-track" cx="${CX}" cy="${CY}" r="${rn.r}" stroke="${rn.color}" stroke-width="${rn.sw}" opacity="${rn.trackAlpha}"/>
+          <circle class="fitness-ring-fill" cx="${CX}" cy="${CY}" r="${rn.r}" stroke="${rn.color}" stroke-width="${rn.sw}"
+            stroke-dasharray="0 ${2*Math.PI*rn.r}"
+            data-dash="${ringDash(rn.r,rn.pct)}"
+            style="transition:stroke-dasharray 1.1s cubic-bezier(.4,0,.2,1)"/>`).join('')}
+        </svg>
+        <div class="fitness-ring-label">
+          <div style="font-size:22px;font-weight:700;letter-spacing:-.02em">${score}</div>
+          <div style="font-size:8px;opacity:.75;font-weight:700;letter-spacing:.5px">${si.label.toUpperCase()}</div>
+        </div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.65;font-weight:700;margin-bottom:8px">Score de salud · hoy</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${rings.map(rn=>`<div style="display:flex;align-items:center;gap:7px">
+            <div style="width:8px;height:8px;border-radius:50%;background:${rn.color};flex-shrink:0"></div>
+            <span style="font-size:10px;opacity:.8;flex:1">${rn.label}</span>
+            <span style="font-size:10px;font-weight:700;opacity:.9">${rn.pct}%</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:5px;font-size:12px;opacity:.85">
+        🔥 <strong>${streak} días</strong> en racha
+      </div>
+      <div style="font-size:11px;opacity:.7">${new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'})}</div>
+    </div>
+  </div>
+
+  <!-- ══ WIDGETS REORDENABLES ══ -->
+  <div class="section-label">Métricas de hoy <span style="font-size:9px;color:var(--muted2);font-weight:500">· mantén para reordenar</span></div>
+  <div id="widgets-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    ${widgetOrder.filter(k=>widgetDefs[k]).map(k=>buildWidget(k)).join('')}
   </div>
   ${!hr&&!dist&&!sueno&&!peso?`<div style="font-size:11px;color:var(--muted);text-align:center;padding:4px 0">Los datos se sincronizan automáticamente vía Google Health</div>`:''}
+
+  <!-- ══ HIDRATACIÓN TÁCTIL — 8 gotas ══ -->
+  <div class="section-label">Hidratación</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-size:13px;font-weight:700;color:var(--text)">${Math.round(agua)} <span style="font-size:11px;color:var(--muted);font-weight:500">/ ${gAgua} ml</span></div>
+      <div style="font-size:11px;color:#30B0C7;font-weight:700">${dropsFilledCount}/8 vasos</div>
+    </div>
+    <div class="water-drops-grid" id="water-drops-grid">
+      ${Array.from({length:8},(_,i)=>`
+        <button class="water-drop-btn ${i<dropsFilledCount?'filled':''}"
+          onclick="tapWaterDrop(${i})"
+          aria-label="Vaso ${i+1} de agua">
+          ${dropSVG(i<dropsFilledCount)}
+        </button>`).join('')}
+    </div>
+    <div class="water-drop-label">${mlPerDrop} ml por gota · toca para registrar</div>
+  </div>
 
   <!-- ══ MENÚ DE HOY ══ -->
   <div class="section-label">Menú de hoy</div>
@@ -1483,23 +2352,29 @@ function rInicio(){
   <!-- ══ LISTA DE LA COMPRA ══ -->
   ${slTotal>0 ? buildShoppingPreviewCard(sl, slChecked, slDone, slTotal) : ''}
 
-  <!-- ══ ACTIVIDAD SEMANAL ══ -->
+  <!-- ══ ACTIVIDAD SEMANAL — gráfica interactiva ══ -->
   <div class="section-label">Actividad semanal</div>
-  <div class="card">
+  <div class="card" style="position:relative">
     <div class="card-title">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       Pasos — últimos 7 días
     </div>
-    <div class="week-chart">
-      ${days.map(d=>{
-        const h=maxPasos>0?Math.max(Math.round((d.pasos/maxPasos)*100),3):3;
-        const isToday=d.date===today();
-        const reached=d.pasos>=gPasos;
-        return `<div class="week-bar-col">
-          <div class="week-bar-fill" style="height:${h}%;background:${reached?'var(--green-700)':isToday?'var(--teal-500)':'var(--green-200)'}"></div>
-          <div class="week-bar-label" style="${isToday?'color:var(--green-700);font-weight:800':''}">${d.label}</div>
-        </div>`;
-      }).join('')}
+    <!-- Tooltip -->
+    <div id="chart-tooltip" class="chart-tooltip">
+      <div id="chart-tt-day" style="font-weight:700;font-size:12px;margin-bottom:5px;color:var(--text)"></div>
+      <div id="chart-tt-steps" style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#007AFF;flex-shrink:0"></div>
+        <span style="color:var(--muted);font-size:10px">Pasos:</span>
+        <span id="chart-tt-steps-val" style="font-weight:700;font-size:11px;color:var(--text)"></span>
+      </div>
+      <div id="chart-tt-kcal" style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
+        <div style="width:7px;height:7px;border-radius:50%;background:#FF9500;flex-shrink:0"></div>
+        <span style="color:var(--muted);font-size:10px">Kcal:</span>
+        <span id="chart-tt-kcal-val" style="font-weight:700;font-size:11px;color:var(--text)"></span>
+      </div>
+    </div>
+    <div class="week-chart" id="week-chart-bars" style="height:90px;align-items:flex-end;gap:5px;margin-top:10px">
+      ${chartDaysHTML}
     </div>
     <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--muted)">
       <span>Media: <strong style="color:var(--green-700)">${fmt(Math.round(days.reduce((a,d)=>a+d.pasos,0)/7))} pasos/día</strong></span>
@@ -1521,23 +2396,26 @@ function rInicio(){
     <canvas id="weight-chart" height="80" style="width:100%;display:block"></canvas>
   </div>`:''}
 
-  <!-- ══ RACHA ══ -->
+  <!-- ══ RACHA — fire counter + mini-calendar ══ -->
   <div class="section-label">Racha de actividad</div>
   <div class="card">
-    <div class="card-title" style="color:var(--orange)">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      ${streak} días consecutivos
+    <div class="streak-hero">
+      <div class="streak-fire-badge">🔥</div>
+      <div>
+        <div class="streak-count">${streak}</div>
+        <div class="streak-sub">días consecutivos cumpliendo objetivo de pasos</div>
+      </div>
     </div>
-    <div class="streak-dots">
+    <div class="streak-mini-cal">
       ${Array.from({length:21},(_,i)=>{
         const d=new Date(); d.setDate(d.getDate()-(20-i));
         const ds=d.toISOString().slice(0,10);
         const isToday=ds===today();
         const done=S.logs.some(l=>l.fecha===ds&&l.tipo==='pasos'&&parseFloat(l.valor)>=5000);
-        return `<div class="streak-dot${done?' done':''}${isToday?' today':''}" title="${ds}"></div>`;
+        return `<div class="streak-dot-v2${done?' done':''}${isToday?' today':''}" title="${ds}"></div>`;
       }).join('')}
     </div>
-    <div style="font-size:10px;color:var(--muted2);margin-top:6px">Verde = +5.000 pasos ese día</div>
+    <div style="font-size:10px;color:var(--muted2);margin-top:6px">🟠 = +5.000 pasos ese día</div>
   </div>
 
 </div>`;
@@ -2042,11 +2920,22 @@ function rNutricion(){
     </div>
   </div>
 
-  <!-- ── MACROS VISUALES mejorados ── -->
+  <!-- ── MACROS VISUALES — barra segmentada animada ── -->
   <div class="card">
     <div class="card-title">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
       Macronutrientes del día
+    </div>
+    <!-- Barra segmentada horizontal animada -->
+    <div class="macro-seg-labels">
+      <div class="macro-seg-label"><div class="macro-seg-dot" style="background:#4DC882"></div><span>Prot</span><span class="macro-seg-val">${fmtDec(totalProt,0)}g</span><span style="font-size:9px;color:var(--muted);margin-left:1px">${protPct}%</span></div>
+      <div class="macro-seg-label"><div class="macro-seg-dot" style="background:#FF9500"></div><span>Carbs</span><span class="macro-seg-val">${fmtDec(totalCarbs,0)}g</span><span style="font-size:9px;color:var(--muted);margin-left:1px">${carbsPct}%</span></div>
+      <div class="macro-seg-label"><div class="macro-seg-dot" style="background:#007AFF"></div><span>Grasas</span><span class="macro-seg-val">${fmtDec(totalFat,0)}g</span><span style="font-size:9px;color:var(--muted);margin-left:1px">${fatPct}%</span></div>
+    </div>
+    <div class="macro-seg-bar" id="macro-seg-bar">
+      <div class="macro-seg-prot" id="macro-seg-prot" style="width:0%"></div>
+      <div class="macro-seg-carbs" id="macro-seg-carbs" style="width:0%"></div>
+      <div class="macro-seg-fat" id="macro-seg-fat" style="width:0%"></div>
     </div>
     <div class="macro-donut-wrap">
       <!-- Donut -->
@@ -2118,25 +3007,36 @@ function rNutricion(){
       </div>
       <!-- Items de comida mejorados -->
       ${groupMeals.length?groupMeals.map(m=>`
-        <div class="meal-item-improved">
-          <div style="width:32px;height:32px;border-radius:9px;background:${cfg.bg};border:1px solid ${cfg.border};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${cfg.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${cfg.icon}</svg>
+        <div class="swipe-row-wrap" data-meal-id="${m.id}" style="position:relative;margin-bottom:7px;overflow:hidden;border-radius:12px">
+          <!-- Fondo izquierda (duplicar) -->
+          <div class="swipe-row-dup-bg" id="dup-bg-${m.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.nombre}</div>
-            <div class="meal-macros-mini">
-              <span class="macro-tag" style="background:rgba(77,200,130,.12);color:#4DC882;border:1px solid rgba(77,200,130,.2)">P ${m.prot||0}g</span>
-              <span class="macro-tag" style="background:var(--orange-bg);color:var(--orange);border:1px solid rgba(224,122,42,.2)">C ${m.carbs||0}g</span>
-              <span class="macro-tag" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(58,127,191,.2)">G ${m.fat||0}g</span>
+          <!-- Fondo derecha (borrar) -->
+          <div class="swipe-row-delete-bg" id="del-bg-${m.id}" style="width:80px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          </div>
+          <!-- Contenido -->
+          <div class="swipe-row-content meal-item-improved" style="border-radius:12px" data-meal-swipe="${m.id}">
+            <div style="width:32px;height:32px;border-radius:9px;background:${cfg.bg};border:1px solid ${cfg.border};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${cfg.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${cfg.icon}</svg>
             </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:700;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.nombre}</div>
+              <div class="meal-macros-mini">
+                <span class="macro-tag" style="background:rgba(77,200,130,.12);color:#4DC882;border:1px solid rgba(77,200,130,.2)">P ${m.prot||0}g</span>
+                <span class="macro-tag" style="background:var(--orange-bg);color:var(--orange);border:1px solid rgba(224,122,42,.2)">C ${m.carbs||0}g</span>
+                <span class="macro-tag" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(58,127,191,.2)">G ${m.fat||0}g</span>
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${cfg.color}">${fmt(m.kcal)}</div>
+              <div style="font-size:9px;color:var(--muted);font-weight:600">kcal</div>
+            </div>
+            <button class="del-btn" onclick="deleteMeal('${m.id}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </button>
           </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13px;color:${cfg.color}">${fmt(m.kcal)}</div>
-            <div style="font-size:9px;color:var(--muted);font-weight:600">kcal</div>
-          </div>
-          <button class="del-btn" onclick="deleteMeal('${m.id}')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-          </button>
         </div>`).join(''):''}
     </div>`;
   }).join('')}
@@ -2174,6 +3074,75 @@ function rAsesoria(){
       `:`<div style="font-size:13px;color:var(--muted);padding:8px 0;line-height:1.7">Pulsa <strong>Generar</strong> para recibir un análisis personalizado basado en tu actividad de hoy y tu perfil.</div>`}
     </div>
   </div>
+
+  <!-- Análisis semanal IA -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:16px 18px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="card-title" style="margin-bottom:0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Análisis semanal
+        </div>
+        <button onclick="generateWeeklyReport()" class="btn btn-sm btn-outline" style="font-size:11px" id="weekly-report-btn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          ${S.weeklyReport ? 'Regenerar' : 'Generar'}
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--muted)">Resumen IA de tu actividad de los últimos 7 días</div>
+    </div>
+    ${S.weeklyReportLoading ? `
+    <div style="padding:14px 18px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--border)">
+      <div style="width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--primary);border-radius:50%;animation:rot2 .8s linear infinite;flex-shrink:0"></div>
+      <span style="font-size:12px;color:var(--muted)">Analizando tu semana…</span>
+    </div>` :
+    S.weeklyReportError ? `
+    <div style="padding:10px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--red)">${S.weeklyReportError}</div>` :
+    S.weeklyReport ? `
+    <div style="padding:0 18px 16px;border-top:1px solid var(--border)">
+      <div style="font-size:13px;line-height:1.85;color:var(--text2);white-space:pre-line;margin-top:14px">${S.weeklyReport.texto}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:10px;font-weight:600">Generado: ${S.weeklyReport.fecha}</div>
+    </div>` :
+    `<div style="padding:10px 18px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.65">Pulsa <strong>Generar</strong> para recibir un análisis comparativo de tu semana: pasos, sueño, nutrición y tendencias.</div>`}
+  </div>
+
+  <!-- Ajuste dinámico de macros -->
+  ${(() => {
+    const weightLogs = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha>b.fecha?1:-1);
+    if(weightLogs.length < 2) return '';
+    return `<div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 18px 14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="card-title" style="margin-bottom:0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Ajuste de objetivo calórico
+          </div>
+          <button onclick="generateMacroAdjust()" class="btn btn-sm btn-outline" style="font-size:11px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Analizar
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--muted)">Basado en tu evolución de peso registrada (${weightLogs.length} registros)</div>
+      </div>
+      ${S.macroAdjustLoading ? \`
+      <div style="padding:14px 18px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--border)">
+        <div style="width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--primary);border-radius:50%;animation:rot2 .8s linear infinite;flex-shrink:0"></div>
+        <span style="font-size:12px;color:var(--muted)">Calculando ajuste óptimo…</span>
+      </div>\` :
+      S.macroAdjust ? \`
+      <div style="padding:0 18px 16px;border-top:1px solid var(--border)">
+        <div style="margin-top:14px;display:flex;align-items:center;gap:14px;background:var(--primary-bg);border-radius:12px;padding:12px 14px">
+          <div style="text-align:center;flex-shrink:0">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--primary)">\${S.macroAdjust.kcalSugeridas}</div>
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">kcal/día</div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">\${S.macroAdjust.razon}</div>
+        </div>
+        <button onclick="applyMacroAdjust(\${S.macroAdjust.kcalSugeridas})" class="btn btn-full btn-sm" style="margin-top:10px">Aplicar objetivo</button>
+        <div style="font-size:10px;color:var(--muted);margin-top:8px;text-align:center">\${S.macroAdjust.fecha}</div>
+      </div>\` :
+      \`<div style="padding:10px 18px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.65">Tienes registros de peso suficientes. Pulsa <strong>Analizar</strong> para que la IA evalúe tu tendencia y sugiera un ajuste del objetivo calórico.</div>\`}
+    </div>`;
+  })()}
 
   <!-- Chat con IA -->
   <div class="card">
@@ -3044,49 +4013,86 @@ Sé directo, específico y accionable. Máximo 180 palabras.`;
 }
 
 async function sendChat(){
-  if(!S.anthropicKey){
-    toast('Configura tu API Key en Ajustes primero');
-    openSettingsModal();
-    return;
-  }
-  const input=document.getElementById('chat-input');
-  const text=input?.value?.trim();
+  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  const input = document.getElementById('chat-input');
+  const text  = input?.value?.trim();
   if(!text) return;
   haptic('medium');
-  input.value='';
+  input.value = '';
 
   S.chatMessages.push({id:uid(),role:'user',text});
   saveState();
 
-  const chatEl=document.getElementById('chat-messages');
+  const chatEl = document.getElementById('chat-messages');
   if(chatEl){
-    chatEl.innerHTML+=`<div style="display:flex;align-items:flex-end;gap:8px;flex-direction:row-reverse"><div class="chat-bubble user">${text}</div></div>`;
-    chatEl.innerHTML+=`<div id="typing" style="display:flex;align-items:flex-end;gap:8px"><div class="chat-avatar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="chat-bubble ai" style="color:var(--muted)">Escribiendo…</div></div>`;
-    chatEl.scrollTop=chatEl.scrollHeight;
+    chatEl.innerHTML += `<div style="display:flex;align-items:flex-end;gap:8px;flex-direction:row-reverse"><div class="chat-bubble user">${text}</div></div>`;
+    chatEl.innerHTML += `<div id="typing" style="display:flex;align-items:flex-end;gap:8px"><div class="chat-avatar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="chat-bubble ai" style="color:var(--muted)">Escribiendo...</div></div>`;
+    chatEl.scrollTop = chatEl.scrollHeight;
   }
 
-  const profileText=buildProfileText();
-  const history=S.chatMessages.slice(-6).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text}));
-  const systemPrompt=`Eres un asesor de salud personal amigable y directo. Sin emojis. Respuestas cortas y útiles (máx 80 palabras).${profileText?` El usuario tiene este perfil: ${profileText}.`:''}${S.userContext?` Notas: ${S.userContext}`:''}`;
+  // Build rich real-data context
+  const pasos   = todayTotal('pasos');
+  const kcal    = todayMeals().reduce((a,m)=>a+parseFloat(m.kcal||0),0);
+  const sueno   = todayTotal('sueno');
+  const agua    = todayTotal('agua');
+  const score   = calcHealthScore();
+  const streak  = calcStreak();
+  const days7   = last7Days();
+  const hp      = S.profile?.answers || {};
+  const dp      = S.dietProfile || {};
+  const rp      = S.rutinaProfile || {};
+  const wLogs   = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha>b.fecha?1:-1);
+  const pesoActual = wLogs.length ? wLogs[wLogs.length-1].valor : null;
+  const avgPasos7  = Math.round(days7.reduce((a,d)=>a+d.pasos,0)/7);
+
+  const todayName = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'][new Date().getDay()];
+  const menuHoy   = S.weeklyMealPlan?.dias?.find(d=>d.dia===todayName);
+  const menuStr   = menuHoy ? ['desayuno','almuerzo','merienda','cena']
+    .map(c=>{ const m=menuHoy[c]; return m?(typeof m==='object'?m.nombre:m):null; })
+    .filter(Boolean).join(', ') : null;
+
+  const dataLines = [
+    'Datos de hoy (' + new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}) + '):',
+    'Score de salud: ' + score + '/100',
+    pasos  > 0 ? 'Pasos: ' + pasos + ' (objetivo ' + S.goals.pasos + ')' : 'Pasos: sin datos hoy',
+    kcal   > 0 ? 'Calorias: ' + Math.round(kcal) + ' kcal (objetivo ' + S.goals.kcal + ')' : 'Calorias: sin registro',
+    sueno  > 0 ? 'Sueno: ' + sueno + 'h (objetivo ' + S.goals.sueno + 'h)' : 'Sueno: sin registro',
+    agua   > 0 ? 'Agua: ' + agua + ' ml' : null,
+    streak > 0 ? 'Racha: ' + streak + ' dias' : null,
+    pesoActual ? 'Peso actual: ' + pesoActual + ' kg' : null,
+    'Media pasos 7 dias: ' + avgPasos7,
+    menuStr ? 'Menu planificado hoy: ' + menuStr : null,
+    hp.objetivo   ? 'Objetivo salud: ' + hp.objetivo : null,
+    hp.actividad  ? 'Actividad: ' + hp.actividad : null,
+    hp.edad       ? 'Edad: ' + hp.edad : null,
+    dp.objetivo   ? 'Objetivo dietetico: ' + dp.objetivo : null,
+    dp.restricciones ? 'Restricciones: ' + dp.restricciones : null,
+    rp.objetivo   ? 'Objetivo entrenamiento: ' + rp.objetivo : null,
+    rp.nivel      ? 'Nivel fitness: ' + rp.nivel : null,
+    S.userContext ? 'Notas usuario: ' + S.userContext : null,
+  ].filter(Boolean).join('\n');
+
+  const history = S.chatMessages.slice(-8).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text}));
+  const systemPrompt = 'Eres un coach de salud personal experto, empatico y directo. Respondes en espanol, en maximo 3-4 frases concisas y accionables. Sin emojis. Tienes acceso a los datos reales del usuario:\n\n' + dataLines + '\n\nUsa estos datos para respuestas personalizadas. No repitas los datos literalmente.';
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey||''},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,system:systemPrompt,messages:[...history.slice(0,-1),{role:'user',content:text}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[...history.slice(0,-1),{role:'user',content:text}]})
     });
-    const data=await res.json();
-    const reply=data.content?.map(c=>c.text||'').join('')||'No pude responder.';
+    const data = await res.json();
+    const reply = data.content?.map(c=>c.text||'').join('') || 'No pude responder.';
     document.getElementById('typing')?.remove();
     S.chatMessages.push({id:uid(),role:'ai',text:reply});
     saveState();
     if(chatEl){
-      chatEl.innerHTML+=`<div style="display:flex;align-items:flex-end;gap:8px"><div class="chat-avatar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="chat-bubble ai">${reply}</div></div>`;
-      chatEl.scrollTop=chatEl.scrollHeight;
+      chatEl.innerHTML += `<div style="display:flex;align-items:flex-end;gap:8px"><div class="chat-avatar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="chat-bubble ai">${reply}</div></div>`;
+      chatEl.scrollTop = chatEl.scrollHeight;
     }
   }catch(e){
     document.getElementById('typing')?.remove();
-    if(chatEl) chatEl.innerHTML+=`<div style="display:flex;align-items:flex-end;gap:8px"><div class="chat-bubble ai" style="color:var(--red)">Error de conexión.</div></div>`;
+    if(chatEl) chatEl.innerHTML += `<div style="display:flex;align-items:flex-end;gap:8px"><div class="chat-bubble ai" style="color:var(--red)">Error de conexion. Verifica tu API key.</div></div>`;
   }
 }
 
@@ -4475,29 +5481,49 @@ function initPanels(){
 // SPLASH + INIT
 // ═══════════════════════════════════════════════════
 (async function init(){
-  // 1. Ocultar splash tras animación
+  // 1. Ocultar splash tras animación (siempre ocurre, pase lo que pase)
   const splash = document.getElementById('splash');
-  setTimeout(()=>{
+  const hideSplash = () => {
     if(splash){ splash.classList.add('hide'); setTimeout(()=>{ splash.style.display='none'; },520); }
-  }, 1600);
+  };
+  const splashTimer = setTimeout(hideSplash, 1600);
 
-  // 2. Comprobar sesión existente
-  const { data: { session } } = await supa.auth.getSession();
+  // Fallback de seguridad: si en 4s sigue pillado, forzar login
+  const fallbackTimer = setTimeout(()=>{
+    hideSplash();
+    const ls = document.getElementById('login-screen');
+    if(ls && ls.classList.contains('hide')) ls.classList.remove('hide');
+  }, 4000);
 
-  if(session?.user){
-    // Ya logado — arrancar directamente
-    currentUser = session.user;
-    updateAvatarUI(session.user);
-    if(session.provider_token){
-      S.googleFit = { ...S.googleFit, connected: true, accessToken: session.provider_token };
-      saveState();
+  try {
+    // 2. Comprobar sesión existente
+    const { data: { session } } = await supa.auth.getSession();
+
+    clearTimeout(fallbackTimer);
+
+    if(session?.user){
+      // Ya logado — arrancar directamente
+      currentUser = session.user;
+      updateAvatarUI(session.user);
+      if(session.provider_token){
+        S.googleFit = { ...S.googleFit, connected: true, accessToken: session.provider_token };
+        saveState();
+      }
+      bootApp();
+    } else {
+      // Sin sesión — mostrar login después del splash
+      setTimeout(()=>{
+        document.getElementById('login-screen').classList.remove('hide');
+      }, 1700);
     }
-    bootApp();
-  } else {
-    // Sin sesión — mostrar login después del splash
+  } catch(err) {
+    // Si Supabase falla (red, CORS, timeout…), mostrar login igualmente
+    clearTimeout(fallbackTimer);
+    console.warn('HealthAPP: error al comprobar sesión, continuando sin auth:', err);
     setTimeout(()=>{
+      hideSplash();
       document.getElementById('login-screen').classList.remove('hide');
-    }, 1700);
+    }, 200);
   }
 })();
 </script>
@@ -4568,204 +5594,140 @@ function buildScorePanelHTML() {
   const si     = healthScoreColor(score);
   const gPasos = S.goals.pasos, gKcal = S.goals.kcal, gSueno = S.goals.sueno;
 
-  const pPasos   = Math.min(100, pasos > 0 ? Math.round((pasos/gPasos)*100) : 0);
-  const pSueno   = Math.min(100, sueno > 0 ? Math.round((sueno/gSueno)*100) : 0);
-  const rKcal    = kcal > 0 ? kcal/gKcal : 0;
+  const pPasos   = Math.min(100, pasos>0 ? Math.round((pasos/gPasos)*100) : 0);
+  const pSueno   = Math.min(100, sueno>0 ? Math.round((sueno/gSueno)*100) : 0);
+  const rKcal    = kcal>0 ? kcal/gKcal : 0;
   const ptsPasos = Math.min(40, Math.round((pasos/gPasos)*40));
-  const ptsKcal  = kcal > 0 ? (rKcal>=0.7&&rKcal<=1.1?35:rKcal>=0.5&&rKcal<=1.3?20:8) : 0;
-  const ptsSueno = sueno > 0 ? Math.min(25, Math.round((sueno/gSueno)*25)) : 0;
-  const pKcalBar = kcal > 0 ? Math.min(100, Math.round((ptsKcal/35)*100)) : 0;
+  const ptsKcal  = kcal>0 ? (rKcal>=0.7&&rKcal<=1.1?35:rKcal>=0.5&&rKcal<=1.3?20:8) : 0;
+  const ptsSueno = sueno>0 ? Math.min(25, Math.round((sueno/gSueno)*25)) : 0;
+  const pKcalBar = kcal>0 ? Math.min(100, Math.round((ptsKcal/35)*100)) : 0;
   const streak   = calcStreak();
   const days7    = last7Days();
   const avgPasos = Math.round(days7.reduce((a,d)=>a+d.pasos,0)/7);
   const daysGoal = days7.filter(d=>d.pasos>=gPasos).length;
+  const maxP     = Math.max(...days7.map(x=>x.pasos), 1);
 
-  // Ring geometry for the header arc (large)
   const R2=38, C2=2*Math.PI*R2;
   const dash2=C2*(score/100), gap2=C2-dash2;
 
-  // Score color palette
-  const palette = score>=80
-    ? {g1:'#1B6B45',g2:'#0C5269',ring:'#4DD88A',ringBg:'rgba(255,255,255,.12)'}
-    : score>=60
-    ? {g1:'#0A7A8F',g2:'#0A4F69',ring:'#2ABECE',ringBg:'rgba(255,255,255,.12)'}
-    : score>=40
-    ? {g1:'#A0480A',g2:'#6A2E0A',ring:'#E0822A',ringBg:'rgba(255,255,255,.12)'}
-    : {g1:'#8C2020',g2:'#5A1010',ring:'#D94F3D',ringBg:'rgba(255,255,255,.12)'};
+  const palette = score>=80 ? {g1:'#1B6B45',g2:'#0C5269',ring:'#4DD88A'}
+    : score>=60 ? {g1:'#0A7A8F',g2:'#0A4F69',ring:'#2ABECE'}
+    : score>=40 ? {g1:'#A0480A',g2:'#6A2E0A',ring:'#E0822A'}
+    :             {g1:'#8C2020',g2:'#5A1010',ring:'#D94F3D'};
 
-  // Contextual tip
+  const headline = score>=80?'Excelente':score>=60?'Buen ritmo':score>=40?'Mejorable':'Tu score';
+
   const tips = [];
-  if (pasos===0 && kcal===0 && sueno===0)
-    tips.push({icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-      text:'Registra tus actividades del día para obtener tu análisis personalizado.'});
-  if (pPasos < 50)
-    tips.push({icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>',
-      text:'Llevas menos de la mitad de pasos del objetivo. Un paseo de 20 minutos puede cambiarlo.'});
-  if (kcal === 0)
-    tips.push({icon:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>',
-      text:'Registra tus comidas para que la nutrición cuente en el score.'});
-  if (kcal > 0 && (rKcal < 0.5 || rKcal > 1.3))
-    tips.push({icon:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
-      text:'Tus calorías están alejadas del objetivo. Ajustar la ingesta mejorará el score de nutrición.'});
-  if (sueno === 0)
-    tips.push({icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
-      text:'Sin datos de sueño no se computan 25 puntos. Registra las horas de anoche.'});
-  if (pPasos >= 100 && ptsKcal === 35 && ptsSueno >= 20)
-    tips.push({icon:'<polyline points="20 6 9 17 4 12"/>',
-      text:'Día perfecto. Estás cumpliendo pasos, nutrición y sueño. Mantén el ritmo.'});
-  const tip = tips[0] || {
-    icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
-    text:'Continúa registrando datos cada día para un análisis más completo.'};
+  if (pasos===0&&kcal===0&&sueno===0) tips.push({icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',text:'Registra tus actividades del día para obtener tu análisis personalizado.'});
+  if (pPasos<50) tips.push({icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>',text:'Llevas menos de la mitad de pasos del objetivo. Un paseo de 20 minutos puede cambiarlo.'});
+  if (kcal===0) tips.push({icon:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>',text:'Registra tus comidas para que la nutrición cuente en el score.'});
+  if (kcal>0&&(rKcal<0.5||rKcal>1.3)) tips.push({icon:'<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',text:'Tus calorías están alejadas del objetivo. Ajustar la ingesta mejorará el score de nutrición.'});
+  if (sueno===0) tips.push({icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',text:'Sin datos de sueño no se computan 25 puntos. Registra las horas de anoche.'});
+  if (pPasos>=100&&ptsKcal===35&&ptsSueno>=20) tips.push({icon:'<polyline points="20 6 9 17 4 12"/>',text:'Día perfecto. Estás cumpliendo pasos, nutrición y sueño. Mantén el ritmo.'});
+  const tip = tips[0]||{icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',text:'Continúa registrando datos cada día para un análisis más completo.'};
 
-  const headline = score>=80 ? 'Excelente'
-    : score>=60 ? 'Buen ritmo'
-    : score>=40 ? 'Mejorable'
-    : 'Tu score';
-
-  // Mini bar chart max
-  const maxP = Math.max(...days7.map(x=>x.pasos), 1);
+  const factors = [
+    {label:'Pasos',    pts:ptsPasos,max:40,pct:pPasos,  color:'#10A8BC',bg:'rgba(16,168,188,.12)',
+     icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>',
+     val:pasos>0?(pasos/1000).toFixed(1)+'k / '+(gPasos/1000).toFixed(0)+'k':'Sin datos',
+     note:pasos>0?(pPasos>=100?'Objetivo cumplido':pPasos+'% del objetivo'):'Registra tus pasos'},
+    {label:'Nutrición',pts:ptsKcal, max:35,pct:pKcalBar,color:'#D97706',bg:'rgba(217,119,6,.12)',
+     icon:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>',
+     val:kcal>0?Math.round(kcal)+' / '+gKcal+' kcal':'Sin datos',
+     note:kcal>0?(ptsKcal===35?'Rango óptimo':'Fuera del rango ideal'):'Registra tus comidas'},
+    {label:'Sueño',    pts:ptsSueno,max:25,pct:pSueno,  color:'#7C3AED',bg:'rgba(124,58,237,.12)',
+     icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+     val:sueno>0?sueno+'h / '+gSueno+'h':'Sin datos',
+     note:sueno>0?(pSueno>=100?'Objetivo cumplido':pSueno+'% del objetivo'):'Registra el sueño'},
+  ];
 
   return `
-  <!-- ── HEADER with gradient + score ring ── -->
-  <div style="
-    background:linear-gradient(160deg,${palette.g1},${palette.g2});
-    border-radius:24px 24px 0 0;
-    padding:24px 22px 22px;
-    position:relative;
-    overflow:hidden;
-  ">
-    <!-- Decorative background ring -->
-    <svg style="position:absolute;right:-28px;top:-28px;opacity:.07" width="180" height="180" viewBox="0 0 180 180">
-      <circle cx="90" cy="90" r="70" fill="none" stroke="#fff" stroke-width="28"/>
+  <div style="background:linear-gradient(160deg,${palette.g1},${palette.g2});border-radius:24px 24px 0 0;padding:26px 22px 24px;position:relative;overflow:hidden">
+    <svg style="position:absolute;right:-32px;top:-32px;opacity:.06;pointer-events:none" width="190" height="190" viewBox="0 0 190 190">
+      <circle cx="95" cy="95" r="74" fill="none" stroke="#fff" stroke-width="30"/>
     </svg>
-
-    <!-- Close button top-right -->
-    <button onclick="closeScorePanel()" style="
-      position:absolute;top:16px;right:16px;
-      width:28px;height:28px;border-radius:50%;
-      border:none;background:rgba(255,255,255,.18);
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;-webkit-tap-highlight-color:transparent;
-      backdrop-filter:blur(4px);
-    ">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
+    <button onclick="closeScorePanel()" style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-
-    <!-- Ring + text row -->
     <div style="display:flex;align-items:center;gap:20px;color:#fff">
-      <!-- Score ring -->
       <div style="position:relative;flex-shrink:0;width:96px;height:96px">
         <svg width="96" height="96" viewBox="0 0 96 96" style="transform:rotate(-90deg);display:block">
-          <circle cx="48" cy="48" r="${R2}" fill="none" stroke="${palette.ringBg}" stroke-width="8"/>
-          <circle cx="48" cy="48" r="${R2}" fill="none" stroke="${palette.ring}" stroke-width="8"
-            stroke-dasharray="${dash2.toFixed(1)} ${gap2.toFixed(1)}" stroke-linecap="round"/>
+          <circle cx="48" cy="48" r="${R2}" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+          <circle cx="48" cy="48" r="${R2}" fill="none" stroke="${palette.ring}" stroke-width="8" stroke-dasharray="${dash2.toFixed(1)} ${gap2.toFixed(1)}" stroke-linecap="round"/>
         </svg>
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
           <div style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:800;line-height:1;color:#fff">${score}</div>
-          <div style="font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.7;color:#fff;margin-top:3px">${si.label}</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:.7;margin-top:3px">${si.label}</div>
         </div>
       </div>
-
-      <!-- Headline + stats -->
       <div style="flex:1;min-width:0">
-        <div style="font-size:18px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:14px">${headline}</div>
-
-        <div style="display:flex;gap:18px">
-          <div>
-            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.55)">Racha</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#fff;line-height:1.2">${streak}<span style="font-size:11px;opacity:.7"> d</span></div>
-          </div>
-          <div>
-            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.55)">Media</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#fff;line-height:1.2">${(avgPasos/1000).toFixed(1)}<span style="font-size:11px;opacity:.7">k</span></div>
-          </div>
-          <div>
-            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.55)">Semana</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#fff;line-height:1.2">${daysGoal}<span style="font-size:11px;opacity:.7">/7</span></div>
-          </div>
+        <div style="font-size:19px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:14px">${headline}</div>
+        <div style="display:flex;gap:20px">
+          <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.5);margin-bottom:2px">Racha</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;color:#fff;line-height:1">${streak}<span style="font-size:11px;opacity:.65"> d</span></div></div>
+          <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.5);margin-bottom:2px">Media</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;color:#fff;line-height:1">${(avgPasos/1000).toFixed(1)}<span style="font-size:11px;opacity:.65">k</span></div></div>
+          <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.5);margin-bottom:2px">Semana</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;color:#fff;line-height:1">${daysGoal}<span style="font-size:11px;opacity:.65">/7</span></div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── FACTORES ── -->
-  <div style="padding:22px 20px 0">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px">Desglose de puntos</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      ${[
-        { label:'Pasos',    pts:ptsPasos, max:40, pct:pPasos,  color:'#10A8BC', bg:'rgba(16,168,188,.1)',
-          icon:'<path d="M13 4v16M5 4l4 8-4 8M19 4l-4 8 4 8"/>',
-          val: pasos>0 ? (pasos/1000).toFixed(1)+'k de '+(gPasos/1000).toFixed(0)+'k' : 'Sin datos',
-          note: pasos>0 ? (pPasos>=100?'Objetivo cumplido':pPasos+'% del objetivo') : 'Registra tus pasos' },
-        { label:'Nutrición', pts:ptsKcal,  max:35, pct:pKcalBar, color:'#D97706', bg:'rgba(217,119,6,.1)',
-          icon:'<path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>',
-          val: kcal>0 ? Math.round(kcal)+' / '+gKcal+' kcal' : 'Sin datos',
-          note: kcal>0 ? (ptsKcal===35?'Rango óptimo':ptsKcal>0?'Fuera del rango ideal':'') : 'Registra tus comidas' },
-        { label:'Sueño',    pts:ptsSueno, max:25, pct:pSueno,  color:'#7C3AED', bg:'rgba(124,58,237,.1)',
-          icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
-          val: sueno>0 ? sueno+'h de '+gSueno+'h' : 'Sin datos',
-          note: sueno>0 ? (pSueno>=100?'Objetivo cumplido':pSueno+'% del objetivo') : 'Registra el sueño' },
-      ].map(f => {
-        const barPct = Math.min(f.pct, 100);
-        return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 15px">
-          <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">
-            <div style="width:36px;height:36px;border-radius:10px;background:${f.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${f.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${f.icon}</svg>
-            </div>
-            <div style="flex:1;min-width:0">
-              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px">
-                <span style="font-size:13px;font-weight:700;color:var(--text)">${f.label}</span>
-                <span style="font-size:11px;color:var(--muted);font-weight:500;white-space:nowrap">${f.val}</span>
-              </div>
-              <div style="font-size:10px;color:var(--muted);margin-top:1px">${f.note}</div>
-            </div>
-            <div style="text-align:right;flex-shrink:0">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:800;color:${f.color};line-height:1">${f.pts}</div>
-              <div style="font-size:9px;color:var(--muted);font-weight:600;margin-top:1px">/ ${f.max}</div>
-            </div>
+  <div style="padding:20px 18px 0">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ap-label-secondary,var(--muted));margin-bottom:11px">Desglose de puntos</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${factors.map(f=>`
+      <div style="background:var(--ap-fill-q,var(--surface2));border-radius:16px;padding:14px 15px">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px">
+          <div style="width:36px;height:36px;border-radius:11px;background:${f.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="${f.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${f.icon}</svg>
           </div>
-          <div style="height:5px;background:var(--border);border-radius:99px;overflow:hidden">
-            <div style="height:100%;width:${barPct}%;background:${f.color};border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1)"></div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:6px">
+              <span style="font-size:13px;font-weight:700;color:var(--ap-label-primary,var(--text))">${f.label}</span>
+              <span style="font-size:11px;color:var(--ap-label-secondary,var(--muted));font-weight:500;white-space:nowrap">${f.val}</span>
+            </div>
+            <div style="font-size:10px;color:var(--ap-label-tertiary,var(--muted));margin-top:2px">${f.note}</div>
           </div>
-        </div>`;
-      }).join('')}
+          <div style="text-align:right;flex-shrink:0;min-width:40px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:800;color:${f.color};line-height:1">${f.pts}</div>
+            <div style="font-size:9px;color:var(--ap-label-tertiary,var(--muted));font-weight:600;margin-top:1px">/ ${f.max}</div>
+          </div>
+        </div>
+        <div style="height:5px;background:var(--ap-hairline,var(--border));border-radius:99px;overflow:hidden">
+          <div style="height:100%;width:${f.pct}%;background:${f.color};border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1)"></div>
+        </div>
+      </div>`).join('')}
     </div>
   </div>
 
-  <!-- ── CONSEJO ── -->
-  <div style="padding:18px 20px 0">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px">Consejo del día</div>
-    <div style="background:var(--primary-bg);border:1px solid rgba(16,168,188,.25);border-radius:16px;padding:14px 15px;display:flex;gap:12px;align-items:flex-start">
-      <div style="width:36px;height:36px;background:rgba(16,168,188,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${tip.icon}</svg>
+  <div style="padding:16px 18px 0">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ap-label-secondary,var(--muted));margin-bottom:11px">Consejo del día</div>
+    <div style="background:var(--ap-fill-q,var(--surface2));border-radius:16px;padding:14px 15px;display:flex;gap:12px;align-items:flex-start">
+      <div style="width:36px;height:36px;border-radius:11px;background:rgba(16,168,188,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10A8BC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${tip.icon}</svg>
       </div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.65;font-weight:500;padding-top:2px">${tip.text}</div>
+      <div style="font-size:13px;color:var(--ap-label-primary,var(--text2));line-height:1.65;font-weight:500;padding-top:2px">${tip.text}</div>
     </div>
   </div>
 
-  <!-- ── MINI CHART 7 DÍAS ── -->
-  <div style="padding:18px 20px 8px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px">Pasos · últimos 7 días</div>
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px 10px">
-      <div style="display:flex;align-items:flex-end;gap:6px;height:52px">
-        ${days7.map(d => {
-          const h = Math.max(Math.round((d.pasos/maxP)*100), 5);
-          const hit = d.pasos >= gPasos;
-          const isT = d.date === today();
+  <div style="padding:16px 18px 6px">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;color:var(--ap-label-secondary,var(--muted));margin-bottom:11px">Pasos · últimos 7 días</div>
+    <div style="background:var(--ap-fill-q,var(--surface2));border-radius:16px;padding:14px 14px 11px">
+      <div style="display:flex;align-items:flex-end;gap:5px;height:52px">
+        ${days7.map(d=>{
+          const h=Math.max(Math.round((d.pasos/maxP)*100),5);
+          const hit=d.pasos>=gPasos, isT=d.date===today();
           return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
-            <div style="width:100%;border-radius:4px 4px 3px 3px;
-              background:${hit?'#10A8BC':isT?'rgba(16,168,188,.5)':'var(--border2)'};
-              height:${h}%;min-height:4px;transition:height .7s cubic-bezier(.4,0,.2,1)">
-            </div>
-            <div style="font-size:8px;font-weight:${isT?700:500};color:${isT?'var(--primary)':'var(--muted)'};letter-spacing:.2px">${d.label}</div>
+            <div style="width:100%;border-radius:4px 4px 3px 3px;background:${hit?'#10A8BC':isT?'rgba(16,168,188,.45)':'var(--ap-hairline,var(--border2))'};height:${h}%;min-height:4px;transition:height .7s cubic-bezier(.4,0,.2,1)"></div>
+            <div style="font-size:8px;font-weight:${isT?700:500};color:${isT?'#10A8BC':'var(--ap-label-tertiary,var(--muted))'};">${d.label}</div>
           </div>`;
         }).join('')}
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-        <span style="font-size:10px;color:var(--muted)">Media: <strong style="color:var(--text)">${(avgPasos/1000).toFixed(1)}k pasos/día</strong></span>
-        <span style="font-size:10px;font-weight:700;color:${daysGoal>=5?'var(--teal-500)':'var(--muted)'}">${daysGoal}/7 días con objetivo</span>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--ap-hairline,var(--border))">
+        <span style="font-size:10px;color:var(--ap-label-secondary,var(--muted))">Media: <strong style="color:var(--ap-label-primary,var(--text))">${(avgPasos/1000).toFixed(1)}k pasos/día</strong></span>
+        <span style="font-size:10px;font-weight:700;color:${daysGoal>=5?'#10A8BC':'var(--ap-label-secondary,var(--muted))'}">${daysGoal}/7 días con objetivo</span>
       </div>
     </div>
   </div>
@@ -4805,6 +5767,747 @@ window.closeScorePanel = () => {
   if (box._swipeEnd)   { box.removeEventListener('touchend',   box._swipeEnd);   box._swipeEnd   = null; }
   document.body.style.overflow = '';
   setTimeout(() => { const i = document.getElementById('quiz-modal-inner'); if(i) i.innerHTML = ''; }, 300);
+};
+
+// ═══════════════════════════════════════════════════
+// 1. SKELETON LOADERS
+// ═══════════════════════════════════════════════════
+function buildSkeletonInicio() {
+  return `<div>
+    <div class="skeleton-card">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div class="skeleton skeleton-circle" style="width:96px;height:96px;border-radius:50%"></div>
+        <div style="flex:1">
+          <div class="skeleton skeleton-line short" style="margin-bottom:14px"></div>
+          <div class="skeleton skeleton-line full"></div>
+          <div class="skeleton skeleton-line full"></div>
+          <div class="skeleton skeleton-line medium"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      ${[1,2,3,4].map(()=>`<div class="skeleton-card" style="padding:14px"><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line medium"></div></div>`).join('')}
+    </div>
+    <div class="skeleton-card"><div class="skeleton skeleton-rect"></div></div>
+  </div>`;
+}
+
+// Show skeleton briefly on tab switch if content takes >100ms
+const _origSetTab = window.setTab || setTab;
+function setTabWithSkeleton(tab) {
+  if(!TAB_ORDER.includes(tab)) tab = 'inicio';
+  const panel = document.getElementById('panel-' + tab);
+  // Show skeleton for init tab only if panel is empty
+  if (panel && !panel.innerHTML.trim() && tab === 'inicio') {
+    panel.innerHTML = buildSkeletonInicio();
+  }
+  setTab(tab);
+}
+
+// ═══════════════════════════════════════════════════
+// 2. SPARKLINES — draw mini SVG sparkline for a data array
+// ═══════════════════════════════════════════════════
+function drawSparkline(canvasId, values, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !values || values.length < 2) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = 60, H = 24;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const min = Math.min(...values), max = Math.max(...values);
+  const range = max - min || 1;
+  const padY = 3;
+  const toX = i => (i / (values.length - 1)) * W;
+  const toY = v => padY + (H - padY * 2) * (1 - (v - min) / range);
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, color + '44');
+  grad.addColorStop(1, color + '00');
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(values[0]));
+  values.forEach((v, i) => { if (i > 0) ctx.lineTo(toX(i), toY(v)); });
+  ctx.lineTo(toX(values.length - 1), H);
+  ctx.lineTo(toX(0), H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // Line
+  ctx.beginPath();
+  values.forEach((v, i) => i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v)));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.8;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  // End dot
+  const lastX = toX(values.length - 1), lastY = toY(values[values.length - 1]);
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 2.5, 0, 2 * Math.PI);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawAllSparklines() {
+  const days7 = last7Days();
+  const pasosVals = days7.map(d => d.pasos);
+  const kcalVals  = days7.map(d => d.kcal);
+  // Weight last 7 logs
+  const weightVals = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha.localeCompare(b.fecha)).slice(-7).map(l=>parseFloat(l.valor));
+  drawSparkline('spark-pasos', pasosVals, '#007AFF');
+  drawSparkline('spark-kcal',  kcalVals,  '#FF9500');
+  drawSparkline('spark-peso',  weightVals,'#34C759');
+}
+
+// Patch bindEvents to also draw sparklines
+const _origBindEvents = bindEvents;
+bindEvents = function() {
+  _origBindEvents();
+  requestAnimationFrame(drawAllSparklines);
+};
+
+// Patch render to draw sparklines after
+const _origRender = render;
+render = function() {
+  _origRender();
+  requestAnimationFrame(drawAllSparklines);
+};
+
+// ═══════════════════════════════════════════════════
+// 3. MICRO-ANIMATIONS — confetti + bounce on register
+// ═══════════════════════════════════════════════════
+function spawnConfetti(x, y, count = 12) {
+  const colors = ['#007AFF','#34C759','#FF9500','#FF3B30','#AF52DE','#30B0C7'];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-particle';
+    const angle = (Math.random() * 360) * (Math.PI / 180);
+    const dist  = 40 + Math.random() * 60;
+    el.style.cssText = `
+      left:${x}px; top:${y}px;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      --cx:${Math.cos(angle) * dist}px;
+      --cy:${Math.sin(angle) * dist}px;
+      --cr:${Math.random() * 360}deg;
+      animation-delay:${Math.random() * 0.15}s;
+      animation-duration:${0.7 + Math.random() * 0.4}s;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+  }
+}
+
+function triggerRegisterAnimation(goalAchieved) {
+  // Bounce the hero card
+  const hero = document.querySelector('.hero-card, .score-ring-wrap');
+  if (hero) {
+    hero.classList.remove('reg-bounce');
+    requestAnimationFrame(() => {
+      hero.classList.add('reg-bounce');
+      setTimeout(() => hero.classList.remove('reg-bounce'), 450);
+    });
+  }
+  // Confetti if goal reached
+  if (goalAchieved) {
+    const ring = document.querySelector('.score-ring-svg');
+    if (ring) {
+      const rect = ring.getBoundingClientRect();
+      spawnConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+    }
+  }
+}
+
+// Patch saveEntry to trigger animation
+const _origSaveEntry = window.saveEntry;
+window.saveEntry = function() {
+  const beforePasos = todayTotal('pasos');
+  const beforeGoal  = beforePasos >= S.goals.pasos;
+  _origSaveEntry.apply(this, arguments);
+  const afterPasos  = todayTotal('pasos');
+  const afterGoal   = afterPasos >= S.goals.pasos;
+  const goalJustMet = !beforeGoal && afterGoal;
+  setTimeout(() => triggerRegisterAnimation(goalJustMet), 120);
+};
+
+// Patch saveFoodEntry
+const _origSaveFoodEntry = window.saveFoodEntry;
+window.saveFoodEntry = function() {
+  _origSaveFoodEntry.apply(this, arguments);
+  const kcal = todayMeals().reduce((a,m)=>a+parseFloat(m.kcal||0),0);
+  setTimeout(() => triggerRegisterAnimation(kcal >= S.goals.kcal * 0.9), 120);
+};
+
+// ═══════════════════════════════════════════════════
+// 4. SWIPE TO DELETE — attach to log-item and meal rows
+// ═══════════════════════════════════════════════════
+function attachSwipeToDelete(el, onDelete) {
+  let startX = 0, currentX = 0, swiping = false;
+  const THRESHOLD = 65;
+  const content = el.querySelector('.swipe-row-content');
+  const bg      = el.querySelector('.swipe-row-delete-bg');
+  if (!content || !bg) return;
+
+  function onStart(e) {
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    swiping = true;
+    content.classList.add('swiping');
+  }
+  function onMove(e) {
+    if (!swiping) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    currentX = Math.min(0, Math.max(-100, x - startX));
+    content.style.transform = `translateX(${currentX}px)`;
+    bg.style.width = Math.abs(currentX) + 'px';
+    bg.classList.toggle('visible', Math.abs(currentX) > 20);
+    if (currentX < 0 && e.cancelable) e.preventDefault();
+  }
+  function onEnd() {
+    if (!swiping) return;
+    swiping = false;
+    content.classList.remove('swiping');
+    if (Math.abs(currentX) >= THRESHOLD) {
+      // Animate out and delete
+      content.style.transition = 'transform .25s ease, opacity .25s ease';
+      content.style.transform = `translateX(-110%)`;
+      content.style.opacity = '0';
+      el.style.transition = 'height .3s ease, margin .3s ease, opacity .3s ease';
+      el.style.overflow = 'hidden';
+      setTimeout(() => {
+        el.style.height = el.offsetHeight + 'px';
+        requestAnimationFrame(() => {
+          el.style.height = '0';
+          el.style.marginBottom = '0';
+          el.style.opacity = '0';
+        });
+        setTimeout(() => { onDelete(); }, 300);
+      }, 200);
+    } else {
+      content.style.transform = 'translateX(0)';
+      bg.classList.remove('visible');
+      bg.style.width = '80px';
+      currentX = 0;
+    }
+  }
+
+  el.addEventListener('touchstart', onStart, { passive: true });
+  el.addEventListener('touchmove',  onMove,  { passive: false });
+  el.addEventListener('touchend',   onEnd,   { passive: true });
+}
+
+function wrapLogItem(el, deleteCallback) {
+  // Wrap .log-item content in swipe structure if not already wrapped
+  if (el.closest('.swipe-row')) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'swipe-row';
+  wrap.style.marginBottom = el.style.marginBottom || '';
+
+  const bg = document.createElement('div');
+  bg.className = 'swipe-row-delete-bg';
+  bg.style.width = '80px';
+  bg.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+
+  const inner = document.createElement('div');
+  inner.className = 'swipe-row-content';
+
+  el.parentNode.insertBefore(wrap, el);
+  inner.appendChild(el);
+  wrap.appendChild(bg);
+  wrap.appendChild(inner);
+
+  attachSwipeToDelete(wrap, deleteCallback);
+}
+
+function bindSwipeDelete() {
+  // Meal items — they have del-btn with onclick="deleteMeal('id')"
+  document.querySelectorAll('.log-item').forEach(item => {
+    const delBtn = item.querySelector('.del-btn');
+    if (!delBtn) return;
+    const match = delBtn.getAttribute('onclick')?.match(/delete(?:Meal|Log)\('([^']+)'\)/);
+    if (!match) return;
+    const id = match[1];
+    const isMeal = delBtn.getAttribute('onclick')?.includes('deleteMeal');
+    if (!item.closest('.swipe-row')) {
+      wrapLogItem(item, () => {
+        if (isMeal) window.deleteMeal(id);
+        else { S.logs = S.logs.filter(l=>l.id!==id); haptic('light'); saveState(); render(); }
+      });
+    }
+  });
+}
+
+// Re-bind swipe after every render
+const _origBindEventsForSwipe = bindEvents;
+bindEvents = function() {
+  _origBindEventsForSwipe();
+  requestAnimationFrame(bindSwipeDelete);
+};
+
+// ═══════════════════════════════════════════════════
+// FEATURE 1: WIDGET DRAG & DROP ORDER
+// ═══════════════════════════════════════════════════
+const WIDGET_ORDER_KEY = 'healthapp_widget_order';
+let _dragSrcKey = null;
+
+window.widgetDragStart = function(e, key) {
+  _dragSrcKey = key;
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+  haptic('light');
+};
+
+window.widgetDragOver = function(e, key) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.widget-card').forEach(el => el.classList.remove('drag-over'));
+  if(key !== _dragSrcKey) e.currentTarget.classList.add('drag-over');
+};
+
+window.widgetDragLeave = function(e) {
+  e.currentTarget.classList.remove('drag-over');
+};
+
+window.widgetDrop = function(e, targetKey) {
+  e.preventDefault();
+  if(!_dragSrcKey || _dragSrcKey === targetKey) { _dragSrcKey = null; return; }
+  try {
+    let order = JSON.parse(localStorage.getItem(WIDGET_ORDER_KEY)) || ['pasos','kcal','sueno','agua'];
+    const srcIdx = order.indexOf(_dragSrcKey);
+    const tgtIdx = order.indexOf(targetKey);
+    if(srcIdx !== -1 && tgtIdx !== -1) {
+      [order[srcIdx], order[tgtIdx]] = [order[tgtIdx], order[srcIdx]];
+      localStorage.setItem(WIDGET_ORDER_KEY, JSON.stringify(order));
+    }
+  } catch(err){}
+  _dragSrcKey = null;
+  haptic('success');
+  // Re-render only inicio panel
+  const panel = document.getElementById('panel-inicio');
+  if(panel && panel.classList.contains('active')) {
+    panel.innerHTML = rInicio();
+    bindEvents();
+    requestAnimationFrame(() => { drawWeekChart(); animateRings(); animateMacroBar(); });
+  }
+};
+
+// Touch-based long-press drag for mobile
+(function initTouchWidgetDrag(){
+  let pressTimer = null, dragEl = null, dragKey = null, origIdx = -1;
+
+  function onTouchStart(e) {
+    const card = e.currentTarget.closest('.widget-card');
+    if(!card) return;
+    dragKey = card.dataset.widget;
+    pressTimer = setTimeout(() => {
+      card.classList.add('long-press');
+      haptic('medium');
+      dragEl = card;
+    }, 500);
+  }
+
+  function onTouchEnd(e) {
+    clearTimeout(pressTimer);
+    if(dragEl) {
+      dragEl.classList.remove('long-press','dragging');
+      dragEl = null; dragKey = null;
+    }
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    const card = e.target.closest('.widget-card');
+    if(!card) return;
+    pressTimer = setTimeout(() => {
+      card.classList.add('long-press');
+      haptic('medium');
+    }, 500);
+  }, {passive:true});
+
+  document.addEventListener('touchend', () => {
+    clearTimeout(pressTimer);
+    document.querySelectorAll('.widget-card.long-press').forEach(el => el.classList.remove('long-press'));
+  }, {passive:true});
+})();
+
+// ═══════════════════════════════════════════════════
+// FEATURE 2: ANIMATE CONCENTRIC RINGS ON LOAD
+// ═══════════════════════════════════════════════════
+function animateRings() {
+  document.querySelectorAll('.fitness-ring-fill').forEach(circle => {
+    const target = circle.getAttribute('data-dash');
+    if(target) {
+      // Start from 0, then animate to target
+      circle.style.strokeDasharray = '0 999';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          circle.style.strokeDasharray = target;
+        });
+      });
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 3: INTERACTIVE WEEK CHART TOOLTIP
+// ═══════════════════════════════════════════════════
+window._chartDaysCache = null;
+
+window.showChartTooltip = function(e, idx) {
+  const tt = document.getElementById('chart-tooltip');
+  if(!tt) return;
+
+  // Get days data
+  const days = last7Days();
+  const day = days[idx];
+  if(!day) return;
+
+  haptic('light');
+
+  // Update tooltip content
+  document.getElementById('chart-tt-day').textContent = day.date === today()
+    ? 'Hoy'
+    : new Date(day.date + 'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'short'});
+  document.getElementById('chart-tt-steps-val').textContent = fmt(day.pasos) + ' pasos';
+  document.getElementById('chart-tt-kcal-val').textContent = fmt(Math.round(day.kcal)) + ' kcal';
+
+  // Position tooltip near the bar
+  const bar = e.currentTarget;
+  const barRect = bar.getBoundingClientRect();
+  const chartCard = bar.closest('.card');
+  const cardRect = chartCard ? chartCard.getBoundingClientRect() : {left:0,top:0};
+
+  const leftRel = barRect.left - cardRect.left;
+  const topRel  = barRect.top - cardRect.top - tt.offsetHeight - 12;
+  tt.style.left = Math.max(0, leftRel - 40) + 'px';
+  tt.style.top  = Math.max(0, topRel) + 'px';
+
+  tt.classList.add('visible');
+
+  // Highlight selected bar
+  document.querySelectorAll('.week-bar-col').forEach((el,i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+
+  // Hide after 2.5s
+  clearTimeout(window._ttTimer);
+  window._ttTimer = setTimeout(() => {
+    tt.classList.remove('visible');
+    document.querySelectorAll('.week-bar-col').forEach(el => el.classList.remove('selected'));
+  }, 2500);
+};
+
+// ═══════════════════════════════════════════════════
+// FEATURE 4: TAP WATER DROPS
+// ═══════════════════════════════════════════════════
+window.tapWaterDrop = function(idx) {
+  const gAgua = S.goals.agua || 2500;
+  const mlPerDrop = Math.round(gAgua / 8);
+  const agua = todayTotal('agua');
+  const currentDrops = Math.min(8, Math.floor(agua / mlPerDrop));
+  const newDrops = idx + 1;
+
+  if(newDrops === currentDrops) {
+    // Tap on last filled — remove that glass
+    const toRemove = mlPerDrop;
+    // Remove water entries until we're at the right amount
+    const waterLogs = S.logs.filter(l=>l.fecha===today()&&l.tipo==='agua');
+    let removed = 0;
+    for(let i = waterLogs.length-1; i>=0 && removed < toRemove; i--) {
+      const l = waterLogs[i];
+      const v = parseFloat(l.valor)||0;
+      if(removed + v <= toRemove + mlPerDrop/2) {
+        S.logs = S.logs.filter(ll => ll.id !== l.id);
+        removed += v;
+      }
+    }
+  } else if(newDrops > currentDrops) {
+    // Add the missing drops
+    const toAdd = (newDrops - currentDrops) * mlPerDrop;
+    S.logs.push({id:uid(), tipo:'agua', valor:toAdd, fecha:today()});
+    haptic('light');
+    const total = todayTotal('agua');
+    if(total >= gAgua) { toast('¡Objetivo de hidratación cumplido! 💧'); haptic('success'); }
+  } else {
+    // Tap below current — clear all drops above that point
+    const target = newDrops * mlPerDrop;
+    S.logs = S.logs.filter(l => !(l.fecha===today() && l.tipo==='agua'));
+    if(target > 0) S.logs.push({id:uid(), tipo:'agua', valor:target, fecha:today()});
+  }
+
+  haptic('light');
+  saveState();
+
+  // Re-render just the water drops without full render
+  const panel = document.getElementById('panel-inicio');
+  if(panel && panel.classList.contains('active')) {
+    panel.innerHTML = rInicio();
+    bindEvents();
+    requestAnimationFrame(() => { drawWeekChart(); animateRings(); });
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// FEATURE 5: SWIPE RIGHT TO DUPLICATE MEAL
+// ═══════════════════════════════════════════════════
+function attachMealSwipes() {
+  document.querySelectorAll('[data-meal-swipe]').forEach(contentEl => {
+    const mealId = contentEl.dataset.mealSwipe;
+    const wrap = contentEl.closest('.swipe-row-wrap');
+    if(!wrap || wrap.dataset.swipeBound) return;
+    wrap.dataset.swipeBound = '1';
+
+    let startX = 0, currentX = 0, swiping = false;
+    const DEL_THRESHOLD = 70;
+    const DUP_THRESHOLD = 70;
+    const delBg = document.getElementById('del-bg-' + mealId);
+    const dupBg = document.getElementById('dup-bg-' + mealId);
+
+    function start(e) {
+      startX = e.touches ? e.touches[0].clientX : e.clientX;
+      swiping = true;
+      currentX = 0;
+    }
+    function move(e) {
+      if(!swiping) return;
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      currentX = x - startX;
+      const clamped = Math.max(-120, Math.min(120, currentX));
+      contentEl.style.transform = `translateX(${clamped}px)`;
+      if(clamped < 0 && delBg) { delBg.style.width = Math.abs(clamped) + 'px'; delBg.classList.toggle('visible', Math.abs(clamped) > 20); }
+      if(clamped > 0 && dupBg) { dupBg.style.width = clamped + 'px'; dupBg.classList.toggle('visible', clamped > 20); }
+      if(Math.abs(clamped) > 5 && e.cancelable) e.preventDefault();
+    }
+    function end() {
+      if(!swiping) return;
+      swiping = false;
+      if(currentX < -DEL_THRESHOLD) {
+        // Delete
+        contentEl.style.transition = 'transform .25s ease,opacity .25s ease';
+        contentEl.style.transform = 'translateX(-110%)';
+        contentEl.style.opacity = '0';
+        wrap.style.transition = 'height .3s ease,margin .3s ease,opacity .3s ease';
+        wrap.style.overflow = 'hidden';
+        setTimeout(() => {
+          wrap.style.height = wrap.offsetHeight + 'px';
+          requestAnimationFrame(() => { wrap.style.height = '0'; wrap.style.marginBottom = '0'; wrap.style.opacity = '0'; });
+          setTimeout(() => { window.deleteMeal(mealId); }, 300);
+        }, 200);
+      } else if(currentX > DUP_THRESHOLD) {
+        // Duplicate to next day
+        const meal = S.meals.find(m => m.id === mealId);
+        if(meal) {
+          const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+          const nextDay = tomorrow.toISOString().slice(0,10);
+          S.meals.push({...meal, id:uid(), fecha:nextDay});
+          saveState();
+          toast(`"${meal.nombre}" duplicado para mañana ✓`);
+          haptic('success');
+        }
+        contentEl.style.transition = 'transform .3s var(--ap-spring)';
+        contentEl.style.transform = 'translateX(0)';
+        if(dupBg) { dupBg.style.width = '0'; dupBg.classList.remove('visible'); }
+      } else {
+        contentEl.style.transition = 'transform .3s var(--ap-spring)';
+        contentEl.style.transform = 'translateX(0)';
+        if(delBg) { delBg.style.width = '80px'; delBg.classList.remove('visible'); }
+        if(dupBg) { dupBg.style.width = '0'; dupBg.classList.remove('visible'); }
+      }
+      currentX = 0;
+    }
+
+    wrap.addEventListener('touchstart', start, {passive:true});
+    wrap.addEventListener('touchmove', move, {passive:false});
+    wrap.addEventListener('touchend', end, {passive:true});
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// FEATURE 6: ANIMATE MACRO SEGMENTED BAR
+// ═══════════════════════════════════════════════════
+function animateMacroBar() {
+  const protEl  = document.getElementById('macro-seg-prot');
+  const carbsEl = document.getElementById('macro-seg-carbs');
+  const fatEl   = document.getElementById('macro-seg-fat');
+  if(!protEl || !carbsEl || !fatEl) return;
+
+  // Get current macro pcts from rendered data
+  const meals = S.meals.filter(m => m.fecha === today());
+  const totalProt  = meals.reduce((a,m)=>a+parseFloat(m.prot||0),0);
+  const totalCarbs = meals.reduce((a,m)=>a+parseFloat(m.carbs||0),0);
+  const totalFat   = meals.reduce((a,m)=>a+parseFloat(m.fat||0),0);
+  const totalMacroKcal = totalProt*4 + totalCarbs*4 + totalFat*9;
+
+  if(totalMacroKcal <= 0) return;
+  const protPct  = Math.round((totalProt*4/totalMacroKcal)*100);
+  const carbsPct = Math.round((totalCarbs*4/totalMacroKcal)*100);
+  const fatPct   = Math.max(0, 100 - protPct - carbsPct);
+
+  // Animate from 0
+  requestAnimationFrame(() => {
+    protEl.style.width  = protPct + '%';
+    carbsEl.style.width = carbsPct + '%';
+    fatEl.style.width   = fatPct + '%';
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// HOOK: run new animations & bindings after every render
+// ═══════════════════════════════════════════════════
+const _origBindEventsAll = bindEvents;
+bindEvents = function() {
+  _origBindEventsAll();
+  requestAnimationFrame(() => {
+    animateRings();
+    animateMacroBar();
+    attachMealSwipes();
+  });
+};
+
+// Also run on initial boot
+const _origBootApp = window.bootApp ? bootApp : null;
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => { animateRings(); animateMacroBar(); }, 400);
+});
+
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 1 — WEEKLY REPORT (análisis semanal IA)
+// ═══════════════════════════════════════════════════════════════
+window.generateWeeklyReport = async () => {
+  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  haptic('medium');
+  S.weeklyReportLoading = true;
+  S.weeklyReportError   = '';
+  saveState(); render();
+
+  const days7 = last7Days();
+  const gPasos = S.goals.pasos, gKcal = S.goals.kcal, gSueno = S.goals.sueno;
+
+  // Build week stats
+  const weekStats = days7.map(d => {
+    const kcalD  = S.meals.filter(m=>m.fecha===d.date).reduce((a,m)=>a+parseFloat(m.kcal||0),0);
+    const suenoD = S.logs.filter(l=>l.tipo==='sueno'&&l.fecha===d.date).reduce((a,l)=>a+parseFloat(l.valor||0),0);
+    return `${d.label}: pasos=${d.pasos}/${gPasos} kcal=${Math.round(kcalD)||'?'}/${gKcal} sueno=${suenoD||'?'}h/${gSueno}h`;
+  }).join('\n');
+
+  const streak     = calcStreak();
+  const avgPasos   = Math.round(days7.reduce((a,d)=>a+d.pasos,0)/7);
+  const daysGoal   = days7.filter(d=>d.pasos>=gPasos).length;
+  const wLogs      = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha>b.fecha?1:-1);
+  const pesoInicio = wLogs.length>1 ? wLogs[wLogs.length-8]?.valor : null;
+  const pesoFin    = wLogs.length   ? wLogs[wLogs.length-1].valor  : null;
+  const hp = S.profile?.answers || {};
+  const dp = S.dietProfile || {};
+
+  const prompt = `Eres un coach de salud personal. Analiza esta semana del usuario y genera un informe en 4-5 parrafos cortos y directos. Sin emojis. En español.
+
+Datos de la semana:
+${weekStats}
+
+Resumen: media pasos=${avgPasos}, dias objetivo cumplido=${daysGoal}/7, racha=${streak} dias
+${pesoInicio && pesoFin ? `Evolucion peso: ${pesoInicio}kg → ${pesoFin}kg` : ''}
+Objetivo salud: ${hp.objetivo||'no definido'}
+Objetivo dietetico: ${dp.objetivo||'no definido'}
+${S.userContext ? 'Notas: '+S.userContext : ''}
+
+Estructura del informe:
+1. Resumen general de la semana (1-2 frases)
+2. Lo que fue bien (especifico con datos)
+3. Lo que se puede mejorar (especifico y constructivo)
+4. Un reto concreto para la proxima semana
+
+Sé directo, usa los datos reales, sin frases genéricas.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const texto = (data.content||[]).map(c=>c.text||'').join('').trim();
+    S.weeklyReport = {
+      texto,
+      fecha: new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}),
+      semana: new Date().toISOString().slice(0,10)
+    };
+    S.weeklyReportLoading = false;
+    saveState(); render();
+    toast('Informe semanal generado');
+    haptic('success');
+  } catch(e) {
+    S.weeklyReportLoading = false;
+    S.weeklyReportError = 'Error: ' + (e.message||'desconocido');
+    saveState(); render();
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// FEATURE 2 — MACRO ADJUST (ajuste dinámico de objetivos calóricos)
+// ═══════════════════════════════════════════════════════════════
+window.generateMacroAdjust = async () => {
+  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  const wLogs = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha>b.fecha?1:-1);
+  if(wLogs.length < 2){ toast('Necesitas al menos 2 registros de peso'); return; }
+  haptic('medium');
+  S.macroAdjustLoading = true;
+  saveState(); render();
+
+  const primero  = wLogs[0];
+  const ultimo   = wLogs[wLogs.length-1];
+  const diasDiff = Math.max(1, Math.round((new Date(ultimo.fecha)-new Date(primero.fecha))/(1000*60*60*24)));
+  const cambioKg = (ultimo.valor - primero.valor).toFixed(1);
+  const tendencia = cambioKg > 0.5 ? 'aumento' : cambioKg < -0.5 ? 'bajada' : 'estable';
+  const hp = S.profile?.answers || {};
+  const dp = S.dietProfile || {};
+  const dias7   = last7Days();
+  const avgKcal = Math.round(S.meals.filter(m=>{
+    const d = new Date(); d.setDate(d.getDate()-7);
+    return new Date(m.fecha) >= d;
+  }).reduce((a,m)=>a+parseFloat(m.kcal||0),0) / 7);
+
+  const prompt = `Eres un nutricionista. Analiza la evolución de peso y sugiere un objetivo calórico diario ajustado. Responde SOLO con JSON:
+{"kcalSugeridas": número, "razon": "explicación de 2 frases máximo, directa y específica"}
+
+Datos:
+- Peso inicial: ${primero.valor}kg (${primero.fecha})
+- Peso actual: ${ultimo.valor}kg (${ultimo.fecha})
+- Cambio: ${cambioKg}kg en ${diasDiff} dias (tendencia: ${tendencia})
+- Objetivo calórico actual: ${S.goals.kcal} kcal/día
+- Media calorías registradas últimos 7 días: ${avgKcal||'sin datos'} kcal
+- Objetivo del usuario: ${dp.objetivo||hp.objetivo||'no especificado'}
+- Actividad: ${hp.actividad||'no especificada'}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    let text = (data.content||[]).map(c=>c.text||'').join('').trim().replace(/```json|```/g,'').trim();
+    const s=text.indexOf('{'), e=text.lastIndexOf('}');
+    const obj = JSON.parse(text.slice(s,e+1));
+    S.macroAdjust = {
+      kcalSugeridas: obj.kcalSugeridas,
+      razon: obj.razon,
+      fecha: new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long'})
+    };
+    S.macroAdjustLoading = false;
+    saveState(); render();
+    haptic('success');
+  } catch(e) {
+    S.macroAdjustLoading = false;
+    saveState(); render();
+    toast('Error al calcular ajuste: ' + e.message);
+  }
+};
+
+window.applyMacroAdjust = (kcal) => {
+  S.goals = { ...S.goals, kcal: parseInt(kcal) };
+  saveState(); render();
+  toast('Objetivo calórico actualizado a ' + kcal + ' kcal/día');
+  haptic('success');
 };
 
 </script>
