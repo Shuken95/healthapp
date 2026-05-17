@@ -1631,7 +1631,14 @@
 // ═══════════════════════════════════════════════════
 const SUPA_URL  = 'https://ijrhkdpdkocqrzmqdtnx.supabase.co';
 const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqcmhrZHBka29jcXJ6bXFkdG54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0Mzc2ODYsImV4cCI6MjA5NDAxMzY4Nn0.KKr8KKkwesBr1SHp26NQ9W-yuMKSrVNjzdchW7EQGsU';
-const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
+  auth: {
+    flowType: 'implicit',
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+  }
+});
 
 let currentUser = null;
 
@@ -1667,7 +1674,7 @@ async function loginWithGoogle(){
 
 function continueOffline(){
   document.getElementById('login-screen').classList.add('hide');
-  bootApp();
+  bootOnce();
 }
 
 function bootApp(){
@@ -1757,22 +1764,7 @@ async function accountGoogleAction(){
     });
   }
 }
-supa.auth.onAuthStateChange(async (event, session) => {
-  if(session?.user){
-    currentUser = session.user;
-    updateAvatarUI(session.user);
-
-    // Guardar el token de Google Fit para sincronización
-    const providerToken = session.provider_token;
-    if(providerToken){
-      S.googleFit = { ...S.googleFit, connected: true, accessToken: providerToken };
-      saveState();
-    }
-
-    document.getElementById('login-screen').classList.add('hide');
-    bootApp();
-  }
-});
+// onAuthStateChange registrado más abajo, tras inicializar S
 
 // ═══════════════════════════════════════════════════
 // ESTADO — persistencia localStorage
@@ -4303,12 +4295,16 @@ window.connectGoogleFit=async()=>{
   window.location.href=url;
 };
 
-// Parse token from URL hash after OAuth redirect
+// Parse token from URL hash after Google Fit OAuth redirect
+// IMPORTANTE: solo actuar si hay un state guardado en sessionStorage
+// (indica que el redirect viene del flujo de Google Fit, no de Supabase)
 (function handleOAuthCallback(){
   const hash=location.hash.slice(1);
   if(!hash.includes('access_token')) return;
-  const params=Object.fromEntries(hash.split('&').map(p=>p.split('=')));
   const savedState=sessionStorage.getItem('gfit_state');
+  // Si no hay state guardado → el hash es de Supabase, no de Google Fit → ignorar
+  if(!savedState) return;
+  const params=Object.fromEntries(hash.split('&').map(p=>p.split('=')));
   if(params.state && params.state!==savedState){toast('Error de seguridad OAuth'); return;}
   sessionStorage.removeItem('gfit_state');
   history.replaceState(null,'',location.pathname);
@@ -4356,7 +4352,10 @@ window.syncGoogleFit=async()=>{
 
     if(res.status===401){
       S.googleFit={...S.googleFit, connected:false, accessToken:''};
-      saveState(); toast('Sesión expirada — reconecta Google Fit'); render(); return;
+      saveState();
+      toast('Token de Google Fit expirado — reconecta en Ajustes');
+      // NO llamar a render() aquí — solo desactivar Fit sin reiniciar la UI
+      return;
     }
 
     const data=await res.json();
@@ -5477,6 +5476,25 @@ function initPanels(){
 
 // ═══════════════════════════════════════════════════
 // SPLASH + INIT
+let _appBooted = false;
+function bootOnce(){
+  if(_appBooted) return;
+  _appBooted = true;
+  document.getElementById('login-screen')?.classList.add('hide');
+  bootApp();
+}
+
+supa.auth.onAuthStateChange(async (event, session) => {
+  if(event === 'SIGNED_OUT'){ _appBooted = false; return; }
+  if(session?.user){
+    currentUser = session.user;
+    updateAvatarUI(session.user);
+    // El provider_token de Supabase NO es el token de Google Fit
+    // Google Fit usa su propio flujo OAuth separado (connectGoogleFit)
+    bootOnce();
+  }
+});
+
 // ═══════════════════════════════════════════════════
 (async function init(){
   // 1. Ocultar splash tras animación (siempre ocurre, pase lo que pase)
@@ -5500,14 +5518,9 @@ function initPanels(){
     clearTimeout(fallbackTimer);
 
     if(session?.user){
-      // Ya logado — arrancar directamente
       currentUser = session.user;
       updateAvatarUI(session.user);
-      if(session.provider_token){
-        S.googleFit = { ...S.googleFit, connected: true, accessToken: session.provider_token };
-        saveState();
-      }
-      bootApp();
+      bootOnce();
     } else {
       // Sin sesión — mostrar login después del splash
       setTimeout(()=>{
