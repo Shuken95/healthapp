@@ -1642,6 +1642,63 @@ const supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
 
 let currentUser = null;
 
+// ═══════════════════════════════════════════════════
+// IA — Helper unificado (Anthropic / Groq)
+// Recibe payload formato Anthropic y devuelve respuesta compatible con su formato
+// ═══════════════════════════════════════════════════
+window.getActiveAIKey = function(){
+  const p = S.aiProvider || 'anthropic';
+  return p === 'groq' ? (S.groqKey||'').trim() : (S.anthropicKey||'').trim();
+};
+window.getActiveAIProviderLabel = function(){
+  return (S.aiProvider === 'groq') ? 'Groq' : 'Anthropic';
+};
+async function aiFetch(body){
+  const provider = S.aiProvider || 'anthropic';
+  if(provider === 'groq'){
+    const key = (S.groqKey||'').trim();
+    if(!key){
+      return { ok:false, status:401, json: async () => ({ error:{ message:'Clave de Groq no configurada' } }) };
+    }
+    const messages = body.system
+      ? [{ role:'system', content: body.system }, ...(body.messages||[])]
+      : (body.messages || []);
+    try{
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: body.max_tokens || 1024,
+          messages
+        })
+      });
+      if(!res.ok){
+        const errText = await res.text().catch(()=> '');
+        return { ok:false, status:res.status, json: async () => ({ error:{ message: errText || ('Groq error '+res.status) } }) };
+      }
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      return { ok:true, status:200, json: async () => ({ content:[{ type:'text', text }] }) };
+    } catch(err){
+      return { ok:false, status:0, json: async () => ({ error:{ message: err.message || 'Error de red' } }) };
+    }
+  }
+  // Anthropic (default)
+  const key = (S.anthropicKey||'').trim();
+  return fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'x-api-key': key
+    },
+    body: JSON.stringify(body)
+  });
+}
+window.aiFetch = aiFetch;
+
 // Scopes de Google Fit — se piden en el momento del login
 const FITNESS_SCOPES = [
   'https://www.googleapis.com/auth/fitness.activity.read',
@@ -1797,8 +1854,10 @@ function defaultState(){
     nutritionProfile: [],
     nutritionWizardDone: false,
     healthQuizDone: false,
-    // API key Anthropic (para llamadas IA)
+    // API keys IA (se guardan solo en este dispositivo)
     anthropicKey: '',
+    groqKey: '',
+    aiProvider: 'anthropic', // 'anthropic' | 'groq'
     // Google Fit / Health Connect
     googleFit: { connected: false, accessToken: '', lastSync: '', clientId: '', lastData: null },
     // Rutina de ejercicio
@@ -1918,7 +1977,7 @@ window.openRecipeModal = async (nombreReceta, comida) => {
   if (cached) { renderRecipeModal(cached, true); return; }
 
   // 2) Llamada a la IA
-  if (!S.anthropicKey) {
+  if (!getActiveAIKey()) {
     body.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No se encontró la receta en la base local.<br>Configura tu API Key en Ajustes para consultar a la IA.</div>`;
     return;
   }
@@ -1932,11 +1991,7 @@ Responde SOLO con JSON válido:
 "ingredientes":[{"n":"nombre","c":"cantidad"}],
 "pasos":["paso 1","paso 2","paso 3","paso 4"]}`;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey.trim()},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:700, messages:[{role:'user',content:prompt}]})
-    });
+    const res = await aiFetch({model:'claude-sonnet-4-20250514', max_tokens:700, messages:[{role:'user',content:prompt}]});
     const data = await res.json();
     let text = (data.content||[]).map(c=>c.text||'').join('').trim();
     text = text.replace(/```json|```/g,'').trim();
@@ -3636,7 +3691,7 @@ window.resetRutinaWizard = () => {
 
 // ── RUTINA PLAN AI GENERATION ──
 window.generateRutinaPlan = async () => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const rp = S.rutinaProfile || {};
   haptic('medium');
   S.rutinaPlanLoading = true;
@@ -3695,20 +3750,11 @@ Para días de descanso usa tipo "descanso", sin ejercicios, y añade nota con ac
 Adapta ESTRICTAMENTE al nivel, lugar, equipo disponible y limitaciones. Incluye ${rp.dias||3} días de entrenamiento más los de descanso necesarios para completar la semana (7 días total o solo los días de entreno si el usuario no pidió descanso específico). Para nivel principiante máximo 5-6 ejercicios por sesión, intermedio 6-8, avanzado 8-10.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'x-api-key': S.anthropicKey || ''
-      },
-      body: JSON.stringify({
+    const res = await aiFetch({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
-      })
-    });
+      });
     const data = await res.json();
     let text = data.content?.map(c => c.text || '').join('') || '';
     // Strip possible markdown fences
@@ -3753,17 +3799,43 @@ function rAjustes(){
   <div class="card" style="margin-bottom:14px">
     <div class="card-title">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
-      API Key de Anthropic
+      Proveedor de IA
     </div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6">Necesaria para el asesor IA y el chat. Obtén tu clave en <strong style="color:var(--green-700)">console.anthropic.com</strong>. Se guarda solo en este dispositivo.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6">Elige qué servicio usará el asesor IA y el chat. La clave se guarda solo en este dispositivo.</div>
+
+    <!-- Selector de proveedor -->
+    <div style="display:flex;gap:8px;margin-bottom:14px" data-testid="ai-provider-selector">
+      <button onclick="setAIProvider('anthropic')" data-testid="ai-provider-anthropic-btn" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid ${S.aiProvider==='anthropic'?'var(--green-700)':'var(--border)'};background:${S.aiProvider==='anthropic'?'rgba(34,197,94,0.08)':'var(--surface)'};color:var(--text);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">
+        Anthropic <span style="font-size:10px;font-weight:500;color:var(--muted)">(de pago)</span>
+      </button>
+      <button onclick="setAIProvider('groq')" data-testid="ai-provider-groq-btn" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid ${S.aiProvider==='groq'?'var(--green-700)':'var(--border)'};background:${S.aiProvider==='groq'?'rgba(34,197,94,0.08)':'var(--surface)'};color:var(--text);font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">
+        Groq <span style="font-size:10px;font-weight:500;color:var(--muted)">(gratis)</span>
+      </button>
+    </div>
+
+    ${S.aiProvider==='groq' ? `
+    <!-- GROQ -->
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Groq</strong> · Obtén tu clave gratuita en <strong style="color:var(--green-700)">console.groq.com/keys</strong>. Modelo: Llama 3.3 70B.</div>
     <div style="position:relative">
-      <input id="api-key-input" type="password" placeholder="sk-ant-api03-…" value="${S.anthropicKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false"/>
-      <button onclick="toggleApiKeyVisibility()" id="api-key-eye" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
+      <input id="api-key-input-groq" type="password" placeholder="gsk_…" value="${S.groqKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="groq-api-key-input"/>
+      <button onclick="toggleApiKeyVisibility('groq')" id="api-key-eye-groq" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
+        <svg id="eye-icon-groq" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+    <button onclick="saveApiKey('groq')" class="btn btn-full" style="margin-top:10px" data-testid="save-groq-key-btn">Guardar clave Groq</button>
+    ${S.groqKey?`<div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--green-700);font-weight:600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Clave guardada · ${S.groqKey.slice(0,10)}…</div>`:''}
+    ` : `
+    <!-- ANTHROPIC -->
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Anthropic</strong> · Obtén tu clave en <strong style="color:var(--green-700)">console.anthropic.com</strong>. Modelo: Claude Sonnet 4.</div>
+    <div style="position:relative">
+      <input id="api-key-input" type="password" placeholder="sk-ant-api03-…" value="${S.anthropicKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="anthropic-api-key-input"/>
+      <button onclick="toggleApiKeyVisibility('anthropic')" id="api-key-eye" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
         <svg id="eye-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
       </button>
     </div>
-    <button onclick="saveApiKey()" class="btn btn-full" style="margin-top:10px">Guardar clave</button>
+    <button onclick="saveApiKey('anthropic')" class="btn btn-full" style="margin-top:10px" data-testid="save-anthropic-key-btn">Guardar clave Anthropic</button>
     ${S.anthropicKey?`<div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--green-700);font-weight:600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Clave guardada · ${S.anthropicKey.slice(0,10)}…</div>`:''}
+    `}
   </div>
 
 
@@ -3953,7 +4025,7 @@ function buildProfileText(){
 }
 
 async function generateAdvice(){
-  if(!S.anthropicKey){
+  if(!getActiveAIKey()){
     toast('Configura tu API Key en Ajustes primero');
     openSettingsModal();
     return;
@@ -3984,11 +4056,7 @@ ${avgHR?`- Frecuencia cardíaca media: ${avgHR} bpm\n`:''}${distKm?`- Distancia 
 Sé directo, específico y accionable. Máximo 180 palabras.`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey||''},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})
-    });
+    const res=await aiFetch({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]});
     const data=await res.json();
     const text=data.content?.map(c=>c.text||'').join('')||'No se pudo generar consejo.';
     S.aiAdvice=text;
@@ -4003,7 +4071,7 @@ Sé directo, específico y accionable. Máximo 180 palabras.`;
 }
 
 async function sendChat(){
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const input = document.getElementById('chat-input');
   const text  = input?.value?.trim();
   if(!text) return;
@@ -4066,11 +4134,7 @@ async function sendChat(){
   const systemPrompt = 'Eres un coach de salud personal experto, empatico y directo. Respondes en espanol, en maximo 3-4 frases concisas y accionables. Sin emojis. Tienes acceso a los datos reales del usuario:\n\n' + dataLines + '\n\nUsa estos datos para respuestas personalizadas. No repitas los datos literalmente.';
 
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey||''},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[...history.slice(0,-1),{role:'user',content:text}]})
-    });
+    const res = await aiFetch({model:'claude-sonnet-4-20250514',max_tokens:300,system:systemPrompt,messages:[...history.slice(0,-1),{role:'user',content:text}]});
     const data = await res.json();
     const reply = data.content?.map(c=>c.text||'').join('') || 'No pude responder.';
     document.getElementById('typing')?.remove();
@@ -4137,7 +4201,7 @@ window.toggleDietWizard = () => {
 // DIET PLAN AI GENERATION
 // ═══════════════════════════════════════════════════
 window.generateDietPlan = async () => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const dp = S.dietProfile || {};
   haptic('medium');
   S.dietPlanLoading = true;
@@ -4184,11 +4248,7 @@ Responde SOLO con JSON válido (sin markdown, sin texto extra):
 IMPORTANTE: Los productos_aldi deben ser productos REALES que vende Aldi España (marcas propias como Aldi Fresh, Gut & Günstig, Favorina, etc. o marcas conocidas disponibles en Aldi). Ajusta las recetas estrictamente al perfil (restricciones, alergias, tiempo de cocina, presupuesto). Asegúrate que el JSON sea válido y completo.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key': S.anthropicKey},
-      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:4000, messages:[{role:'user',content:prompt}]})
-    });
+    const res = await aiFetch({model:'claude-sonnet-4-20250514', max_tokens:4000, messages:[{role:'user',content:prompt}]});
     const data = await res.json();
     const raw = data.content?.map(c=>c.text||'').join('') || '';
     const cleaned = raw.replace(/```json|```/g,'').trim();
@@ -4255,16 +4315,34 @@ window.resetShoppingList = () => {
 // ═══════════════════════════════════════════════════
 // API KEY & GOOGLE FIT
 // ═══════════════════════════════════════════════════
-window.saveApiKey=()=>{
-  const val=document.getElementById('api-key-input')?.value?.trim();
-  if(!val){toast('Introduce una clave válida'); return;}
-  S.anthropicKey=val;
+window.saveApiKey=(provider)=>{
+  provider = provider || S.aiProvider || 'anthropic';
+  if(provider === 'groq'){
+    const val=document.getElementById('api-key-input-groq')?.value?.trim();
+    if(!val){toast('Introduce una clave válida'); return;}
+    S.groqKey=val;
+  } else {
+    const val=document.getElementById('api-key-input')?.value?.trim();
+    if(!val){toast('Introduce una clave válida'); return;}
+    S.anthropicKey=val;
+  }
   haptic('success'); saveState(); toast('Clave guardada'); render();
 };
 
-window.toggleApiKeyVisibility=()=>{
-  const inp=document.getElementById('api-key-input');
-  const icon=document.getElementById('eye-icon');
+window.setAIProvider=(provider)=>{
+  if(provider !== 'anthropic' && provider !== 'groq') return;
+  S.aiProvider = provider;
+  haptic('light'); saveState();
+  toast(provider === 'groq' ? 'Proveedor: Groq (gratis)' : 'Proveedor: Anthropic');
+  render();
+};
+
+window.toggleApiKeyVisibility=(provider)=>{
+  provider = provider || 'anthropic';
+  const inputId = provider === 'groq' ? 'api-key-input-groq' : 'api-key-input';
+  const iconId  = provider === 'groq' ? 'eye-icon-groq'      : 'eye-icon';
+  const inp=document.getElementById(inputId);
+  const icon=document.getElementById(iconId);
   if(!inp) return;
   const hidden=inp.type==='password';
   inp.type=hidden?'text':'password';
@@ -4295,15 +4373,13 @@ window.connectGoogleFit=async()=>{
   window.location.href=url;
 };
 
-// Parse token from URL hash after Google Fit OAuth redirect
-// IMPORTANTE: solo actuar si hay un state guardado en sessionStorage
-// (indica que el redirect viene del flujo de Google Fit, no de Supabase)
+// Parse token from URL hash — solo actuar si hay state en sessionStorage
+// (indica flujo de Google Fit, no de Supabase)
 (function handleOAuthCallback(){
   const hash=location.hash.slice(1);
   if(!hash.includes('access_token')) return;
   const savedState=sessionStorage.getItem('gfit_state');
-  // Si no hay state guardado → el hash es de Supabase, no de Google Fit → ignorar
-  if(!savedState) return;
+  if(!savedState) return; // hash de Supabase — ignorar
   const params=Object.fromEntries(hash.split('&').map(p=>p.split('=')));
   if(params.state && params.state!==savedState){toast('Error de seguridad OAuth'); return;}
   sessionStorage.removeItem('gfit_state');
@@ -4313,7 +4389,6 @@ window.connectGoogleFit=async()=>{
     saveState();
     toast('Google Fit conectado');
     render();
-    // Auto-sync on connect
     setTimeout(()=>syncGoogleFit(),300);
   }
 })();
@@ -4326,9 +4401,16 @@ window.syncGoogleFit=async()=>{
   [btn,btn2].forEach(b=>{if(b){b.disabled=true; b.textContent='Sincronizando…';}});
 
   try{
-    // Time range: today midnight → now
-    const now=Date.now();
-    const startMs=new Date(today()+'T00:00:00').getTime();
+    // Time range: medianoche local → ahora
+    // Usar fecha local explícita para evitar problemas de timezone (UTC vs local)
+    const now = Date.now();
+    const todayDate = new Date();
+    const startMs = new Date(
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate(),
+      0, 0, 0, 0
+    ).getTime();
 
     const body={
       aggregateBy:[
@@ -4354,7 +4436,6 @@ window.syncGoogleFit=async()=>{
       S.googleFit={...S.googleFit, connected:false, accessToken:''};
       saveState();
       toast('Token de Google Fit expirado — reconecta en Ajustes');
-      // NO llamar a render() aquí — solo desactivar Fit sin reiniciar la UI
       return;
     }
 
@@ -4387,15 +4468,26 @@ window.syncGoogleFit=async()=>{
     const avgHR=hrValues.length?Math.round(hrValues.reduce((a,b)=>a+b,0)/hrValues.length):0;
     const distKm=distanceM>0?+(distanceM/1000).toFixed(2):0;
 
-    const d=today();
-    // Remove existing Fit-synced entries for today
-    S.logs=S.logs.filter(l=>!(l.fecha===d&&l.fitSync));
-    if(steps>0)       S.logs.push({id:uid(),tipo:'pasos',valor:Math.round(steps),fecha:d,fitSync:true});
-    if(kcalBurned>50) S.logs.push({id:uid(),tipo:'kcalQuemadas',valor:Math.round(kcalBurned),fecha:d,fitSync:true});
-    if(sleepMin>30)   S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:d,fitSync:true});
-    if(avgHR>40)      S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,fecha:d,fitSync:true});
-    if(distKm>0)      S.logs.push({id:uid(),tipo:'distancia',valor:distKm,fecha:d,fitSync:true});
-    if(weightKg>20)   S.logs.push({id:uid(),tipo:'peso',valor:+weightKg.toFixed(1),fecha:d,fitSync:true});
+    const d = today();
+    // Tipos que vienen de Fit — eliminar TODOS los logs de hoy de estos tipos
+    // (tanto manuales como de sync anterior) para evitar doble conteo
+    const fitTypes = ['pasos','kcalQuemadas','sueno','frecuenciaCardiaca','distancia'];
+    S.logs = S.logs.filter(l => {
+      if(l.fecha !== d) return true;               // otros días: conservar
+      if(l.fitSync) return false;                  // sync anterior: eliminar
+      if(steps > 0    && l.tipo === 'pasos')            return false; // manual sustituido por Fit
+      if(kcalBurned>50 && l.tipo === 'kcalQuemadas')    return false;
+      if(sleepMin>30  && l.tipo === 'sueno')            return false;
+      if(avgHR>40     && l.tipo === 'frecuenciaCardiaca') return false;
+      if(distKm>0     && l.tipo === 'distancia')        return false;
+      return true; // resto de tipos (peso manual, agua, comidas): conservar
+    });
+    if(steps>0)       S.logs.push({id:uid(),tipo:'pasos',          valor:Math.round(steps),         fecha:d,fitSync:true});
+    if(kcalBurned>50) S.logs.push({id:uid(),tipo:'kcalQuemadas',   valor:Math.round(kcalBurned),    fecha:d,fitSync:true});
+    if(sleepMin>30)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:d,fitSync:true});
+    if(avgHR>40)      S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,                  fecha:d,fitSync:true});
+    if(distKm>0)      S.logs.push({id:uid(),tipo:'distancia',      valor:distKm,                    fecha:d,fitSync:true});
+    if(weightKg>20)   S.logs.push({id:uid(),tipo:'peso',           valor:+weightKg.toFixed(1),      fecha:d,fitSync:true});
 
     S.googleFit={...S.googleFit, lastSync:new Date().toISOString(),
       lastData:{steps:Math.round(steps),kcal:Math.round(kcalBurned),sleepMin:Math.round(sleepMin),avgHR,distKm,weightKg:+weightKg.toFixed(1)}};
@@ -4691,7 +4783,7 @@ function maybeShowRutinaQuiz(){
 // ═══════════════════════════════════════════════════
 
 window.generateWeeklyMealPlan = async () => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   haptic('medium');
   S.weeklyMealPlanLoading = true;
   S.weeklyMealPlanError = '';
@@ -4721,11 +4813,7 @@ IMPORTANTE: cada comida debe incluir sus macros (kcal, prot, carbs, grasa en gra
 Rellena los 7 días (Lunes a Domingo) con recetas reales y macros realistas. merienda puede ser null si no aplica. La lista_compra debe tener 25-35 productos con todos los ingredientes de la semana. Kcal_total = suma de kcal de todas las comidas del día, objetivo: ${S.goals.kcal||2000} kcal/día.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey.trim() },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:4000, messages:[{role:'user',content:prompt}] })
-    });
+    const res = await aiFetch({ model:'claude-sonnet-4-20250514', max_tokens:4000, messages:[{role:'user',content:prompt}] });
     if(!res.ok){
       const errData = await res.json().catch(()=>({}));
       throw new Error(errData?.error?.message || `HTTP ${res.status}`);
@@ -4827,7 +4915,7 @@ window.syncTodayMenuToMeals = async (silent = true) => {
 
   // Pedir macros a la IA en background para las que faltan (si hay API key)
   const pending = toAdd.filter(m => m.pendingMacros);
-  if (pending.length && S.anthropicKey) {
+  if (pending.length && getActiveAIKey()) {
     fetchPendingMacros(pending);
   }
 };
@@ -4839,11 +4927,7 @@ async function fetchPendingMacros(pendingMeals) {
       const dp = S.dietProfile || {};
       const prompt = `Dame los macros de "${meal.nombre}" para 1 persona. Solo JSON:
 {"kcal":número,"prot":número,"carbs":número,"grasa":número}`;
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key': S.anthropicKey.trim() },
-        body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:120, messages:[{role:'user',content:prompt}] })
-      });
+      const res = await aiFetch({ model:'claude-haiku-4-5-20251001', max_tokens:120, messages:[{role:'user',content:prompt}] });
       const data = await res.json();
       let text = (data.content||[]).map(c=>c.text||'').join('').trim().replace(/```json|```/g,'').trim();
       const s=text.indexOf('{'), e=text.lastIndexOf('}');
@@ -4879,7 +4963,7 @@ async function fetchPendingMacros(pendingMeals) {
 
 // Rechazar una receta y pedir sustitución
 window.rechazarReceta = async (comida, dia) => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes'); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes'); return; }
   // Ask why with a bottom sheet
   const reason = await showRejectionSheet(comida, dia);
   if(!reason) return; // user cancelled
@@ -4900,11 +4984,7 @@ Propón UNA receta alternativa diferente y mejor adaptada al motivo del rechazo.
 { "nueva_receta": "nombre y descripción breve de la nueva receta" }`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey.trim() },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}] })
-    });
+    const res = await aiFetch({ model:'claude-sonnet-4-20250514', max_tokens:300, messages:[{role:'user',content:prompt}] });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     let text = (data.content||[]).map(c=>c.text||'').join('').trim();
@@ -5489,8 +5569,6 @@ supa.auth.onAuthStateChange(async (event, session) => {
   if(session?.user){
     currentUser = session.user;
     updateAvatarUI(session.user);
-    // El provider_token de Supabase NO es el token de Google Fit
-    // Google Fit usa su propio flujo OAuth separado (connectGoogleFit)
     bootOnce();
   }
 });
@@ -6394,7 +6472,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // FEATURE 1 — WEEKLY REPORT (análisis semanal IA)
 // ═══════════════════════════════════════════════════════════════
 window.generateWeeklyReport = async () => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   haptic('medium');
   S.weeklyReportLoading = true;
   S.weeklyReportError   = '';
@@ -6439,11 +6517,7 @@ Estructura del informe:
 Sé directo, usa los datos reales, sin frases genéricas.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
-    });
+    const res = await aiFetch({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]});
     const data = await res.json();
     const texto = (data.content||[]).map(c=>c.text||'').join('').trim();
     S.weeklyReport = {
@@ -6466,7 +6540,7 @@ Sé directo, usa los datos reales, sin frases genéricas.`;
 // FEATURE 2 — MACRO ADJUST (ajuste dinámico de objetivos calóricos)
 // ═══════════════════════════════════════════════════════════════
 window.generateMacroAdjust = async () => {
-  if(!S.anthropicKey){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const wLogs = S.logs.filter(l=>l.tipo==='peso').sort((a,b)=>a.fecha>b.fecha?1:-1);
   if(wLogs.length < 2){ toast('Necesitas al menos 2 registros de peso'); return; }
   haptic('medium');
@@ -6499,11 +6573,7 @@ Datos:
 - Actividad: ${hp.actividad||'no especificada'}`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true','x-api-key':S.anthropicKey},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})
-    });
+    const res = await aiFetch({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]});
     const data = await res.json();
     let text = (data.content||[]).map(c=>c.text||'').join('').trim().replace(/```json|```/g,'').trim();
     const s=text.indexOf('{'), e=text.lastIndexOf('}');
