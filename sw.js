@@ -4,7 +4,7 @@
 //  manual controlada por el usuario (banner)
 // ══════════════════════════════════════════════════════════════
 
-const APP_VERSION   = 'nura-v33';
+const APP_VERSION   = 'nura-v34';
 const CACHE_STATIC  = `${APP_VERSION}-static`;
 const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
 
