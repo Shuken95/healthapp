@@ -4,7 +4,7 @@
 //  manual controlada por el usuario (banner)
 // ══════════════════════════════════════════════════════════════
 
-const APP_VERSION   = 'healthapp-v24';
+const APP_VERSION   = 'healthapp-v25';
 const CACHE_STATIC  = `${APP_VERSION}-static`;
 const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
 
