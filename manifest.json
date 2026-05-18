@@ -1,6 +1,6 @@
 {
-  "name": "HealthAPP",
-  "short_name": "HealthAPP",
+  "name": "Nura",
+  "short_name": "Nura",
   "description": "Tu asistente de salud inteligente: ejercicio, nutrición y bienestar",
   "start_url": "./",
   "scope": "./",

@@ -1,10 +1,10 @@
 // ══════════════════════════════════════════════════════════════
-//  HealthAPP — Service Worker
+//  Nura — Service Worker
 //  Estrategia: Cache-first para recursos estáticos + actualización
 //  manual controlada por el usuario (banner)
 // ══════════════════════════════════════════════════════════════
 
-const APP_VERSION   = 'healthapp-v31';
+const APP_VERSION   = 'nura-v32';
 const CACHE_STATIC  = `${APP_VERSION}-static`;
 const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
 
