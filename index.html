@@ -1465,6 +1465,12 @@
             <span id="acct-google-label">Conectar con Google</span>
           </button>
           <div style="height:1px;background:var(--border);margin:4px 0"></div>
+          <button class="acct-menu-item" onclick="openAchievements();toggleAccountMenu()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            Mis logros
+            <span id="acct-badge-count" style="margin-left:auto;background:var(--teal-100);color:var(--teal-600);font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px"></span>
+          </button>
+          <div style="height:1px;background:var(--border);margin:4px 0"></div>
           <button class="acct-menu-item danger" onclick="accountSignOut()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Cerrar sesión
@@ -1884,12 +1890,13 @@ function updateAvatarUI(user){
 }
 
 function toggleAccountMenu(e){
-  e.stopPropagation();
+  if(e) e.stopPropagation();
   const menu = document.getElementById('account-menu');
   if(!menu) return;
   const isOpen = menu.classList.contains('open');
   menu.classList.toggle('open', !isOpen);
   if(!isOpen){
+    updateAchievementBadge();
     // Cierra al pulsar fuera
     setTimeout(() => document.addEventListener('click', closeAccountMenu, {once:true}), 0);
   }
@@ -8181,7 +8188,7 @@ function calcAchievements(){
 }
 
 function showAchievementToast(a){
-  showNotifBanner(a.emoji+' '+a.name, 'Logro desbloqueado: '+a.desc, '#FFD600', a.emoji);
+  showNotifBanner(a.icon+' '+a.name, 'Logro desbloqueado: '+a.desc, '#FFD600', a.icon);
   haptic('success');
 }
 
@@ -8210,6 +8217,13 @@ function openAchievements(){
   document.body.style.overflow = 'hidden';
 }
 window.openAchievements = openAchievements;
+
+function updateAchievementBadge(){
+  const count = Object.keys(S._achievements||{}).length;
+  const el = document.getElementById('acct-badge-count');
+  if(el) el.textContent = count + '/' + ACHIEVEMENTS.length;
+}
+window.updateAchievementBadge = updateAchievementBadge;
 
 function closeAchievements(){
   document.getElementById('achievements-modal').classList.remove('open');
