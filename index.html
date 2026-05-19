@@ -1619,6 +1619,14 @@ body.dark .v2-day-btn.active { background: rgba(167,139,250,0.25); border-color:
 
 .v2-day-content-wrap { overflow: hidden; position: relative; padding: 12px 14px; }
 
+/* Animación: comidas/ejercicios saliendo desde el botón del día activo */
+.v2-meal-row, .v2-ex-row {
+  will-change: transform, opacity;
+}
+.v2-meal-row.v2-fly-in, .v2-ex-row.v2-fly-in {
+  transition: transform .58s cubic-bezier(.34,1.42,.5,1), opacity .35s ease-out;
+}
+
 /* Shopping list */
 .v2-shopping-card { padding: 16px; margin-bottom: 12px; }
 .v2-shop-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -2216,6 +2224,7 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
         </button>
       </div>
       <div class="v2-day-strip" id="v2-day-strip"></div>
+      <div class="v2-glass v2-day-content-wrap" id="v2-meals-wrap"><div id="v2-meals-content"></div></div>
       <div class="v2-glass v2-daily-kcal-card">
         <div class="v2-kcal-header"><span class="v2-kcal-title">Calorías del día</span><span class="v2-kcal-total" id="v2-day-kcal">— kcal</span></div>
         <div class="v2-macro-bar">
@@ -2229,7 +2238,6 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
           <div class="v2-macro-leg"><div class="v2-macro-leg-dot" style="background:#60a5fa"></div>Grasas <span id="v2-ml-fat">0g</span></div>
         </div>
       </div>
-      <div class="v2-glass v2-day-content-wrap" id="v2-meals-wrap"><div id="v2-meals-content"></div></div>
       <div class="v2-glass v2-shopping-card" onclick="v2OpenShoppingPopup()">
         <div class="v2-shop-header">
           <span class="v2-shop-title" style="display:flex;align-items:center;gap:8px">
@@ -11599,6 +11607,9 @@ window.generateWeeklyReport = async function(){
     mb('v2-mb-prot', totalP); mb('v2-mb-carbs', totalC); mb('v2-mb-fat', totalF);
     const ml = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val + 'g'; };
     ml('v2-ml-prot', totalP); ml('v2-ml-carbs', totalC); ml('v2-ml-fat', totalF);
+
+    // ── Animación: las comidas vuelan desde el botón del día activo ──
+    v2FlyFromDayButton('v2-day-strip', '.v2-meal-row');
   };
 
   // ─── Shopping list (colapsada → popup) ───
@@ -11711,7 +11722,49 @@ window.generateWeeklyReport = async function(){
     set('v2-stat-entrenos', totalDays);
     set('v2-stat-completados', Math.min(done, totalDays));
     set('v2-stat-adherencia', totalDays ? Math.round(Math.min(done, totalDays)/totalDays*100) + '%' : '0%');
+
+    // ── Animación: ejercicios vuelan desde el botón del día activo ──
+    v2FlyFromDayButton('v2-gym-day-strip', '.v2-ex-row');
   };
+
+  // ─── Animación FLIP: items vuelan desde el botón activo del day-strip ───
+  function v2FlyFromDayButton(stripId, itemsSel){
+    requestAnimationFrame(() => {
+      const strip = document.getElementById(stripId);
+      if(!strip) return;
+      const activeBtn = strip.querySelector('.v2-day-btn.active') || strip.querySelector('.v2-day-btn');
+      if(!activeBtn) return;
+      const items = document.querySelectorAll(itemsSel);
+      if(!items.length) return;
+      const a = activeBtn.getBoundingClientRect();
+      const acx = a.left + a.width / 2;
+      const acy = a.top + a.height / 2;
+      items.forEach((it, i) => {
+        const r = it.getBoundingClientRect();
+        const dx = acx - (r.left + r.width / 2);
+        const dy = acy - (r.top + r.height / 2);
+        // Estado inicial (sin transición) — desde el botón
+        it.style.transition = 'none';
+        it.style.transformOrigin = '50% 50%';
+        it.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(.32)`;
+        it.style.opacity = '0';
+        // Forzar reflow
+        void it.offsetWidth;
+        // Activar transición con delay escalonado
+        it.classList.add('v2-fly-in');
+        it.style.transitionDelay = (i * 55) + 'ms';
+        it.style.transform = 'translate(0,0) scale(1)';
+        it.style.opacity = '1';
+        // Limpiar tras la animación
+        setTimeout(() => {
+          it.classList.remove('v2-fly-in');
+          it.style.transition = ''; it.style.transitionDelay = '';
+          it.style.transform = ''; it.style.opacity = '';
+          it.style.transformOrigin = '';
+        }, 700 + i * 55);
+      });
+    });
+  }
 
   // ─── Chat coach ───
   window.v2RenderChat = function(){
