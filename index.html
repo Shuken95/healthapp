@@ -2050,6 +2050,32 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
 .login-divider-line { background: var(--v2-glass-border) !important; }
 .login-footer { color: var(--v2-muted) !important; font-family: 'Nunito', sans-serif !important; }
 </style>
+<script id="v2-early-theme">
+// Establece modo oscuro por defecto antes de que Nura cargue su estado.
+// - Si nunca hubo estado guardado, escribimos {dark:true} para que defaultState() lo herede.
+// - Si ya existía estado pero sin `dark` definido, también lo añadimos.
+(function(){
+  try {
+    const KEY = 'healthapp_v1';
+    const raw = localStorage.getItem(KEY);
+    let s;
+    if(!raw){
+      s = { dark: true };
+      localStorage.setItem(KEY, JSON.stringify(s));
+    } else {
+      s = JSON.parse(raw);
+      if(s && typeof s.dark !== 'boolean'){
+        s.dark = true;
+        localStorage.setItem(KEY, JSON.stringify(s));
+      }
+    }
+    if(s && s.dark){
+      document.documentElement.classList.add('dark');
+      document.addEventListener('DOMContentLoaded', () => document.body.classList.add('dark'));
+    }
+  } catch(_){}
+})();
+</script>
 </head>
 <body>
 <div id="app">
@@ -11392,45 +11418,57 @@ window.generateWeeklyReport = async function(){
   const DIAS_LONG  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   const DIAS_SHORT = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
-  // ─── Helpers que reusan los de Nura ───
+  // ─── Acceso a S (variable de Nura declarada con `let` → no está en window) ───
+  const _getS = new Function("try{return S}catch(_){return null}");
+  function _S(){ return _getS() || null; }
+
+  // ─── Helpers que reusan los de Nura cuando existen ───
   function _today(){
     if(typeof today==='function') return today();
     const d=new Date(); return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   }
   function _dateStr(d){ return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-'); }
   function _sumLogs(type, date){
-    if(!window.S || !S.logs) return 0;
-    return S.logs.filter(l => l.fecha===date && l.tipo===type)
+    if(typeof todayLogs === 'function' && date === _today()){
+      try { return todayLogs(type).reduce((a,l)=>a+(parseFloat(l.valor)||0),0); } catch(_){}
+    }
+    const s = _S(); if(!s || !s.logs) return 0;
+    return s.logs.filter(l => l.fecha===date && l.tipo===type)
                  .reduce((a,l)=>a+(parseFloat(l.valor)||0),0);
   }
   function _lastLog(type, date){
-    if(!window.S || !S.logs) return null;
-    const arr = S.logs.filter(l => l.fecha===date && l.tipo===type);
+    const s = _S(); if(!s || !s.logs) return null;
+    const arr = s.logs.filter(l => l.fecha===date && l.tipo===type);
     return arr.length ? arr[arr.length-1] : null;
   }
   function _todayMeals(){
-    if(!window.S || !S.meals) return [];
+    if(typeof todayMeals === 'function'){ try{ return todayMeals(); }catch(_){} }
+    const s = _S(); if(!s || !s.meals) return [];
     const d = _today();
-    return S.meals.filter(m => m.fecha===d);
+    return s.meals.filter(m => m.fecha===d);
   }
   function _latestWeight(){
-    if(!window.S || !S.logs) return null;
-    const arr = S.logs.filter(l => l.tipo==='peso').sort((a,b)=>a.fecha.localeCompare(b.fecha));
+    const s = _S(); if(!s || !s.logs) return null;
+    const arr = s.logs.filter(l => l.tipo==='peso').sort((a,b)=>a.fecha.localeCompare(b.fecha));
     return arr.length ? parseFloat(arr[arr.length-1].valor) : null;
   }
-  function _goal(k){ return (window.S && S.goals && S.goals[k]) || ({pasos:10000,kcal:2000,agua:2500,sueno:8,peso:75}[k]); }
+  function _goal(k){ const s = _S(); return (s && s.goals && s.goals[k]) || ({pasos:10000,kcal:2000,agua:2500,sueno:8,peso:75}[k]); }
 
   // ─── Render widgets de inicio desde S ───
   window.v2RenderInicio = function(){
-    if(!window.S) return;
+    const s = _S();
+    if(!s) return;
     const d = _today();
     const pasos    = _sumLogs('pasos', d);
     const aguaMl   = _sumLogs('agua',  d);
     const aguaGoalMl = _goal('agua');
     const aguaVasos    = Math.round(aguaMl / 250);
     const aguaVasosGoal = Math.max(1, Math.round(aguaGoalMl / 250));
-    const sueno    = parseFloat(_lastLog('sueno', d)?.valor || 0);
-    const kcalIn   = _todayMeals().reduce((a,m)=>a+(parseFloat(m.kcal)||0), 0);
+    const sueno    = _sumLogs('sueno', d) || parseFloat(_lastLog('sueno', d)?.valor || 0);
+    // Para "Calorías": preferimos las quemadas de Health Connect; si no, las ingeridas de comidas
+    const kcalBurned = _sumLogs('kcalQuemadas', d);
+    const kcalIngested = _todayMeals().reduce((a,m)=>a+(parseFloat(m.kcal)||0), 0);
+    const kcalIn = kcalBurned || kcalIngested;
     const peso     = _latestWeight();
     const pesoObj  = _goal('peso');
 
@@ -11443,7 +11481,7 @@ window.generateWeeklyReport = async function(){
     const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
     set('v2-w-pasos', pasos.toLocaleString('es-ES'));
     set('v2-w-cals',  kcalIn.toLocaleString('es-ES'));
-    set('v2-w-sueno', sueno > 0 ? sueno + 'h' : '—');
+    set('v2-w-sueno', sueno > 0 ? (sueno.toFixed ? sueno.toFixed(1).replace(/\.0$/,'') : sueno) + 'h' : '—');
     set('v2-w-agua',  aguaVasos);
     set('v2-w-peso',  peso ? peso.toFixed(1) + ' kg' : '—');
     set('v2-w-peso-obj', peso ? '· Obj: ' + pesoObj + ' kg' : 'Obj: ' + pesoObj + ' kg');
@@ -11468,7 +11506,7 @@ window.generateWeeklyReport = async function(){
     });
 
     // Streak from Nura state
-    const streak = (window.S && (S.streak || S.profile?.racha)) || 0;
+    const streak = (s.streak || s.profile?.racha) || 0;
     set('v2-streak-val', streak + ' días');
     const now = new Date();
     set('v2-today-label', DIAS_LONG[now.getDay()].toLowerCase() + ', ' + now.getDate() + ' ' + now.toLocaleString('es-ES',{month:'short'}));
@@ -11499,7 +11537,7 @@ window.generateWeeklyReport = async function(){
       v2SelectedDietIdx = days.findIndex(d => d.isToday);
       if(v2SelectedDietIdx < 0) v2SelectedDietIdx = 0;
     }
-    const plan = window.S && S.weeklyMealPlan && S.weeklyMealPlan.dias;
+    const plan = _S()?.weeklyMealPlan && S.weeklyMealPlan.dias;
     strip.innerHTML = days.map((d, i) => {
       const hasMeal = plan && plan[i] && (plan[i].comidas?.length || plan[i].meals?.length);
       return `<button class="v2-day-btn ${i===v2SelectedDietIdx?'active':''} ${hasMeal?'has-meal':''}" onclick="v2SelectDietDay(${i})">
@@ -11518,7 +11556,7 @@ window.generateWeeklyReport = async function(){
   window.v2RenderMeals = function(){
     const content = document.getElementById('v2-meals-content');
     if(!content) return;
-    const plan = window.S && S.weeklyMealPlan && S.weeklyMealPlan.dias;
+    const plan = _S()?.weeklyMealPlan && S.weeklyMealPlan.dias;
     if(!plan || v2SelectedDietIdx === null || !plan[v2SelectedDietIdx]){
       content.innerHTML = `<div style="padding:20px;text-align:center;color:var(--v2-muted);font-size:13px">Sin menú para este día</div>`;
       const setKcal = document.getElementById('v2-day-kcal'); if(setKcal) setKcal.textContent = '— kcal';
@@ -11566,8 +11604,8 @@ window.generateWeeklyReport = async function(){
   // ─── Shopping list (colapsada → popup) ───
   window.v2RenderShopping = function(){
     const summary = document.getElementById('v2-shop-summary');
-    const list = (window.S && S.shoppingList) || [];
-    const checked = (window.S && S.shoppingListChecked) || {};
+    const list = (_S()?.shoppingList) || [];
+    const checked = (_S()?.shoppingListChecked) || {};
     if(summary){
       if(!list.length){ summary.textContent = 'La lista se genera al crear el plan semanal'; }
       else {
@@ -11583,8 +11621,8 @@ window.generateWeeklyReport = async function(){
   function v2RenderShoppingPopup(){
     const el = document.getElementById('v2-shop-popup-list');
     if(!el) return;
-    const list = (window.S && S.shoppingList) || [];
-    const checked = (window.S && S.shoppingListChecked) || {};
+    const list = (_S()?.shoppingList) || [];
+    const checked = (_S()?.shoppingListChecked) || {};
     if(!list.length){
       el.innerHTML = `<div style="padding:24px;text-align:center;color:var(--v2-muted);font-size:13px">La lista se genera automáticamente al crear el plan semanal de comidas.</div>`;
       return;
@@ -11612,7 +11650,7 @@ window.generateWeeklyReport = async function(){
     if(popup) popup.classList.remove('open');
   };
   window.v2ToggleShop = function(key){
-    if(!window.S) return;
+    if(!_S()) return;
     if(!S.shoppingListChecked) S.shoppingListChecked = {};
     S.shoppingListChecked[key] = !S.shoppingListChecked[key];
     if(typeof saveState==='function') saveState();
@@ -11630,7 +11668,7 @@ window.generateWeeklyReport = async function(){
       v2SelectedGymIdx = days.findIndex(d => d.isToday);
       if(v2SelectedGymIdx < 0) v2SelectedGymIdx = 0;
     }
-    const plan = window.S && S.rutinaPlan && S.rutinaPlan.dias;
+    const plan = _S()?.rutinaPlan && S.rutinaPlan.dias;
     strip.innerHTML = days.map((d, i) => {
       const has = plan && plan[i] && (plan[i].ejercicios?.length || plan[i].exercises?.length);
       return `<button class="v2-day-btn ${i===v2SelectedGymIdx?'active':''} ${has?'has-meal':''}" onclick="v2SelectGymDay(${i})">
@@ -11645,7 +11683,7 @@ window.generateWeeklyReport = async function(){
   window.v2RenderGymContent = function(){
     const content = document.getElementById('v2-gym-content');
     if(!content) return;
-    const plan = window.S && S.rutinaPlan && S.rutinaPlan.dias;
+    const plan = _S()?.rutinaPlan && S.rutinaPlan.dias;
     if(!plan || v2SelectedGymIdx === null || !plan[v2SelectedGymIdx]){
       content.innerHTML = `<div style="padding:20px;text-align:center;color:var(--v2-muted);font-size:13px">Sin rutina para este día</div>`;
       return;
@@ -11668,7 +11706,7 @@ window.generateWeeklyReport = async function(){
     // Stats semanales
     const planAll = plan;
     const totalDays = planAll.filter(d => (d.ejercicios?.length||d.exercises?.length)).length;
-    const done = (window.S && S.rutinaEjerciciosDone) ? Object.keys(S.rutinaEjerciciosDone).length : 0;
+    const done = (_S()?.rutinaEjerciciosDone) ? Object.keys(S.rutinaEjerciciosDone).length : 0;
     const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
     set('v2-stat-entrenos', totalDays);
     set('v2-stat-completados', Math.min(done, totalDays));
@@ -11679,7 +11717,7 @@ window.generateWeeklyReport = async function(){
   window.v2RenderChat = function(){
     const el = document.getElementById('v2-chat-messages');
     if(!el) return;
-    const msgs = (window.S && S.chatMessages) || [];
+    const msgs = (_S()?.chatMessages) || [];
     if(!msgs.length){
       el.innerHTML = `<div class="v2-chat-msg"><div class="v2-chat-avatar"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--c-purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="v2-chat-bubble ai">¡Hola! Soy tu coach de salud IA. ¿En qué puedo ayudarte hoy?</div></div>`;
       return;
@@ -11703,7 +11741,7 @@ window.generateWeeklyReport = async function(){
     else if(typeof window.coachAsk === 'function'){ window.coachAsk(txt); }
     else {
       // Fallback: push manual + emular respuesta
-      if(!window.S.chatMessages) S.chatMessages = [];
+      if(!_S().chatMessages) _S().chatMessages = [];
       S.chatMessages.push({ role:'user', text: txt });
       v2RenderChat();
       setTimeout(() => {
@@ -11726,13 +11764,13 @@ window.generateWeeklyReport = async function(){
     else if(typeof window.generateCoachAdvice === 'function'){ window.generateCoachAdvice(); }
     else if(typeof window.getAIAdvice === 'function'){ window.getAIAdvice(); }
     setTimeout(() => {
-      if(window.S && S.aiAdvice && el) el.innerHTML = S.aiAdvice.replace(/\n/g,'<br>');
+      if(_S()?.aiAdvice && el) el.innerHTML = S.aiAdvice.replace(/\n/g,'<br>');
     }, 2500);
   };
 
   window.v2SaveContext = function(){
     const el = document.getElementById('v2-user-context');
-    if(!el || !window.S) return;
+    if(!el || !_S()) return;
     S.userContext = el.value;
     if(typeof saveState==='function') saveState();
     if(typeof toast==='function') toast('Contexto guardado ✓');
@@ -11756,7 +11794,7 @@ window.generateWeeklyReport = async function(){
 
   // ─── Theme toggle ───
   window.v2ToggleTheme = function(){
-    if(!window.S) return;
+    if(!_S()) return;
     S.dark = !S.dark;
     document.body.classList.toggle('dark', !!S.dark);
     document.documentElement.classList.toggle('dark', !!S.dark);
@@ -11765,10 +11803,19 @@ window.generateWeeklyReport = async function(){
     if(typeof applyTheme==='function') applyTheme();
   };
   function v2ApplyThemeFromState(){
-    if(window.S && S.dark){
+    const s = _S();
+    // Si el usuario nunca eligió tema (s.dark === undefined), forzamos oscuro por defecto
+    if(s && s.dark === undefined){
+      s.dark = true;
+      if(typeof saveState==='function') try{ saveState(); }catch(_){}
+    }
+    if(s && s.dark){
       document.body.classList.add('dark');
       document.documentElement.classList.add('dark');
       document.getElementById('v2-theme-toggle')?.classList.add('on');
+    } else {
+      document.body.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
   }
 
@@ -11831,11 +11878,11 @@ window.generateWeeklyReport = async function(){
     try { v2RenderChat(); } catch(e){}
     try {
       const ctx = document.getElementById('v2-user-context');
-      if(ctx && window.S && S.userContext !== undefined) ctx.value = S.userContext || '';
+      if(ctx && _S()?.userContext !== undefined) ctx.value = S.userContext || '';
       const advEl = document.getElementById('v2-ai-advice-text');
-      if(advEl && window.S && S.aiAdvice){ advEl.innerHTML = (S.aiAdvice+'').replace(/\n/g,'<br>'); }
+      if(advEl && _S()?.aiAdvice){ advEl.innerHTML = (S.aiAdvice+'').replace(/\n/g,'<br>'); }
       const wkEl = document.getElementById('v2-weekly-report-body');
-      if(wkEl && window.S && S.weeklyReport && S.weeklyReport.texto){ wkEl.innerHTML = (S.weeklyReport.texto+'').replace(/\n/g,'<br>'); }
+      if(wkEl && _S()?.weeklyReport && S.weeklyReport.texto){ wkEl.innerHTML = (S.weeklyReport.texto+'').replace(/\n/g,'<br>'); }
     } catch(e){}
   };
 
