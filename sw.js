@@ -4,7 +4,7 @@
 //  manual controlada por el usuario (banner)
 // ══════════════════════════════════════════════════════════════
 
-const APP_VERSION   = 'nura-v37';
+const APP_VERSION   = 'nura-v38';
 const CACHE_STATIC  = `${APP_VERSION}-static`;
 const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
 
@@ -12,10 +12,10 @@ const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-192.png',
-  './icons/icon-maskable-512.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-192.png',
+  './icon-maskable-512.png',
 ];
 
 // ── INSTALL ──────────────────────────────────────────────────
@@ -80,7 +80,7 @@ self.addEventListener('fetch', event => {
   }
 
   if (
-    url.pathname.startsWith('/icons/') ||
+    url.pathname.endsWith('.png') ||
     url.pathname === '/manifest.json'
   ) {
     event.respondWith(cacheFirst(request, CACHE_STATIC));
