@@ -2662,62 +2662,59 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
         <div style="font-size:13px;color:rgba(255,255,255,.78);margin-top:6px;line-height:1.5">Tu asistente personal de salud y bienestar</div>
       </div>
 
-      <!-- Secciones explicativas -->
-      <div style="padding:18px 18px 8px;display:flex;flex-direction:column;gap:10px">
+      <!-- Secciones explicativas compactas -->
+      <div style="padding:16px 18px 8px;display:flex;flex-direction:column;gap:8px">
 
-        <!-- Inicio -->
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(0,122,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <!-- Fila 1: Inicio + Tests -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px 13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+              <div style="width:28px;height:28px;border-radius:9px;background:rgba(0,122,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--text)">Inicio</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">Toca los widgets para registrar pasos, calorías, sueño e hidratación.</div>
           </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">Panel de inicio</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">Aquí verás todos tus datos del día: pasos, calorías, sueño, hidratación y más. <strong style="color:var(--text)">Toca cada widget</strong> para ver el detalle y registrar datos.</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px 13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+              <div style="width:28px;height:28px;border-radius:9px;background:rgba(255,149,0,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--text)">Tests ☰</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">Completa tu perfil de salud, dieta y entreno para mejores consejos.</div>
           </div>
         </div>
 
-        <!-- Tests -->
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(255,149,0,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <!-- Fila 2: Coach + Rutina -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px 13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+              <div style="width:28px;height:28px;border-radius:9px;background:rgba(175,82,222,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#AF52DE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--text)">Coach IA</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">Consejos personalizados y análisis semanal de tu salud.</div>
           </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">Tests de perfil <span style="font-size:10px;font-weight:700;color:#FF9500;background:rgba(255,149,0,.12);border-radius:6px;padding:2px 7px;margin-left:4px">Importante</span></div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">Pulsa el icono <strong style="color:var(--text)">☰</strong> (arriba a la derecha) para completar los tests de <strong style="color:var(--text)">salud, dieta y entrenamiento</strong>. Cuanto más completos estén, mejores serán los consejos de la IA.</div>
-          </div>
-        </div>
-
-        <!-- Coach IA -->
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(175,82,222,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#AF52DE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">Coach IA</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">Toca el widget <strong style="color:var(--text)">Coach</strong> en el inicio para obtener consejos personalizados, hacer preguntas sobre salud, nutrición o entrenamiento, y ver tu análisis semanal.</div>
-          </div>
-        </div>
-
-        <!-- Rutina -->
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(255,59,48,.10);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">Rutina de entrenamiento</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">Toca el widget <strong style="color:var(--text)">Rutina</strong> para que la IA genere un plan de entrenamiento personalizado según tu perfil y objetivos.</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:12px 13px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+              <div style="width:28px;height:28px;border-radius:9px;background:rgba(255,59,48,.10);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+              </div>
+              <div style="font-size:12px;font-weight:800;color:var(--text)">Rutina</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">Plan de entrenamiento generado por IA según tu perfil.</div>
           </div>
         </div>
 
-        <!-- API Key -->
-        <div style="background:rgba(255,149,0,.06);border:1.5px solid rgba(255,149,0,.25);border-radius:16px;padding:13px 16px;display:flex;align-items:flex-start;gap:12px">
-          <div style="width:36px;height:36px;border-radius:11px;background:rgba(255,149,0,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <!-- API Key — fila completa por ser accionable -->
+        <div style="background:rgba(255,149,0,.06);border:1.5px solid rgba(255,149,0,.25);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:11px">
+          <div style="width:28px;height:28px;border-radius:9px;background:rgba(255,149,0,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF9500" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px">Configura tu API Key</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">Para usar las funciones de IA, ve a <strong style="color:var(--text)">Ajustes ⚙️</strong> (arriba a la derecha) y añade tu API Key de Anthropic. La obtienes gratis en <strong style="color:#FF9500">console.anthropic.com</strong>.</div>
-          </div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.5">Añade tu <strong style="color:var(--text)">API Key de Anthropic</strong> en Ajustes ⚙️ para activar la IA. Obtenla en <strong style="color:#FF9500">console.anthropic.com</strong></div>
         </div>
 
       </div>
@@ -3378,7 +3375,7 @@ function haptic(type='medium'){
 // ═══════════════════════════════════════════════════
 function toast(msg){
   const el=document.getElementById('toast');
-  el.textContent=msg; el.classList.add('show');
+  el.innerHTML=msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2800);
 }
 
@@ -4280,6 +4277,19 @@ window.selectRutinaDay = function(day){
   renderRutinaModalBody();
 };
 
+window.openRutinaModalSwap = function(day){
+  // Pre-select the day and open modal in swap mode
+  window._rutinaModalDay = day;
+  openRutinaModal();
+  // Trigger swap after modal is open
+  requestAnimationFrame(() => {
+    window._rutinaSwapMode = true;
+    window._rutinaSwapFrom = day;
+    renderRutinaModalDays();
+    toast('Selecciona el día por el que quieres intercambiar');
+  });
+};
+
 window.startRutinaSwap = function(fromDay){
   window._rutinaSwapMode = true;
   window._rutinaSwapFrom = fromDay;
@@ -4671,9 +4681,14 @@ function buildDietPlanCard() {
           <div style="font-size:9px;text-transform:uppercase;letter-spacing:.7px;font-weight:700;color:var(--muted);margin-bottom:2px">${dias[i]||'Día '+(i+1)}</div>
           <div style="font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.nombre}</div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--teal-600)">${r.kcal||'—'}</div>
-          <div style="font-size:9px;color:var(--muted);font-weight:600">kcal</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <div style="text-align:right">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:var(--teal-600)">${r.kcal||'—'}</div>
+            <div style="font-size:9px;color:var(--muted);font-weight:600">kcal</div>
+          </div>
+          <button onclick="rechazarRecetaPlan(${i},'${dias[i]||'Día '+(i+1)}')" style="width:28px;height:28px;border-radius:8px;background:var(--surface2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0" title="Cambiar receta">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </button>
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -5520,11 +5535,16 @@ function buildRutinaPlanSection(){
         </div>
         ${!isDescanso && dia.ejercicios?.length ? `
         <div style="padding:12px 16px 4px;display:flex;flex-direction:column;gap:8px">
-          ${dia.ejercicios.map((ej, ei) => `
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:11px;border:1px solid var(--border)">
-            <div style="min-width:24px;height:24px;border-radius:7px;background:${color}1A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:${color};flex-shrink:0;margin-top:1px">${ei+1}</div>
+          ${dia.ejercicios.map((ej, ei) => {
+            const ejKey = 'plan_' + (dia.dia||('dia'+(i+1))) + '_' + ei;
+            const done = !!(S.ejerciciosDone && S.ejerciciosDone[ejKey]);
+            return `
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:${done?'var(--primary-bg)':'var(--surface2)'};border-radius:11px;border:1px solid ${done?'var(--green-100)':'var(--border)'};transition:all .2s">
+            <button onclick="toggleEjercicioDone('${ejKey}')" style="width:24px;height:24px;border-radius:8px;border:2px solid ${done?'var(--ios-green)':'var(--border2)'};background:${done?'var(--ios-green)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;margin-top:2px;-webkit-tap-highlight-color:transparent;transition:all .2s;padding:0">
+              ${done?`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+            </button>
             <div style="flex:1;min-width:0">
-              <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px">${ej.nombre||''}</div>
+              <div style="font-size:13px;font-weight:700;color:${done?'var(--green-700)':'var(--text)'};margin-bottom:3px;${done?'text-decoration:line-through;opacity:.7':''}">${ej.nombre||''}</div>
               <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:5px">
                 ${ej.series?`<span style="background:${color}15;border:1px solid ${color}30;color:${color};border-radius:100px;padding:2px 8px;font-size:10px;font-weight:700">${ej.series} series</span>`:''}
                 ${ej.reps?`<span style="background:var(--primary-bg);border:1px solid var(--green-100);color:var(--green-700);border-radius:100px;padding:2px 8px;font-size:10px;font-weight:700">${ej.reps}</span>`:''}
@@ -5532,11 +5552,16 @@ function buildRutinaPlanSection(){
               </div>
               ${ej.nota?`<div style="font-size:11px;color:var(--muted);line-height:1.5">${ej.nota}</div>`:''}
             </div>
-          </div>`).join('')}
+          </div>`;
+          }).join('')}
         </div>
         <div style="padding:8px 16px 14px">
           ${dia.calentamiento?`<div style="font-size:11px;color:var(--muted);margin-bottom:4px"><span style="font-weight:700;color:var(--orange)">Calentamiento:</span> ${dia.calentamiento}</div>`:''}
-          ${dia.vuelta_calma?`<div style="font-size:11px;color:var(--muted)"><span style="font-weight:700;color:var(--blue)"> Vuelta a la calma:</span> ${dia.vuelta_calma}</div>`:''}
+          ${dia.vuelta_calma?`<div style="font-size:11px;color:var(--muted);margin-bottom:8px"><span style="font-weight:700;color:var(--blue)"> Vuelta a la calma:</span> ${dia.vuelta_calma}</div>`:''}
+          <button onclick="openRutinaModalSwap('${dia.dia||('Día '+(i+1))}')" style="display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;width:100%;justify-content:center">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            Intercambiar con otro día
+          </button>
         </div>
         ` : isDescanso ? `<div style="padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.6">${dia.nota||'Día de recuperación activa. Puedes caminar, estirar o hacer movilidad.'}</div>` : ''}
       </div>`;
@@ -5593,6 +5618,7 @@ window.generateRutinaPlan = async () => {
   if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const rp = S.rutinaProfile || {};
   haptic('medium');
+  toast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Generando tu rutina personalizada con IA…`);
   S.rutinaPlanLoading = true;
   S.rutinaPlanError = '';
   saveState(); render();
@@ -6209,6 +6235,7 @@ window.generateDietPlan = async () => {
   if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes primero'); openSettingsModal(); return; }
   const dp = S.dietProfile || {};
   haptic('medium');
+  toast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><path d="M3 2h18"/><path d="M3 2v7a6 6 0 0 0 6 6h6a6 6 0 0 0 6-6V2"/><path d="M3 13c0 3.314 2.686 6 6 6h6c3.314 0 6-2.686 6-6"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>Generando tu plan de nutrición con IA…`);
   S.dietPlanLoading = true;
   S.dietPlanError = '';
   saveState(); render();
@@ -8159,6 +8186,46 @@ Propón UNA receta alternativa diferente y mejor adaptada al motivo del rechazo.
     haptic('success');
     // Re-sincronizar para actualizar nutrición con la nueva receta
     syncTodayMenuToMeals(true);
+  } catch(e) {
+    toast('No se pudo cambiar: ' + (e.message||'error'));
+  }
+};
+
+// Cambiar receta del plan semanal (dietPlan.recetas[])
+window.rechazarRecetaPlan = async (idx, diaLabel) => {
+  if(!getActiveAIKey()){ toast('Configura tu API Key en Ajustes'); return; }
+  const reason = await showRejectionSheet(diaLabel, diaLabel);
+  if(!reason) return;
+  haptic('medium');
+  toast('Buscando alternativa…');
+
+  const recetas = S.dietPlan?.recetas;
+  if(!recetas || !recetas[idx]) return;
+  const recetaActual = recetas[idx].nombre || JSON.stringify(recetas[idx]);
+  const dp = S.dietProfile || {};
+  const hp = S.profile?.answers || {};
+
+  const prompt = `Soy nutricionista. El usuario rechaza esta receta del plan semanal para el ${diaLabel}: "${recetaActual}".
+Motivo: "${reason}"
+Perfil: ${[dp.objetivo,dp.restricciones,hp.dieta,S.userContext].filter(Boolean).join(', ') || 'equilibrado'}
+
+Propón UNA receta alternativa diferente y mejor adaptada. Responde SOLO con JSON:
+{ "nombre": "...", "kcal": 500, "proteinas": 30, "carbos": 50, "grasas": 15, "tiempo": 20 }`;
+
+  try {
+    const res = await aiFetch({ model:'claude-sonnet-4-5', max_tokens:300, messages:[{role:'user',content:prompt}] });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    let text = (data.content||[]).map(c=>c.text||'').join('').trim();
+    text = text.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+    const s=text.indexOf('{'), e2=text.lastIndexOf('}');
+    if(s===-1||e2===-1) throw new Error('Sin JSON');
+    const result = JSON.parse(text.slice(s,e2+1));
+    if(!result.nombre) throw new Error('Sin receta');
+    S.dietPlan.recetas[idx] = { ...S.dietPlan.recetas[idx], ...result };
+    saveState(); render();
+    toast('¡Receta cambiada! ✓');
+    haptic('success');
   } catch(e) {
     toast('No se pudo cambiar: ' + (e.message||'error'));
   }
@@ -12195,14 +12262,46 @@ window.generateWeeklyReport = async function(){
   }
 
   // ─── INIT ───
+  // ─── SWIPE HORIZONTAL → CAMBIAR DÍA ───
+  function v2InitDaySwipe() {
+    var configs = [
+      { sectionId:'v2-sec-diet',    select:function(i){ window.v2SelectDietDay(i); }, stripId:'v2-day-strip' },
+      { sectionId:'v2-sec-fitness', select:function(i){ window.v2SelectGymDay(i);  }, stripId:'v2-gym-day-strip' },
+    ];
+    configs.forEach(function(cfg) {
+      var section = document.getElementById(cfg.sectionId);
+      if (!section) return;
+      var inner = section.querySelector('.v2-section-inner');
+      if (!inner) return;
+      var sx = 0, sy = 0;
+      inner.addEventListener('touchstart', function(e) {
+        if (e.touches.length !== 1) return;
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+      }, { passive: true });
+      inner.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - sx;
+        var dy = e.changedTouches[0].clientY - sy;
+        if (Math.abs(dx) < 44) return;
+        if (Math.abs(dy) / Math.abs(dx) > 0.65) return;
+        // Leer el índice activo directamente del DOM — las variables internas son privadas al IIFE
+        var btns = Array.from(document.querySelectorAll('#' + cfg.stripId + ' .v2-day-btn'));
+        if (!btns.length) return;
+        var cur = btns.findIndex(function(b){ return b.classList.contains('active'); });
+        if (cur < 0) cur = 0;
+        var next = dx < 0 ? Math.min(cur + 1, btns.length - 1) : Math.max(cur - 1, 0);
+        if (next !== cur) cfg.select(next);
+      }, { passive: true });
+    });
+  }
+
   function v2Init(){
     v2ApplyThemeFromState();
     v2BindScrollAndDots();
     v2HookSaveState();
     v2MoveMenusOutOfHeader();
     v2RenderAll();
-    // Re-render cada 4s por si Nura cambia el estado por dentro sin pasar por saveState
-    setInterval(() => { try { v2RenderAll(); } catch(e){} }, 4000);
+    v2InitDaySwipe();
   }
 
   // Mueve los menús desplegables (#account-menu, #tests-menu) fuera del .header oculto
