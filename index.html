@@ -11886,7 +11886,12 @@ window.generateWeeklyReport = async function(){
           <div class="v2-meal-name">${nombre}</div>
           <div class="v2-meal-macros">Ver receta →</div>
         </div>
-        <div class="v2-meal-kcal">${kcal}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+          <div class="v2-meal-kcal">${kcal}</div>
+          <button onclick="event.stopPropagation();v2SwapMealPlan(${v2SelectedDietIdx},'${tipo}','${(nombre+'').replace(/'/g,"\\'")}');" title="Cambiar receta" style="width:26px;height:26px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--v2-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          </button>
+        </div>
       </div>`;
     }).join('') || `<div style="padding:14px;text-align:center;color:var(--v2-muted);font-size:13px">Día libre</div>`;
     const setKcal = document.getElementById('v2-day-kcal');
@@ -11899,6 +11904,53 @@ window.generateWeeklyReport = async function(){
 
     // ── Animación: las comidas vuelan desde el botón del día activo ──
     v2FlyFromDayButton('v2-day-strip', '.v2-meal-row');
+  };
+
+  // ─── Cambiar una comida del plan semanal con IA ───
+  window.v2SwapMealPlan = async function(dayIdx, mealTipo, currentNombre){
+    if(!_S()?.weeklyMealPlan) { toast('Genera el plan de nutrición primero'); return; }
+    if(typeof getActiveAIKey === 'function' && !getActiveAIKey()) { toast('Configura tu API Key en Ajustes'); return; }
+    haptic('light');
+    toast('Buscando alternativa…');
+    const profile = _S()?.profile || {};
+    const restrict = _S()?.userContext || '';
+    const prompt = `Eres nutricionista. Sugiere UNA alternativa diferente para "${mealTipo}" en lugar de "${currentNombre}".
+Perfil: objetivo=${profile.objetivo||'no definido'}, restricciones="${restrict}".
+Responde SOLO JSON sin backticks ni explicación:
+{"nombre":"Nombre del plato","kcal":350,"prot":25,"carbs":40,"fat":10,"descripcion":"Descripción breve en 1 frase"}`;
+    try {
+      const aiFn = typeof aiFetch === 'function' ? aiFetch : (opts => fetch('https://api.anthropic.com/v1/messages', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(opts)}));
+      const res = await aiFn({model:'claude-sonnet-4-5',max_tokens:200,messages:[{role:'user',content:prompt}]});
+      const data = await res.json();
+      let text = (data.content||[]).map(c=>c.text||'').join('').trim().replace(/```json|```/g,'').trim();
+      const s=text.indexOf('{'), e=text.lastIndexOf('}');
+      const alt = JSON.parse(text.slice(s,e+1));
+      // Apply swap to the plan
+      const planDias = S.weeklyMealPlan.dias;
+      const weekDays = _weekDays();
+      const selName = weekDays[dayIdx]?.name?.toLowerCase() || '';
+      const selNorm = selName.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const dayMap = _buildDayMap(planDias);
+      const day = dayMap[selName] || dayMap[selNorm] || planDias[dayIdx];
+      if(day){
+        const meals = day.comidas || day.meals || [];
+        const mealIdx = meals.findIndex(m => (m.comida||m.tipo||'').toLowerCase() === mealTipo.toLowerCase());
+        if(mealIdx >= 0){
+          meals[mealIdx] = {...meals[mealIdx], nombre:alt.nombre, kcal:alt.kcal, prot:alt.prot, carbs:alt.carbs, fat:alt.fat};
+        } else {
+          // flat format
+          const flatKey = mealTipo.toLowerCase();
+          if(day[flatKey]) day[flatKey] = {...day[flatKey], nombre:alt.nombre, kcal:alt.kcal, prot:alt.prot, carbs:alt.carbs, fat:alt.fat};
+        }
+      }
+      if(typeof saveState === 'function') saveState();
+      v2RenderMeals();
+      haptic('success');
+      toast('"'+alt.nombre+'" listo');
+    } catch(err) {
+      toast('Error al cambiar receta');
+      console.error(err);
+    }
   };
 
   // ─── Shopping list (colapsada → popup) ───
@@ -12023,11 +12075,32 @@ window.generateWeeklyReport = async function(){
       content.innerHTML = `<div style="padding:24px;text-align:center"><div style="display:flex;justify-content:center;margin-bottom:8px"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--c-purple)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><div style="font-size:16px;font-weight:800;color:var(--v2-text)">Día de descanso</div><div style="font-size:13px;color:var(--v2-muted);margin-top:6px">El descanso es parte del entrenamiento.</div></div>`;
       return;
     }
-    content.innerHTML = `<div style="padding:6px 4px 10px;font-size:14px;font-weight:800;color:var(--v2-text);margin-bottom:6px">${name} · ${exs.length} ejercicios</div>` +
+    const ejDone = (_S()?.rutinaEjerciciosDone) || {};
+    const dateKey = (typeof today === 'function') ? today() : new Date().toISOString().slice(0,10);
+    const selDayLabel = weekDays[v2SelectedGymIdx]?.name || ('dia'+(v2SelectedGymIdx+1));
+    const dayKey = dateKey + '_' + selDayLabel;
+    const doneCount = exs.filter((_,ei) => ejDone[dayKey+'_'+ei]).length;
+    const totalEj = exs.length;
+    content.innerHTML =
+      `<div style="display:flex;align-items:center;justify-content:space-between;padding:2px 4px 10px">
+        <div style="font-size:14px;font-weight:800;color:var(--v2-text)">${name} &middot; ${totalEj} ejercicios</div>
+        <div style="font-size:11px;font-weight:700;color:${doneCount===totalEj&&totalEj>0?'#3ecf8e':'var(--v2-muted)'}">${doneCount}/${totalEj}</div>
+      </div>
+      <div style="height:3px;background:rgba(255,255,255,.1);border-radius:99px;margin-bottom:10px;overflow:hidden">
+        <div style="height:100%;width:${totalEj>0?Math.round((doneCount/totalEj)*100):0}%;background:#3ecf8e;border-radius:99px;transition:width .4s ease"></div>
+      </div>` +
       exs.map((ex, i) => {
+        const ejKey = dayKey+'_'+i;
+        const done = ejDone[ejKey] || false;
         const exName = ex.nombre || ex.n || ex.name || 'Ejercicio';
-        const detail = ex.detalle || ex.d || (ex.series && ex.reps ? ex.series+'×'+ex.reps : '') + (ex.peso ? ' · ' + ex.peso + 'kg' : '');
-        return `<div class="v2-ex-row"><div class="v2-ex-num">${i+1}</div><div class="v2-ex-info"><div class="v2-ex-name">${exName}</div><div class="v2-ex-detail">${detail||''}</div></div></div>`;
+        const detail = ex.detalle || ex.d || (ex.series && ex.reps ? ex.series+'x'+ex.reps : '') + (ex.peso ? ' · ' + ex.peso + 'kg' : '');
+        return `<div class="v2-ex-row" style="background:${done?'rgba(62,207,142,.08)':'rgba(100,60,180,0.06)'};border:1.5px solid ${done?'rgba(62,207,142,.3)':'transparent'};transition:all .2s">
+          <button onclick="toggleEjercicioDone('${ejKey}');v2RenderGymContent();" style="width:22px;height:22px;border-radius:7px;border:2px solid ${done?'#3ecf8e':'rgba(180,160,220,.4)'};background:${done?'#3ecf8e':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .2s;padding:0">
+            ${done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
+          </button>
+          <div class="v2-ex-num" style="opacity:${done?.4:1}">${i+1}</div>
+          <div class="v2-ex-info"><div class="v2-ex-name" style="text-decoration:${done?'line-through':'none'};opacity:${done?.5:1};transition:all .2s">${exName}</div><div class="v2-ex-detail">${detail||''}</div></div>
+        </div>`;
       }).join('');
 
     // Stats semanales
