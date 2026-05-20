@@ -1607,7 +1607,7 @@ body.dark .v2-blob { opacity: 0.35; }
 .v2-ring-score { font-size: 26px; font-weight: 900; color: var(--v2-text); line-height: 1; font-family: 'JetBrains Mono', monospace; }
 .v2-ring-label { font-size: 9px; font-weight: 800; color: var(--c-purple); letter-spacing: .8px; text-transform: uppercase; margin-top: 2px; }
 .v2-score-details { flex: 1; min-width: 0; }
-.v2-score-title { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--v2-muted); margin-bottom: 10px; }
+.v2-score-title { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--v2-muted); margin-bottom: 4px; }
 .v2-score-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
 .v2-score-row-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--v2-text2); }
 .v2-score-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
@@ -2198,16 +2198,16 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
               <circle class="v2-ring-fill-2" id="v2-ring-kcal" cx="50" cy="50" r="28" stroke-dasharray="175.93" stroke-dashoffset="175.93"/>
               <circle class="v2-ring-fill-3" id="v2-ring-sueno" cx="50" cy="50" r="18" stroke-dasharray="113.10" stroke-dashoffset="113.10"/>
             </svg>
-            <div class="v2-ring-center">
-              <div class="v2-ring-score" id="v2-score-val">0</div>
-              <div class="v2-ring-label" id="v2-score-label">BAJO</div>
-            </div>
           </div>
           <div class="v2-score-details">
             <div class="v2-score-title">Score de Salud · Hoy</div>
-            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#4AAA80"></span>Pasos</span><span class="v2-score-pct" id="v2-pct-pasos">0%</span></div>
-            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#98D8BC"></span>Kcal</span><span class="v2-score-pct" id="v2-pct-kcal">0%</span></div>
-            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#2E8860"></span>Sueño</span><span class="v2-score-pct" id="v2-pct-sueno">0%</span></div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
+              <div class="v2-ring-score" id="v2-score-val" style="font-size:36px">0</div>
+              <div class="v2-ring-label" id="v2-score-label" style="font-size:10px">BAJO</div>
+            </div>
+            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#34d399"></span>Pasos</span><span class="v2-score-pct" id="v2-pct-pasos">0%</span></div>
+            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#fbbf24"></span>Kcal</span><span class="v2-score-pct" id="v2-pct-kcal">0%</span></div>
+            <div class="v2-score-row"><span class="v2-score-row-label"><span class="v2-score-dot" style="background:#f472b6"></span>Sueño</span><span class="v2-score-pct" id="v2-pct-sueno">0%</span></div>
           </div>
         </div>
         <div class="v2-score-footer">
@@ -3064,6 +3064,8 @@ function toggleAccountMenu(e){
   const menu = document.getElementById('account-menu');
   if(!menu) return;
   const isOpen = menu.classList.contains('open');
+  // Cierra el menú de tests si está abierto
+  if(!isOpen) closeTestsMenu();
   menu.classList.toggle('open', !isOpen);
   if(!isOpen){
     updateAchievementBadge();
@@ -7618,6 +7620,8 @@ window.toggleTestsMenu = (e) => {
   if(isOpen) {
     closeTestsMenu();
   } else {
+    // Cierra el menú de cuenta si está abierto
+    closeAccountMenu();
     menu.style.opacity = '1';
     menu.style.transform = 'translateY(0) scale(1)';
     menu.style.pointerEvents = 'all';
