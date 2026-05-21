@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
-  <meta name="theme-color" content="#0d0820"/>
+  <meta name="theme-color" content="#0E8FA0"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Nura"/>
@@ -352,9 +352,11 @@
     /* ── SECTION ── */
     .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin-bottom:10px;padding-left:2px;margin-top:8px}
 
-    /* ── SETTINGS MODAL ── */
-    #settings-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);display:flex;align-items:center;justify-content:center;padding:16px;pointer-events:none;transition:background .25s,backdrop-filter .25s}
-    #settings-sheet{background:var(--surface);border-radius:24px;width:100%;max-width:480px;max-height:88dvh;display:flex;flex-direction:column;transform:scale(.9) translateY(20px);opacity:0;transition:transform .3s cubic-bezier(.34,1.4,.64,1),opacity .25s ease;box-shadow:0 24px 64px rgba(0,0,0,.35)}
+    /* ── SETTINGS SHEET ── */
+    #settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:300;opacity:0;pointer-events:none;transition:none}
+    #settings-overlay.open{opacity:1;pointer-events:all}
+    #settings-sheet{position:fixed;bottom:0;left:0;right:0;max-width:520px;margin:0 auto;background:var(--surface);border-radius:24px 24px 0 0;border-top:3px solid var(--teal-400,#2CBECE);z-index:301;max-height:88dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:none;padding-bottom:calc(var(--safe-bottom)+8px)}
+    #settings-sheet.open{transform:translateY(0)}
     #settings-sheet-body{overflow-y:auto;flex:1;padding:4px 18px 16px;-webkit-overflow-scrolling:touch}
     #settings-sheet-body::-webkit-scrollbar{width:3px}
     #settings-sheet-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -1173,7 +1175,7 @@
     .chat-bubble.ai { background: var(--ap-fill-q) !important; border: none !important; color: var(--ap-text) !important; }
 
     /* ===== Settings sheet ===== */
-    #settings-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; }
+    #settings-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; border-radius: 18px 18px 0 0 !important; }
     body.dark #settings-sheet { background: var(--ap-surface) !important; }
     .settings-row { border-bottom: .5px solid var(--ap-hairline) !important; padding: 14px 0 !important; }
     .settings-label { font-size: 15px !important; font-weight: 500 !important; letter-spacing: -.24px !important; }
@@ -1670,14 +1672,10 @@ body.dark .v2-day-btn.active { background: rgba(167,139,250,0.25); border-color:
 
 /* Animación: comidas/ejercicios saliendo desde el botón del día activo */
 .v2-meal-row, .v2-ex-row {
-  will-change: opacity, transform;
+  will-change: transform, opacity;
 }
-.v2-meal-row.v2-fade-in, .v2-ex-row.v2-fade-in {
-  animation: v2FadeUp .22s ease both;
-}
-@keyframes v2FadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+.v2-meal-row.v2-fly-in, .v2-ex-row.v2-fly-in {
+  transition: transform .58s cubic-bezier(.34,1.42,.5,1), opacity .35s ease-out;
 }
 
 /* Shopping list */
@@ -1696,8 +1694,6 @@ body.dark .v2-day-btn.active { background: rgba(167,139,250,0.25); border-color:
 .v2-ex-num { width: 22px; height: 22px; border-radius: 7px; background: rgba(239,68,68,.2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: #ef4444; flex-shrink: 0; }
 .v2-ex-info { flex: 1; }
 .v2-ex-name { font-size: 13px; font-weight: 800; color: var(--v2-text); }
-.v2-ex-name-link { display:inline-flex;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;border-bottom:1px dashed rgba(155,109,255,.4);padding-bottom:1px;transition:border-color .15s; }
-.v2-ex-name-link:active { border-color:rgba(155,109,255,.9); }
 .v2-ex-detail { font-size: 10px; color: var(--v2-muted); margin-top: 2px; font-weight: 600; }
 
 /* Coach IA cards */
@@ -1754,7 +1750,7 @@ body.dark .v2-chat-bubble.ai { background: rgba(167,139,250,.18); border-color: 
   color: var(--v2-text) !important;
   box-shadow: 0 -8px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.1) inset !important;
 }
-/* #settings-sheet border-radius handled by base CSS */
+#settings-sheet { border-radius: 28px 28px 0 0 !important; }
 .modal, .modal-sheet { font-family: 'Nunito', sans-serif !important; }
 .modal-title, .modal h2, .modal h3 { color: var(--v2-text) !important; font-family: 'Nunito', sans-serif !important; }
 
@@ -2138,16 +2134,6 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
     }
   } catch(_){}
 })();
-</script>
-<script>
-  (function(){
-    try{
-      var s = JSON.parse(localStorage.getItem('nura_state')||'{}');
-      var dark = s.dark !== undefined ? s.dark : window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var m = document.querySelector('meta[name="theme-color"]');
-      if(m) m.setAttribute('content', dark ? '#0d0820' : '#e8e4f4');
-    }catch(e){}
-  })();
 </script>
 </head>
 <body>
@@ -2752,16 +2738,16 @@ body.dark .login-sub { color: var(--v2-muted) !important; }
   <!-- quiz-selector-sheet eliminado: el botón ? abre el último slide del banner de la pestaña activa -->
 
   <!-- SETTINGS SHEET -->
-  <div id="settings-overlay" onclick="closeSettingsModal()">
-  <div id="settings-sheet" onclick="event.stopPropagation()">
-    <div style="padding:18px 18px 12px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
+  <div id="settings-overlay" onclick="closeSettingsModal()"></div>
+  <div id="settings-sheet">
+    <div style="padding:12px 18px 0">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 14px"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="font-weight:800;font-size:18px;color:var(--text)">Ajustes</div>
-        <button onclick="closeSettingsModal()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-family:inherit"><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg></button>
+        <button onclick="closeSettingsModal()" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;font-family:inherit"><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg></button>
       </div>
     </div>
     <div id="settings-sheet-body"></div>
-  </div>
   </div>
 
   <div id="toast"></div>
@@ -3411,7 +3397,7 @@ function applyDark(){
   }
   // Update theme-color meta for status bar
   var meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute('content', S.dark ? '#0d0820' : '#e8e4f4');
+  if(meta) meta.setAttribute('content', S.dark ? '#000000' : '#F2F2F7');
 }
 function toggleDark(){
   S.dark=!S.dark; applyDark(); saveState(); haptic && haptic('light');
@@ -5768,7 +5754,7 @@ function rAjustes(){
 
     ${S.aiProvider==='groq' ? `
     <!-- GROQ -->
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Groq</strong> · Obtén tu clave gratuita en <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--green-700);font-weight:700;text-decoration:underline">console.groq.com/keys</a>. Modelo: Llama 3.3 70B.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Groq</strong> · Obtén tu clave gratuita en <strong style="color:var(--green-700)">console.groq.com/keys</strong>. Modelo: Llama 3.3 70B.</div>
     <div style="position:relative">
       <input id="api-key-input-groq" type="password" placeholder="gsk_…" value="${S.groqKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="groq-api-key-input"/>
       <button onclick="toggleApiKeyVisibility('groq')" id="api-key-eye-groq" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
@@ -5779,7 +5765,7 @@ function rAjustes(){
     ${S.groqKey?`<div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--green-700);font-weight:600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Clave guardada · ${S.groqKey.slice(0,10)}…</div>`:''}
     ` : `
     <!-- ANTHROPIC -->
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Anthropic</strong> · Obtén tu clave en <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--green-700);font-weight:700;text-decoration:underline">console.anthropic.com</a>. Modelo: Claude Sonnet 4.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Anthropic</strong> · Obtén tu clave en <strong style="color:var(--green-700)">console.anthropic.com</strong>. Modelo: Claude Sonnet 4.</div>
     <div style="position:relative">
       <input id="api-key-input" type="password" placeholder="sk-ant-api03-…" value="${S.anthropicKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="anthropic-api-key-input"/>
       <button onclick="toggleApiKeyVisibility('anthropic')" id="api-key-eye" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
@@ -5904,25 +5890,13 @@ function rAjustes(){
 function openSettingsModal(){
   const body = document.getElementById('settings-sheet-body');
   if(body) body.innerHTML = rAjustes();
-  const overlay = document.getElementById('settings-overlay');
-  const sheet = document.getElementById('settings-sheet');
-  overlay.style.pointerEvents = 'all';
-  overlay.style.background = 'rgba(0,0,0,.48)';
-  overlay.style.backdropFilter = 'blur(12px)';
-  overlay.style.webkitBackdropFilter = 'blur(12px)';
-  sheet.style.transform = 'scale(1) translateY(0)';
-  sheet.style.opacity = '1';
+  document.getElementById('settings-overlay').classList.add('open');
+  document.getElementById('settings-sheet').classList.add('open');
   document.body.style.overflow='hidden';
 }
 function closeSettingsModal(){
-  const overlay = document.getElementById('settings-overlay');
-  const sheet = document.getElementById('settings-sheet');
-  overlay.style.pointerEvents = 'none';
-  overlay.style.background = 'rgba(0,0,0,0)';
-  overlay.style.backdropFilter = 'blur(0px)';
-  overlay.style.webkitBackdropFilter = 'blur(0px)';
-  sheet.style.transform = 'scale(.9) translateY(20px)';
-  sheet.style.opacity = '0';
+  document.getElementById('settings-overlay').classList.remove('open');
+  document.getElementById('settings-sheet').classList.remove('open');
   document.body.style.overflow='';
 }
 
@@ -6945,6 +6919,31 @@ window.openHydrationPanel = function() {
 
 // Animación de ola SVG continua
 let _waveRAF = null;
+function startWaveAnimation() {
+  cancelAnimationFrame(_waveRAF);
+  const wavePath = document.getElementById('water-wave');
+  const fillRect = document.getElementById('water-fill');
+  if(!wavePath || !fillRect) return;
+
+  let t = 0;
+  function frame() {
+    t += 0.032;
+    const yBase = parseFloat(fillRect.getAttribute('y')) || 100;
+    // Ola suave con dos armónicos
+    const w = `M0 ${yBase}
+      Q 14 ${yBase - 5 + Math.sin(t)*4}
+        27 ${yBase + Math.sin(t + 1.2)*3}
+      Q 40 ${yBase - 4 + Math.sin(t + 2.1)*5}
+        54 ${yBase + Math.sin(t + 0.7)*3}
+      Q 67 ${yBase - 5 + Math.sin(t + 1.8)*4}
+        80 ${yBase + Math.sin(t + 0.4)*3}
+      L80 ${yBase + 10} L0 ${yBase + 10} Z`;
+    wavePath.setAttribute('d', w);
+    _waveRAF = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
 window.addWaterAmount = function(ml) {
   S.logs.push({id:uid(), tipo:'agua', valor:ml, fecha:today()});
   saveState();
@@ -7008,6 +7007,7 @@ function animateRingFill() {
   }
 }
 
+function animateBottleFill() { animateRingFill(); }
 
 
 window.toggleApiKeyVisibility=(provider)=>{
@@ -7049,6 +7049,21 @@ window.connectGoogleFit = async (silent=false) => {
 };
 
 // Tras login de Google, conectar Fit automáticamente si aún no lo está
+function maybeAutoConnectFit() {
+  if(S.googleFit?.connected) return;           // ya conectado
+  if(!currentUser?.email) return;              // sin usuario
+  const isGoogle = currentUser?.app_metadata?.provider === 'google'
+                || currentUser?.identities?.some(i => i.provider === 'google');
+  if(!isGoogle) return;                        // no es cuenta Google
+
+  // Guardamos intención para reanudar tras el redirect
+  sessionStorage.setItem('gfit_pending_auto', '1');
+
+  // Toast informativo + redirect automático tras 2.5s
+  toast('Conectando Google Fit automáticamente…');
+  setTimeout(() => connectGoogleFit(true), 2500);
+}
+
 // Parse token from URL hash — solo actuar si hay state en sessionStorage
 // (indica flujo de Google Fit, no de Supabase)
 (function handleOAuthCallback(){
@@ -9693,7 +9708,52 @@ window.showChartTooltip = function(e, idx) {
 // ═══════════════════════════════════════════════════
 // WATER DROP ANIMATIONS
 // ═══════════════════════════════════════════════════
-;
+window.animateWaterDrop = function(idx, evt) {
+  const gAgua = S.goals.agua || 2500;
+  const mlPerDrop = Math.round(gAgua / 8);
+
+  // Refresh all drops in the popup without reopening
+  setTimeout(() => {
+    const agua = todayTotal('agua');
+    const filled = Math.min(8, Math.floor(agua / mlPerDrop));
+    for(let i = 0; i < 8; i++) {
+      const btn = document.getElementById('popup-drop-' + i);
+      if(!btn) continue;
+      const shouldFill = i < filled;
+      const wasFilled = btn.classList.contains('filled');
+      if(shouldFill && !wasFilled) {
+        btn.classList.add('filled', 'bounce', 'filling');
+        // Ripple
+        const rip = document.createElement('div');
+        rip.className = 'drop-ripple';
+        btn.appendChild(rip);
+        setTimeout(() => { rip.remove(); btn.classList.remove('bounce','filling'); }, 600);
+      } else if(!shouldFill && wasFilled) {
+        btn.classList.remove('filled');
+        // Small deflate
+        btn.style.transform = 'scale(.75)';
+        setTimeout(() => { btn.style.transform = ''; }, 220);
+      }
+    }
+
+    // Update label
+    const lbl = document.querySelector('.water-drops-label-live');
+    if(lbl) {
+      const pct = Math.min(100, Math.round((agua / gAgua) * 100));
+      lbl.textContent = `${mlPerDrop} ml por gota · ${filled}/8 vasos · ${Math.round(agua)} ml de ${gAgua} ml`;
+      // Animate the label
+      lbl.style.transition = 'color .3s';
+      lbl.style.color = '#30B0C7';
+      setTimeout(() => { lbl.style.color = ''; }, 800);
+    }
+
+    // Completion burst
+    if(agua >= gAgua) {
+      const btn = document.getElementById('popup-drop-7');
+      if(btn) spawnWaterBurst(btn);
+    }
+  }, 60);
+};
 
 function spawnWaterBurst(anchorEl) {
   const rect = anchorEl.getBoundingClientRect();
@@ -11842,6 +11902,7 @@ window.generateWeeklyReport = async function(){
     const ml = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val + 'g'; };
     ml('v2-ml-prot', totalP); ml('v2-ml-carbs', totalC); ml('v2-ml-fat', totalF);
 
+    // ── Animación: las comidas vuelan desde el botón del día activo ──
     v2FlyFromDayButton('v2-day-strip', '.v2-meal-row');
   };
 
@@ -11989,12 +12050,6 @@ Responde SOLO JSON sin backticks ni explicación:
   };
   window.v2SelectGymDay = function(idx){ v2SelectedGymIdx = idx; v2RenderGymStrip(); };
 
-  // ─── Abre vídeo/tutorial del ejercicio en YouTube ───
-  window.openExerciseVideo = function(exName) {
-    const query = encodeURIComponent(exName + ' ejercicio tutorial técnica correcta');
-    window.open('https://www.youtube.com/results?search_query=' + query, '_blank', 'noopener');
-  };
-
   window.v2RenderGymContent = function(){
     const content = document.getElementById('v2-gym-content');
     if(!content) return;
@@ -12044,65 +12099,57 @@ Responde SOLO JSON sin backticks ni explicación:
             ${done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
           </button>
           <div class="v2-ex-num" style="opacity:${done?.4:1}">${i+1}</div>
-          <div class="v2-ex-info">
-            <div class="v2-ex-name" style="text-decoration:${done?'line-through':'none'};opacity:${done?.5:1};transition:all .2s">
-              <span class="v2-ex-name-link" onclick="event.stopPropagation();openExerciseVideo('${exName.replace(/'/g,\"\\'\")}')">
-                ${exName}<svg style="flex-shrink:0;opacity:.55" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </span>
-            </div>
-            <div class="v2-ex-detail">${detail||''}</div>
-          </div>
+          <div class="v2-ex-info"><div class="v2-ex-name" style="text-decoration:${done?'line-through':'none'};opacity:${done?.5:1};transition:all .2s">${exName}</div><div class="v2-ex-detail">${detail||''}</div></div>
         </div>`;
       }).join('');
 
-    // Stats semanales — un día cuenta como completado solo si TODOS sus ejercicios están hechos
-    // Keys: "YYYY-MM-DD_DayName_exerciseIdx"
-    const ejDoneAll = (_S()?.rutinaEjerciciosDone) || {};
-    const gymMapAll = _buildDayMap(planDias);
-    // Agrupa las claves marcadas por "dayName" (ignora la fecha para ser robusto)
-    const byDay = {}; // dayName (lowercase) -> Set of exercise indices done
-    Object.keys(ejDoneAll).forEach(k => {
-      if(!ejDoneAll[k]) return;
-      const m = k.match(/^\d{4}-\d{2}-\d{2}_(.+)_(\d+)$/);
-      if(!m) return;
-      const [, kDay, kIdx] = m;
-      const kDayNorm = kDay.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      if(!byDay[kDayNorm]) byDay[kDayNorm] = new Set();
-      byDay[kDayNorm].add(Number(kIdx));
-    });
-    let totalDaysCount = 0, completedDaysCount = 0, totalExAll = 0, doneExAll = 0;
-    planDias.forEach(planDay => {
-      const exList = planDay.ejercicios || planDay.exercises || [];
-      if(!exList.length) return;
-      totalDaysCount++;
-      totalExAll += exList.length;
-      const rawName = (planDay.dia || planDay.day || planDay.nombre || planDay.name || '').toLowerCase().trim();
-      const normName = rawName.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const doneSet = byDay[normName] || byDay[rawName] || new Set();
-      const doneCt = exList.filter((_, ei) => doneSet.has(ei)).length;
-      doneExAll += doneCt;
-      if(doneCt === exList.length) completedDaysCount++;
-    });
+    // Stats semanales
+    const totalDays = planDias.filter(d => (d.ejercicios?.length||d.exercises?.length)).length;
+    const done = (_S()?.rutinaEjerciciosDone) ? Object.keys(S.rutinaEjerciciosDone).length : 0;
     const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-    set('v2-stat-entrenos', totalDaysCount);
-    set('v2-stat-completados', completedDaysCount);
-    set('v2-stat-adherencia', totalExAll ? Math.round(doneExAll / totalExAll * 100) + '%' : '0%');
+    set('v2-stat-entrenos', totalDays);
+    set('v2-stat-completados', Math.min(done, totalDays));
+    set('v2-stat-adherencia', totalDays ? Math.round(Math.min(done, totalDays)/totalDays*100) + '%' : '0%');
 
+    // ── Animación: ejercicios vuelan desde el botón del día activo ──
     v2FlyFromDayButton('v2-gym-day-strip', '.v2-ex-row');
   };
 
-  // ─── Animación limpia: fade + slide-up al cambiar de día ───
+  // ─── Animación FLIP: items vuelan desde el botón activo del day-strip ───
   function v2FlyFromDayButton(stripId, itemsSel){
     requestAnimationFrame(() => {
-      document.querySelectorAll(itemsSel).forEach((it, i) => {
-        it.classList.remove('v2-fade-in');
+      const strip = document.getElementById(stripId);
+      if(!strip) return;
+      const activeBtn = strip.querySelector('.v2-day-btn.active') || strip.querySelector('.v2-day-btn');
+      if(!activeBtn) return;
+      const items = document.querySelectorAll(itemsSel);
+      if(!items.length) return;
+      const a = activeBtn.getBoundingClientRect();
+      const acx = a.left + a.width / 2;
+      const acy = a.top + a.height / 2;
+      items.forEach((it, i) => {
+        const r = it.getBoundingClientRect();
+        const dx = acx - (r.left + r.width / 2);
+        const dy = acy - (r.top + r.height / 2);
+        // Estado inicial (sin transición) — desde el botón
+        it.style.transition = 'none';
+        it.style.transformOrigin = '50% 50%';
+        it.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(.32)`;
+        it.style.opacity = '0';
+        // Forzar reflow
         void it.offsetWidth;
-        it.style.animationDelay = (i * 30) + 'ms';
-        it.classList.add('v2-fade-in');
-        it.addEventListener('animationend', () => {
-          it.classList.remove('v2-fade-in');
-          it.style.animationDelay = '';
-        }, { once: true });
+        // Activar transición con delay escalonado
+        it.classList.add('v2-fly-in');
+        it.style.transitionDelay = (i * 55) + 'ms';
+        it.style.transform = 'translate(0,0) scale(1)';
+        it.style.opacity = '1';
+        // Limpiar tras la animación
+        setTimeout(() => {
+          it.classList.remove('v2-fly-in');
+          it.style.transition = ''; it.style.transitionDelay = '';
+          it.style.transform = ''; it.style.opacity = '';
+          it.style.transformOrigin = '';
+        }, 700 + i * 55);
       });
     });
   }
@@ -12912,6 +12959,50 @@ button[onclick*="v2Open"]:active {
   }
 
   // ══════════════════════════════════════════════════════
+  // 8. MEAL / EXERCISE ROWS — improved fly-in from day button
+  // ══════════════════════════════════════════════════════
+  function patchFlyIn() {
+    // Override v2FlyFromDayButton with a more expressive spring version
+    const ORIG = window.v2FlyFromDayButton;
+    window.v2FlyFromDayButton = function(stripId, itemsSel) {
+      requestAnimationFrame(() => {
+        const strip = document.getElementById(stripId);
+        if(!strip) return;
+        const activeBtn = strip.querySelector('.v2-day-btn.active') || strip.querySelector('.v2-day-btn');
+        if(!activeBtn) return;
+        const items = document.querySelectorAll(itemsSel);
+        if(!items.length) return;
+        const a = activeBtn.getBoundingClientRect();
+        const acx = a.left + a.width / 2;
+        const acy = a.top + a.height / 2;
+        items.forEach((it, i) => {
+          const r = it.getBoundingClientRect();
+          const dx = acx - (r.left + r.width / 2);
+          const dy = acy - (r.top + r.height / 2);
+          // Start state
+          it.style.transition = 'none';
+          it.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(.28) rotate(${(i%2===0?-3:3)}deg)`;
+          it.style.opacity = '0';
+          it.style.filter = 'blur(4px)';
+          void it.offsetWidth;
+          // Spring fly to resting position
+          const delay = i * 48;
+          it.style.transition = `transform 520ms cubic-bezier(.34,1.42,.64,1) ${delay}ms, opacity 280ms ease ${delay}ms, filter 280ms ease ${delay}ms`;
+          it.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
+          it.style.opacity = '1';
+          it.style.filter = 'blur(0)';
+          setTimeout(() => {
+            it.style.transition = '';
+            it.style.transform = '';
+            it.style.opacity = '';
+            it.style.filter = '';
+          }, 520 + delay + 60);
+        });
+      });
+    };
+  }
+
+  // ══════════════════════════════════════════════════════
   // INIT — run everything after DOM is ready
   // ══════════════════════════════════════════════════════
   function init() {
@@ -12921,6 +13012,7 @@ button[onclick*="v2Open"]:active {
     initTapFeedback();
     initHeaderSubtitleAnim();
     initSectionDotSpring();
+    patchFlyIn();
   }
 
   if(document.readyState === 'loading') {
