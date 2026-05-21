@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover"/>
-  <meta name="theme-color" content="#0E8FA0"/>
+  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Nura"/>
@@ -353,10 +354,12 @@
     .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin-bottom:10px;padding-left:2px;margin-top:8px}
 
     /* ── SETTINGS SHEET ── */
-    #settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:300;opacity:0;pointer-events:none;transition:none}
-    #settings-overlay.open{opacity:1;pointer-events:all}
-    #settings-sheet{position:fixed;bottom:0;left:0;right:0;max-width:520px;margin:0 auto;background:var(--surface);border-radius:24px 24px 0 0;border-top:3px solid var(--teal-400,#2CBECE);z-index:301;max-height:88dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:none;padding-bottom:calc(var(--safe-bottom)+8px)}
-    #settings-sheet.open{transform:translateY(0)}
+    /* Settings overlay now handled by new centered popup styles below */
+    /* Settings as centered popup — same pattern as tests/quiz modal */
+    #settings-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);pointer-events:none;transition:background .25s,backdrop-filter .25s}
+    #settings-overlay.open{background:rgba(0,0,0,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);pointer-events:all}
+    #settings-sheet{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);z-index:301;background:var(--surface);border-radius:24px;width:calc(100% - 32px);max-width:480px;max-height:88dvh;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.34,1.4,.64,1),opacity .25s ease;box-shadow:0 24px 64px rgba(0,0,0,.35);padding-bottom:calc(var(--safe-bottom)+8px)}
+    #settings-sheet.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
     #settings-sheet-body{overflow-y:auto;flex:1;padding:4px 18px 16px;-webkit-overflow-scrolling:touch}
     #settings-sheet-body::-webkit-scrollbar{width:3px}
     #settings-sheet-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
@@ -1175,7 +1178,7 @@
     .chat-bubble.ai { background: var(--ap-fill-q) !important; border: none !important; color: var(--ap-text) !important; }
 
     /* ===== Settings sheet ===== */
-    #settings-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; border-radius: 18px 18px 0 0 !important; }
+    #settings-sheet { background: var(--ap-bg-elev) !important; border-top: none !important; border-radius: 24px !important; }
     body.dark #settings-sheet { background: var(--ap-surface) !important; }
     .settings-row { border-bottom: .5px solid var(--ap-hairline) !important; padding: 14px 0 !important; }
     .settings-label { font-size: 15px !important; font-weight: 500 !important; letter-spacing: -.24px !important; }
@@ -1750,7 +1753,7 @@ body.dark .v2-chat-bubble.ai { background: rgba(167,139,250,.18); border-color: 
   color: var(--v2-text) !important;
   box-shadow: 0 -8px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.1) inset !important;
 }
-#settings-sheet { border-radius: 28px 28px 0 0 !important; }
+#settings-sheet { border-radius: 24px !important; }
 .modal, .modal-sheet { font-family: 'Nunito', sans-serif !important; }
 .modal-title, .modal h2, .modal h3 { color: var(--v2-text) !important; font-family: 'Nunito', sans-serif !important; }
 
@@ -3396,8 +3399,12 @@ function applyDark(){
     }
   }
   // Update theme-color meta for status bar
-  var meta = document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute('content', S.dark ? '#000000' : '#F2F2F7');
+  var metas = document.querySelectorAll('meta[name="theme-color"]');
+  metas.forEach(function(meta) {
+    var media = meta.getAttribute('media') || '';
+    if(media.includes('dark')) meta.setAttribute('content', S.dark ? '#000000' : '#1C1C1E');
+    else meta.setAttribute('content', S.dark ? '#1C1C1E' : '#F2F2F7');
+  });
 }
 function toggleDark(){
   S.dark=!S.dark; applyDark(); saveState(); haptic && haptic('light');
@@ -5754,7 +5761,7 @@ function rAjustes(){
 
     ${S.aiProvider==='groq' ? `
     <!-- GROQ -->
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Groq</strong> · Obtén tu clave gratuita en <strong style="color:var(--green-700)">console.groq.com/keys</strong>. Modelo: Llama 3.3 70B.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Groq</strong> · Obtén tu clave gratuita en <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--green-700);font-weight:700;text-decoration:underline">console.groq.com/keys</a>. Modelo: Llama 3.3 70B.</div>
     <div style="position:relative">
       <input id="api-key-input-groq" type="password" placeholder="gsk_…" value="${S.groqKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="groq-api-key-input"/>
       <button onclick="toggleApiKeyVisibility('groq')" id="api-key-eye-groq" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
@@ -5765,7 +5772,7 @@ function rAjustes(){
     ${S.groqKey?`<div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:var(--green-700);font-weight:600"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Clave guardada · ${S.groqKey.slice(0,10)}…</div>`:''}
     ` : `
     <!-- ANTHROPIC -->
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Anthropic</strong> · Obtén tu clave en <strong style="color:var(--green-700)">console.anthropic.com</strong>. Modelo: Claude Sonnet 4.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.6"><strong style="color:var(--text)">API Key de Anthropic</strong> · Obtén tu clave en <a href="https://console.anthropic.com" target="_blank" rel="noopener" style="color:var(--green-700);font-weight:700;text-decoration:underline">console.anthropic.com</a>. Modelo: Claude Sonnet 4.</div>
     <div style="position:relative">
       <input id="api-key-input" type="password" placeholder="sk-ant-api03-…" value="${S.anthropicKey||''}" style="padding-right:42px" autocomplete="off" spellcheck="false" data-testid="anthropic-api-key-input"/>
       <button onclick="toggleApiKeyVisibility('anthropic')" id="api-key-eye" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center">
@@ -12099,59 +12106,50 @@ Responde SOLO JSON sin backticks ni explicación:
             ${done?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':''}
           </button>
           <div class="v2-ex-num" style="opacity:${done?.4:1}">${i+1}</div>
-          <div class="v2-ex-info"><div class="v2-ex-name" style="text-decoration:${done?'line-through':'none'};opacity:${done?.5:1};transition:all .2s">${exName}</div><div class="v2-ex-detail">${detail||''}</div></div>
+          <div class="v2-ex-info"><div class="v2-ex-name" style="text-decoration:${done?'line-through':'none'};opacity:${done?.5:1};transition:all .2s;cursor:pointer;display:flex;align-items:center;gap:5px" onclick="window.open('https://www.youtube.com/results?search_query=${encodeURIComponent(exName+' ejercicio tutorial cómo hacer')}','_blank')" title="Ver vídeo tutorial en YouTube">${exName}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${done?'rgba(100,80,180,.4)':'rgba(155,109,255,.7)'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><div class="v2-ex-detail">${detail||''}</div></div>
         </div>`;
       }).join('');
 
-    // Stats semanales
+    // Stats semanales — cuenta días completos correctamente
     const totalDays = planDias.filter(d => (d.ejercicios?.length||d.exercises?.length)).length;
-    const done = (_S()?.rutinaEjerciciosDone) ? Object.keys(S.rutinaEjerciciosDone).length : 0;
+    const ejDoneObj = (_S()?.rutinaEjerciciosDone) || {};
+    // Count fully completed workout days (all exercises checked for that day)
+    let completedDays = 0;
+    const weekDaysAll = _weekDays();
+    planDias.forEach((dia, dayIdx) => {
+      const exsDay = dia.ejercicios || dia.exercises || [];
+      if(!exsDay.length) return; // rest day
+      const dayName = weekDaysAll[dayIdx]?.name || ('dia'+(dayIdx+1));
+      // Try all date keys in ejDoneObj to see if this day was completed
+      // Key format: YYYY-MM-DD_DayName_exIdx
+      const dayDoneKeys = Object.keys(ejDoneObj).filter(k => {
+        const parts = k.split('_');
+        const kDayName = parts.slice(1, -1).join('_');
+        return kDayName === dayName && ejDoneObj[k];
+      });
+      const doneForDay = exsDay.filter((_, ei) => {
+        // Check any date for this day
+        return Object.keys(ejDoneObj).some(k => {
+          const parts = k.split('_');
+          const kIdx = parseInt(parts[parts.length-1]);
+          const kDayName = parts.slice(1, -1).join('_');
+          return kDayName === dayName && kIdx === ei && ejDoneObj[k];
+        });
+      }).length;
+      if(doneForDay === exsDay.length && exsDay.length > 0) completedDays++;
+    });
     const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
     set('v2-stat-entrenos', totalDays);
-    set('v2-stat-completados', Math.min(done, totalDays));
-    set('v2-stat-adherencia', totalDays ? Math.round(Math.min(done, totalDays)/totalDays*100) + '%' : '0%');
+    set('v2-stat-completados', completedDays);
+    set('v2-stat-adherencia', totalDays ? Math.round(completedDays/totalDays*100) + '%' : '0%');
 
     // ── Animación: ejercicios vuelan desde el botón del día activo ──
     v2FlyFromDayButton('v2-gym-day-strip', '.v2-ex-row');
   };
 
-  // ─── Animación FLIP: items vuelan desde el botón activo del day-strip ───
+  // ─── Sin animación al cambiar día — transición limpia ───
   function v2FlyFromDayButton(stripId, itemsSel){
-    requestAnimationFrame(() => {
-      const strip = document.getElementById(stripId);
-      if(!strip) return;
-      const activeBtn = strip.querySelector('.v2-day-btn.active') || strip.querySelector('.v2-day-btn');
-      if(!activeBtn) return;
-      const items = document.querySelectorAll(itemsSel);
-      if(!items.length) return;
-      const a = activeBtn.getBoundingClientRect();
-      const acx = a.left + a.width / 2;
-      const acy = a.top + a.height / 2;
-      items.forEach((it, i) => {
-        const r = it.getBoundingClientRect();
-        const dx = acx - (r.left + r.width / 2);
-        const dy = acy - (r.top + r.height / 2);
-        // Estado inicial (sin transición) — desde el botón
-        it.style.transition = 'none';
-        it.style.transformOrigin = '50% 50%';
-        it.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(.32)`;
-        it.style.opacity = '0';
-        // Forzar reflow
-        void it.offsetWidth;
-        // Activar transición con delay escalonado
-        it.classList.add('v2-fly-in');
-        it.style.transitionDelay = (i * 55) + 'ms';
-        it.style.transform = 'translate(0,0) scale(1)';
-        it.style.opacity = '1';
-        // Limpiar tras la animación
-        setTimeout(() => {
-          it.classList.remove('v2-fly-in');
-          it.style.transition = ''; it.style.transitionDelay = '';
-          it.style.transform = ''; it.style.opacity = '';
-          it.style.transformOrigin = '';
-        }, 700 + i * 55);
-      });
-    });
+    // No-op: items appear cleanly without fly-in animation
   }
 
   // ─── Chat coach ───
@@ -12258,6 +12256,13 @@ Responde SOLO JSON sin backticks ni explicación:
       document.body.classList.remove('dark');
       document.documentElement.classList.remove('dark');
     }
+    // Sync theme-color meta
+    const isDark = s && s.dark;
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+      const media = m.getAttribute('media') || '';
+      if(media.includes('dark')) m.setAttribute('content', isDark ? '#000000' : '#1C1C1E');
+      else m.setAttribute('content', isDark ? '#1C1C1E' : '#F2F2F7');
+    });
   }
 
   // ─── Scroll snap detection ───
@@ -12817,7 +12822,6 @@ button[onclick*="v2Open"]:active {
   function initModalSpring() {
     // Observe classList changes on modal overlays and apply spring
     const modalSelectors = [
-      '#settings-sheet',
       '#recipe-modal-sheet',
       '#achievements-sheet',
       '#trends-sheet',
@@ -12959,46 +12963,12 @@ button[onclick*="v2Open"]:active {
   }
 
   // ══════════════════════════════════════════════════════
-  // 8. MEAL / EXERCISE ROWS — improved fly-in from day button
+  // 8. MEAL / EXERCISE ROWS — clean instant appearance (no fly-in)
   // ══════════════════════════════════════════════════════
   function patchFlyIn() {
-    // Override v2FlyFromDayButton with a more expressive spring version
-    const ORIG = window.v2FlyFromDayButton;
+    // Override v2FlyFromDayButton with a clean fade-in (no fly animation)
     window.v2FlyFromDayButton = function(stripId, itemsSel) {
-      requestAnimationFrame(() => {
-        const strip = document.getElementById(stripId);
-        if(!strip) return;
-        const activeBtn = strip.querySelector('.v2-day-btn.active') || strip.querySelector('.v2-day-btn');
-        if(!activeBtn) return;
-        const items = document.querySelectorAll(itemsSel);
-        if(!items.length) return;
-        const a = activeBtn.getBoundingClientRect();
-        const acx = a.left + a.width / 2;
-        const acy = a.top + a.height / 2;
-        items.forEach((it, i) => {
-          const r = it.getBoundingClientRect();
-          const dx = acx - (r.left + r.width / 2);
-          const dy = acy - (r.top + r.height / 2);
-          // Start state
-          it.style.transition = 'none';
-          it.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(.28) rotate(${(i%2===0?-3:3)}deg)`;
-          it.style.opacity = '0';
-          it.style.filter = 'blur(4px)';
-          void it.offsetWidth;
-          // Spring fly to resting position
-          const delay = i * 48;
-          it.style.transition = `transform 520ms cubic-bezier(.34,1.42,.64,1) ${delay}ms, opacity 280ms ease ${delay}ms, filter 280ms ease ${delay}ms`;
-          it.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
-          it.style.opacity = '1';
-          it.style.filter = 'blur(0)';
-          setTimeout(() => {
-            it.style.transition = '';
-            it.style.transform = '';
-            it.style.opacity = '';
-            it.style.filter = '';
-          }, 520 + delay + 60);
-        });
-      });
+      // No animation — items appear cleanly without flying
     };
   }
 
