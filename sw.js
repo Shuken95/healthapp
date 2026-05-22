@@ -1,139 +1,105 @@
-// ══════════════════════════════════════════════════════════════
-//  Nura — Service Worker
-//  Estrategia: Cache-first para recursos estáticos + actualización
-//  manual controlada por el usuario (banner)
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// NURA — Service Worker v3
+// Offline completo + Push Notifications
+// ═══════════════════════════════════════════════
 
-const APP_VERSION   = 'nura-v1.0.2';
-const CACHE_STATIC  = `${APP_VERSION}-static`;
-const CACHE_DYNAMIC = `${APP_VERSION}-dynamic`;
+const CACHE_NAME = 'nura-v3';
+const OFFLINE_URL = './index.html';
 
-const STATIC_ASSETS = [
-  './',
+// Recursos críticos que se cachean en el install
+const PRECACHE = [
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-192.png',
-  './icon-maskable-512.png',
 ];
 
-// ── INSTALL ──────────────────────────────────────────────────
-// ⚠️  NO llamamos a self.skipWaiting() aquí.
-//     Si lo hiciéramos, el SW nuevo se activaría solo sin que el
-//     usuario lo pida, dejando la página cargada con recursos
-//     del SW anterior → pantalla rota + banner fantasma en cada carga.
+// ── INSTALL ──────────────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_STATIC).then(cache =>
-      Promise.allSettled(
-        STATIC_ASSETS.map(url =>
-          cache.add(url).catch(err =>
-            console.warn('[SW] No se pudo cachear:', url, err)
-          )
-        )
-      )
-    )
-    // Sin self.skipWaiting() → el SW queda en "waiting" hasta que
-    // el usuario pulse "Actualizar" en el banner.
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE))
   );
+  self.skipWaiting();
 });
 
-// ── ACTIVATE ─────────────────────────────────────────────────
+// ── ACTIVATE ─────────────────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_STATIC && key !== CACHE_DYNAMIC)
-          .map(key => {
-            console.log('[SW] Eliminando caché antigua:', key);
-            return caches.delete(key);
-          })
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
+  );
+  self.clients.claim();
+});
+
+// ── FETCH — Estrategia: Network first, Cache fallback ──
+self.addEventListener('fetch', event => {
+  const req = event.request;
+
+  // Solo interceptar GET del mismo origen o CDNs conocidas
+  if (req.method !== 'GET') return;
+
+  // No interceptar llamadas a APIs externas (Google Fit, Supabase, Anthropic, Groq)
+  const url = new URL(req.url);
+  const externalAPIs = [
+    'googleapis.com', 'supabase.co', 'anthropic.com',
+    'groq.com', 'openai.com', 'accounts.google.com'
+  ];
+  if (externalAPIs.some(api => url.hostname.includes(api))) return;
+
+  event.respondWith(
+    fetch(req)
+      .then(response => {
+        // Guardar en caché si es respuesta válida
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
+        }
+        return response;
+      })
+      .catch(() => {
+        // Sin red → devolver desde caché
+        return caches.match(req).then(cached => {
+          if (cached) return cached;
+          // Si es navegación (HTML), devolver la app principal
+          if (req.mode === 'navigate') return caches.match(OFFLINE_URL);
+          return new Response('Sin conexión', { status: 503 });
+        });
+      })
   );
 });
 
-// ── FETCH ─────────────────────────────────────────────────────
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
+// ── PUSH NOTIFICATIONS ────────────────────────
+self.addEventListener('push', event => {
+  let data = { title: 'Nura', body: 'Tienes un recordatorio pendiente.' };
+  try { data = event.data?.json() || data; } catch (_) {}
 
-  if (
-    url.hostname === 'api.anthropic.com' ||
-    url.hostname.includes('supabase.co') ||
-    url.hostname.includes('googleapis.com') ||
-    url.hostname.includes('fonts.gstatic.com') ||
-    request.method !== 'GET'
-  ) {
-    return;
-  }
-
-  if (
-    url.pathname === '/' ||
-    url.pathname === '/index.html' ||
-    url.pathname.endsWith('/')
-  ) {
-    event.respondWith(networkFirst(request, CACHE_STATIC));
-    return;
-  }
-
-  if (
-    url.pathname.endsWith('.png') ||
-    url.pathname === '/manifest.json'
-  ) {
-    event.respondWith(cacheFirst(request, CACHE_STATIC));
-    return;
-  }
-
-  if (
-    url.hostname === 'fonts.googleapis.com' ||
-    url.hostname === 'fonts.gstatic.com'
-  ) {
-    event.respondWith(cacheFirst(request, CACHE_DYNAMIC));
-    return;
-  }
-
-  event.respondWith(networkFirst(request, CACHE_DYNAMIC));
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-192.png',
+      vibrate: [200, 100, 200],
+      tag: 'nura-reminder',
+      renotify: true,
+      data: { url: self.location.origin }
+    })
+  );
 });
 
-// ── ESTRATEGIAS DE CACHÉ ──────────────────────────────────────
+// ── NOTIFICATION CLICK ────────────────────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      // Si la app ya está abierta, enfocarla
+      const existing = list.find(c => c.url.includes(self.location.origin));
+      if (existing) return existing.focus();
+      // Si no, abrirla
+      return clients.openWindow(event.notification.data?.url || self.location.origin);
+    })
+  );
+});
 
-async function cacheFirst(request, cacheName) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(cacheName);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    return new Response('Sin conexión', { status: 503 });
-  }
-}
-
-async function networkFirst(request, cacheName) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(cacheName);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    return cached || new Response('Sin conexión', { status: 503 });
-  }
-}
-
-// ── MENSAJES DESDE LA APP ─────────────────────────────────────
-// El único sitio donde se llama skipWaiting es aquí,
-// cuando el usuario pulsa "Actualizar" en el banner.
+// ── SKIP WAITING (para actualizaciones) ───────
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
