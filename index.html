@@ -2875,7 +2875,7 @@ const SUPA_URL  = 'https://ijrhkdpdkocqrzmqdtnx.supabase.co';
 const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqcmhrZHBka29jcXJ6bXFkdG54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0Mzc2ODYsImV4cCI6MjA5NDAxMzY4Nn0.KKr8KKkwesBr1SHp26NQ9W-yuMKSrVNjzdchW7EQGsU';
 const supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
   auth: {
-    flowType: 'implicit',
+    flowType: 'pkce',
     detectSessionInUrl: true,
     persistSession: true,
     autoRefreshToken: true,
@@ -7055,6 +7055,43 @@ window.connectGoogleFit = async (silent=false) => {
   window.location.href = url;
 };
 
+// Renovar el access_token de Google usando el provider_refresh_token de Supabase
+window._refreshGoogleFitToken = async () => {
+  try {
+    // Pedir a Supabase que renueve la sesión — esto actualiza provider_token internamente
+    const { data, error } = await supa.auth.refreshSession();
+    if(error) throw error;
+    const newToken = data?.session?.provider_token;
+    if(!newToken) throw new Error('no provider_token tras refresh');
+    S.googleFit = {...S.googleFit, connected:true, accessToken: newToken};
+    saveState();
+    return newToken;
+  } catch(e) {
+    // Si Supabase no puede renovar, intentar con el provider_refresh_token directamente
+    try {
+      const { data: { session } } = await supa.auth.getSession();
+      const refreshToken = session?.provider_refresh_token;
+      if(!refreshToken) throw new Error('sin refresh token');
+      const res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+          client_id: GFIT_CLIENT_ID,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token',
+        })
+      });
+      const json = await res.json();
+      if(!json.access_token) throw new Error('Google no devolvió token');
+      S.googleFit = {...S.googleFit, connected:true, accessToken: json.access_token};
+      saveState();
+      return json.access_token;
+    } catch(e2) {
+      throw e2;
+    }
+  }
+};
+
 // Tras login de Google, conectar Fit automáticamente si aún no lo está
 function maybeAutoConnectFit() {
   if(S.googleFit?.connected) return;           // ya conectado
@@ -7139,6 +7176,49 @@ window.syncGoogleFit=async(silent=false)=>{
     });
 
     if(res.status===401){
+      try {
+        const newToken = await window._refreshGoogleFitToken();
+        if(newToken){
+          const res2 = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate',{
+            method:'POST',
+            headers:{'Authorization':`Bearer ${newToken}`,'Content-Type':'application/json'},
+            body:JSON.stringify(body),
+          });
+          if(res2.ok){
+            const data2 = await res2.json();
+            let steps=0,kcalBurned=0,sleepMin=0,hrValues=[],distanceM=0,weightKg=0;
+            let sleepDeepMin=0,sleepRemMin=0,sleepLightMin=0,sleepBedtime=null,sleepWakeTime=null;
+            (data2.bucket||[]).forEach(bucket=>{
+              (bucket.dataset||[]).forEach(ds=>{
+                (ds.point||[]).forEach(pt=>{
+                  const dtn=(ds.dataTypeName||ds.dataSourceId||'');
+                  if(dtn.includes('step_count')) steps+=(pt.value||[]).reduce((a,v)=>a+(v.intVal||0),0);
+                  else if(dtn.includes('calories')) kcalBurned+=(pt.value||[]).reduce((a,v)=>a+(v.fpVal||0),0);
+                  else if(dtn.includes('sleep')){const startNs=parseInt(pt.startTimeNanos),endNs=parseInt(pt.endTimeNanos);const durMs=(endNs-startNs)/1e6;const stage=(pt.value||[])[0]?.intVal||2;if(stage!==1){sleepMin+=durMs/60000;if(stage===4)sleepDeepMin+=durMs/60000;else if(stage===5)sleepRemMin+=durMs/60000;else sleepLightMin+=durMs/60000;}const ptStart=startNs/1e6,ptEnd=endNs/1e6;if(!sleepBedtime||ptStart<sleepBedtime)sleepBedtime=ptStart;if(!sleepWakeTime||ptEnd>sleepWakeTime)sleepWakeTime=ptEnd;}
+                  else if(dtn.includes('heart_rate'))(pt.value||[]).forEach(v=>{if(v.fpVal>0)hrValues.push(v.fpVal);});
+                  else if(dtn.includes('distance'))distanceM+=(pt.value||[]).reduce((a,v)=>a+(v.fpVal||0),0);
+                  else if(dtn.includes('weight')){const w=(pt.value||[]).find(v=>v.fpVal>0);if(w)weightKg=w.fpVal;}
+                });
+              });
+            });
+            const avgHR=hrValues.length?Math.round(hrValues.reduce((a,b)=>a+b,0)/hrValues.length):0;
+            const distKm=distanceM>0?+(distanceM/1000).toFixed(2):0;
+            const d=today();
+            S.logs=S.logs.filter(l=>{if(l.fecha!==d)return true;if(l.fitSync)return false;if(steps>0&&l.tipo==='pasos')return false;if(kcalBurned>50&&l.tipo==='kcalQuemadas')return false;if(sleepMin>30&&l.tipo==='sueno')return false;if(avgHR>40&&l.tipo==='frecuenciaCardiaca')return false;if(distKm>0&&l.tipo==='distancia')return false;return true;});
+            if(steps>0)S.logs.push({id:uid(),tipo:'pasos',valor:Math.round(steps),fecha:d,fitSync:true});
+            if(kcalBurned>50)S.logs.push({id:uid(),tipo:'kcalQuemadas',valor:Math.round(kcalBurned),fecha:d,fitSync:true});
+            if(sleepMin>30)S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:d,fitSync:true,deepMin:Math.round(sleepDeepMin),remMin:Math.round(sleepRemMin),lightMin:Math.round(sleepLightMin),bedtime:sleepBedtime,wakeTime:sleepWakeTime});
+            if(avgHR>40)S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,fecha:d,fitSync:true});
+            if(distKm>0)S.logs.push({id:uid(),tipo:'distancia',valor:distKm,fecha:d,fitSync:true});
+            if(weightKg>20)S.logs.push({id:uid(),tipo:'peso',valor:+weightKg.toFixed(1),fecha:d,fitSync:true});
+            S.googleFit={...S.googleFit,lastSync:new Date().toISOString(),lastData:{steps:Math.round(steps),kcal:Math.round(kcalBurned),sleepMin:Math.round(sleepMin),avgHR,distKm,weightKg:+weightKg.toFixed(1)}};
+            saveState();
+            if(!silent) toast('Token renovado y sincronizado ✓');
+            render();
+            return;
+          }
+        }
+      } catch(_){}
       S.googleFit={...S.googleFit, connected:false, accessToken:''};
       saveState();
       if(!silent) toast('Token de Google Fit expirado — reconecta en Ajustes');
@@ -8885,6 +8965,13 @@ document.addEventListener('visibilitychange', async () => {
     } catch(_){}
   }
 });
+
+// Auto-sync cada 30 minutos mientras la app está abierta
+setInterval(async () => {
+  if(document.visibilityState !== 'visible') return;
+  if(!S.googleFit?.connected) return;
+  try { syncGoogleFit(true); } catch(_){}
+}, 30 * 60 * 1000);
 document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
 document.addEventListener('gestureend',e=>e.preventDefault(),{passive:false});
