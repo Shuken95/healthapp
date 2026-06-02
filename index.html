@@ -7286,7 +7286,7 @@ window.syncGoogleFit=async(silent=false)=>{
             });
             if(steps>0)S.logs.push({id:uid(),tipo:'pasos',valor:Math.round(steps),fecha:d,fitSync:true});
             if(kcalBurned>50)S.logs.push({id:uid(),tipo:'kcalQuemadas',valor:Math.round(kcalBurned),fecha:d,fitSync:true});
-            if(sleepMin>30)S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:d,fitSync:true,deepMin:Math.round(sleepDeepMin),remMin:Math.round(sleepRemMin),lightMin:Math.round(sleepLightMin),bedtime:sleepBedtime,wakeTime:sleepWakeTime});
+            if(sleepMin>30)S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:yestStr,fitSync:true,deepMin:Math.round(sleepDeepMin),remMin:Math.round(sleepRemMin),lightMin:Math.round(sleepLightMin),bedtime:sleepBedtime,wakeTime:sleepWakeTime});
             if(avgHR>40)S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,fecha:d,fitSync:true});
             if(distKm>0)S.logs.push({id:uid(),tipo:'distancia',valor:distKm,fecha:d,fitSync:true});
             if(weightKg>20)S.logs.push({id:uid(),tipo:'peso',valor:+weightKg.toFixed(1),fecha:d,fitSync:true});
@@ -7387,7 +7387,7 @@ window.syncGoogleFit=async(silent=false)=>{
     });
     if(steps>0)       S.logs.push({id:uid(),tipo:'pasos',          valor:Math.round(steps),         fecha:d,fitSync:true});
     if(kcalBurned>50) S.logs.push({id:uid(),tipo:'kcalQuemadas',   valor:Math.round(kcalBurned),    fecha:d,fitSync:true});
-    if(sleepMin>30)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:d,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
+    if(sleepMin>30)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:yestStr,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
     if(avgHR>40)      S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,                  fecha:d,fitSync:true});
     if(distKm>0)      S.logs.push({id:uid(),tipo:'distancia',      valor:distKm,                    fecha:d,fitSync:true});
     if(weightKg>20)   S.logs.push({id:uid(),tipo:'peso',           valor:+weightKg.toFixed(1),      fecha:d,fitSync:true});
