@@ -7309,6 +7309,80 @@ window.syncGoogleFit=async(silent=false)=>{
 
     const data=await res.json();
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // SLEEP via SESSIONS API (com.google.sleep / activityType=72)
+    // El endpoint aggregate con com.google.sleep.segment NO es fiable: muchas
+    // apps fuente (OHealth, Samsung Health, Fitbit Sync, etc.) escriben el sueño
+    // como Sesiones (activityType 72), no como puntos en sleep.segment.
+    // Por eso aggregate devuelve 0 aunque haya sueño registrado.
+    // Ref: https://developers.google.com/fit/scenarios/read-sleep-data
+    // Pedimos las sesiones de sueño de las últimas 72h.
+    let sessionsSleepMin = 0, sessionsDeepMin = 0, sessionsRemMin = 0, sessionsLightMin = 0;
+    let sessionsBedtime = null, sessionsWakeTime = null;
+    try {
+      const sessStart = new Date(now - 72*3600*1000).toISOString();
+      const sessEnd   = new Date(now).toISOString();
+      const sessUrl = `https://www.googleapis.com/fitness/v1/users/me/sessions?startTime=${encodeURIComponent(sessStart)}&endTime=${encodeURIComponent(sessEnd)}&activityType=72`;
+      const sessRes = await fetch(sessUrl, { headers:{'Authorization':`Bearer ${token}`} });
+      if(sessRes.ok){
+        const sessJson = await sessRes.json();
+        const sessions = (sessJson.session||[]).filter(s => Number(s.activityType) === 72);
+        // Para cada sesión, intentar leer segmentos detallados (etapas) por dataset.
+        for(const s of sessions){
+          const sStartMs = parseInt(s.startTimeMillis);
+          const sEndMs   = parseInt(s.endTimeMillis);
+          if(!sStartMs || !sEndMs) continue;
+          // Filtrar: solo sesiones que terminaron en las últimas 48h (= "anoche")
+          if(sEndMs < now - 48*3600*1000) continue;
+          // Etapas detalladas: query dataset de sleep.segment dentro de la sesión
+          let segDeep=0, segRem=0, segLight=0, totalStagedMs=0;
+          try {
+            const dsUrl = `https://www.googleapis.com/fitness/v1/users/me/dataSources/derived:com.google.sleep.segment:com.google.android.gms:merged/datasets/${sStartMs*1e6}-${sEndMs*1e6}`;
+            const dsRes = await fetch(dsUrl, { headers:{'Authorization':`Bearer ${token}`} });
+            if(dsRes.ok){
+              const dsJson = await dsRes.json();
+              (dsJson.point||[]).forEach(pt=>{
+                const startNs=parseInt(pt.startTimeNanos), endNs=parseInt(pt.endTimeNanos);
+                const durMs=(endNs-startNs)/1e6;
+                const stage=(pt.value||[])[0]?.intVal||2;
+                // 1=awake, 3=out-of-bed → no cuenta
+                if(stage===1 || stage===3) return;
+                totalStagedMs += durMs;
+                if(stage===5) segDeep  += durMs/60000;
+                else if(stage===6) segRem += durMs/60000;
+                else if(stage===4) segLight += durMs/60000;
+                else segLight += durMs/60000;
+              });
+            }
+          } catch(_){}
+          const sessDurMin = (sEndMs - sStartMs)/60000;
+          if(totalStagedMs > 0){
+            // Hay etapas detalladas: usar suma de etapas (excluye awake/out-of-bed)
+            sessionsSleepMin += totalStagedMs/60000;
+            sessionsDeepMin  += segDeep;
+            sessionsRemMin   += segRem;
+            sessionsLightMin += segLight;
+          } else {
+            // Sin etapas: usar duración total de la sesión como sueño ligero
+            sessionsSleepMin += sessDurMin;
+            sessionsLightMin += sessDurMin;
+          }
+          if(!sessionsBedtime  || sStartMs < sessionsBedtime)  sessionsBedtime  = sStartMs;
+          if(!sessionsWakeTime || sEndMs   > sessionsWakeTime) sessionsWakeTime = sEndMs;
+        }
+        console.log('[Google Fit Sync] Sessions API sueño:', {
+          sessionsCount: sessions.length,
+          sessionsSleepMin: Math.round(sessionsSleepMin),
+          sessionsSleepHours: +(sessionsSleepMin/60).toFixed(1)
+        });
+      } else {
+        console.warn('[Google Fit Sync] Sessions API error:', sessRes.status, await sessRes.text().catch(()=>''));
+      }
+    } catch(e){
+      console.warn('[Google Fit Sync] Sessions API exception:', e);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     // Inicio del día de hoy en ms (para comparar con wakeTime del sueño)
     const todayStartMs = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), 0, 0, 0, 0).getTime();
 
@@ -7378,18 +7452,41 @@ window.syncGoogleFit=async(silent=false)=>{
     const avgHR=hrValues.length?Math.round(hrValues.reduce((a,b)=>a+b,0)/hrValues.length):0;
     const distKm=distanceM>0?+(distanceM/1000).toFixed(2):0;
 
+    // FUSIÓN: si Sessions API devolvió más sueño que aggregate → usar Sessions
+    // Esto cubre el caso típico en que la fuente (OHealth/Samsung Health) escribe
+    // sueño como Sesiones y no como puntos en sleep.segment.
+    if(sessionsSleepMin > sleepMin){
+      console.log('[Google Fit Sync] Usando datos de Sessions API (más completos que aggregate)');
+      sleepMin       = sessionsSleepMin;
+      sleepDeepMin   = sessionsDeepMin;
+      sleepRemMin    = sessionsRemMin;
+      sleepLightMin  = sessionsLightMin;
+      sleepBedtime   = sessionsBedtime  || sleepBedtime;
+      sleepWakeTime  = sessionsWakeTime || sleepWakeTime;
+    }
+
+    // Determinar fecha del sueño: si wakeTime es hoy → guardar en `d` (hoy),
+    // si wakeTime es ayer → guardar en `yestStr`. Si no hay wakeTime usar `d`.
+    let sleepFecha = d;
+    if(sleepWakeTime){
+      const wd = new Date(sleepWakeTime);
+      const wdStr = [wd.getFullYear(), String(wd.getMonth()+1).padStart(2,'0'), String(wd.getDate()).padStart(2,'0')].join('-');
+      sleepFecha = wdStr; // fecha = día en que el usuario se despertó
+    }
+
     // Debug: Log datos obtenidos
     console.log('[Google Fit Sync] Datos obtenidos:', {
       steps, kcalBurned, sleepMin, sleepHours: +(sleepMin/60).toFixed(1),
       sleepDeepMin, sleepRemMin, sleepLightMin, avgHR, distKm, weightKg,
       sleepBedtime: sleepBedtime ? new Date(sleepBedtime).toLocaleString('es-ES') : null,
-      sleepWakeTime: sleepWakeTime ? new Date(sleepWakeTime).toLocaleString('es-ES') : null
+      sleepWakeTime: sleepWakeTime ? new Date(sleepWakeTime).toLocaleString('es-ES') : null,
+      sleepFecha
     });
 
     // Limpiar logs de sync anteriores para hoy Y ayer (sueño nocturno de ayer)
     S.logs = S.logs.filter(l => {
       if(l.fecha !== d && l.fecha !== yestStr) return true; // otros días: conservar
-      if(l.fecha === yestStr && l.tipo === 'sueno' && l.fitSync) return false; // sueño de ayer sincronizado: reemplazar
+      if((l.fecha === yestStr || l.fecha === d) && l.tipo === 'sueno' && l.fitSync) return false; // sueño sincronizado: reemplazar
       if(l.fecha !== d) return true;                        // otros campos de ayer: conservar
       if(l.fitSync) return false;                           // sync anterior de hoy: eliminar
       if(steps > 0    && l.tipo === 'pasos')            return false; // manual sustituido por Fit
@@ -7401,7 +7498,7 @@ window.syncGoogleFit=async(silent=false)=>{
     });
     if(steps>0)       S.logs.push({id:uid(),tipo:'pasos',          valor:Math.round(steps),         fecha:d,fitSync:true});
     if(kcalBurned>50) S.logs.push({id:uid(),tipo:'kcalQuemadas',   valor:Math.round(kcalBurned),    fecha:d,fitSync:true});
-    if(sleepMin>10)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:d,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
+    if(sleepMin>10)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:sleepFecha,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
     if(avgHR>40)      S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,                  fecha:d,fitSync:true});
     if(distKm>0)      S.logs.push({id:uid(),tipo:'distancia',      valor:distKm,                    fecha:d,fitSync:true});
     if(weightKg>20)   S.logs.push({id:uid(),tipo:'peso',           valor:+weightKg.toFixed(1),      fecha:d,fitSync:true});
