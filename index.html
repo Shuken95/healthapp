@@ -7252,11 +7252,11 @@ window.syncGoogleFit=async(silent=false)=>{
                   if(dtn.includes('sleep')){
                     const startNs=parseInt(pt.startTimeNanos),endNs=parseInt(pt.endTimeNanos);
                     const ptEnd=endNs/1e6;
-                    const thirtyHoursAgo2 = now - 30 * 3600 * 1000;
-                    if(ptEnd < thirtyHoursAgo2) return;
+                    const fortyEightHoursAgo2 = now - 48 * 3600 * 1000;
+                    if(ptEnd < fortyEightHoursAgo2) return;
                     const durMs=(endNs-startNs)/1e6;
                     const stage=(pt.value||[])[0]?.intVal||2;
-                    if(stage!==1){sleepMin+=durMs/60000;if(stage===4)sleepDeepMin+=durMs/60000;else if(stage===5)sleepRemMin+=durMs/60000;else sleepLightMin+=durMs/60000;}
+                    if(stage!==1&&stage!==3){sleepMin+=durMs/60000;if(stage===5)sleepDeepMin+=durMs/60000;else if(stage===6)sleepRemMin+=durMs/60000;else if(stage===4)sleepLightMin+=durMs/60000;else sleepLightMin+=durMs/60000;}
                     const ptStart=startNs/1e6;
                     if(!sleepBedtime||ptStart<sleepBedtime)sleepBedtime=ptStart;
                     if(!sleepWakeTime||ptEnd>sleepWakeTime)sleepWakeTime=ptEnd;
@@ -7279,14 +7279,14 @@ window.syncGoogleFit=async(silent=false)=>{
               if(l.fitSync)return false;
               if(steps>0&&l.tipo==='pasos')return false;
               if(kcalBurned>50&&l.tipo==='kcalQuemadas')return false;
-              if(sleepMin>30&&l.tipo==='sueno')return false;
+              if(sleepMin>10&&l.tipo==='sueno')return false;
               if(avgHR>40&&l.tipo==='frecuenciaCardiaca')return false;
               if(distKm>0&&l.tipo==='distancia')return false;
               return true;
             });
             if(steps>0)S.logs.push({id:uid(),tipo:'pasos',valor:Math.round(steps),fecha:d,fitSync:true});
             if(kcalBurned>50)S.logs.push({id:uid(),tipo:'kcalQuemadas',valor:Math.round(kcalBurned),fecha:d,fitSync:true});
-            if(sleepMin>30)S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:yestStr,fitSync:true,deepMin:Math.round(sleepDeepMin),remMin:Math.round(sleepRemMin),lightMin:Math.round(sleepLightMin),bedtime:sleepBedtime,wakeTime:sleepWakeTime});
+            if(sleepMin>10)S.logs.push({id:uid(),tipo:'sueno',valor:+(sleepMin/60).toFixed(1),fecha:d,fitSync:true,deepMin:Math.round(sleepDeepMin),remMin:Math.round(sleepRemMin),lightMin:Math.round(sleepLightMin),bedtime:sleepBedtime,wakeTime:sleepWakeTime});
             if(avgHR>40)S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,fecha:d,fitSync:true});
             if(distKm>0)S.logs.push({id:uid(),tipo:'distancia',valor:distKm,fecha:d,fitSync:true});
             if(weightKg>20)S.logs.push({id:uid(),tipo:'peso',valor:+weightKg.toFixed(1),fecha:d,fitSync:true});
@@ -7332,20 +7332,23 @@ window.syncGoogleFit=async(silent=false)=>{
             // (ayer), pero puede terminar esta mañana. Además, con buckets UTC el bucket
             // de "ayer local" puede tener startTimeMillis de anteayer UTC.
             // Estrategia: aceptar cualquier segmento de sueño cuyo wakeTime (ptEnd)
-            // esté dentro de las últimas 30 horas → cubre la noche anterior en cualquier timezone.
-            // Descartamos solo sueño que terminó hace más de 30h (noches viejas).
+            // esté dentro de las últimas 48 horas → cubre la noche anterior en cualquier timezone.
+            // Descartamos solo sueño que terminó hace más de 48h (noches viejas).
             const startNs=parseInt(pt.startTimeNanos), endNs=parseInt(pt.endTimeNanos);
             const ptEnd=endNs/1e6;
-            const thirtyHoursAgo = now - 30 * 3600 * 1000;
-            // Si el sueño terminó hace más de 30h no es de anoche → ignorar
-            if(ptEnd < thirtyHoursAgo) return;
+            const fortyEightHoursAgo = now - 48 * 3600 * 1000;
+            // Si el sueño terminó hace más de 48h no es de anoche → ignorar
+            if(ptEnd < fortyEightHoursAgo) return;
             const durMs=(endNs-startNs)/1e6;
             const stage=(pt.value||[])[0]?.intVal||2;
-            if(stage!==1){
+            // Stage 1=awake, 2=sleep(generic), 3=out-of-bed, 4=light, 5=deep, 6=REM
+            // Contar todo excepto stage 1 (awake) y 3 (out-of-bed)
+            if(stage!==1 && stage!==3){
               sleepMin+=durMs/60000;
-              if(stage===4) sleepDeepMin+=durMs/60000;
-              else if(stage===5) sleepRemMin+=durMs/60000;
-              else sleepLightMin+=durMs/60000;
+              if(stage===5) sleepDeepMin+=durMs/60000;
+              else if(stage===6) sleepRemMin+=durMs/60000;
+              else if(stage===4) sleepLightMin+=durMs/60000;
+              else sleepLightMin+=durMs/60000; // stage 2 (generic sleep) = light
             }
             const ptStart=startNs/1e6;
             if(!sleepBedtime||ptStart<sleepBedtime) sleepBedtime=ptStart;
@@ -7372,6 +7375,14 @@ window.syncGoogleFit=async(silent=false)=>{
     const avgHR=hrValues.length?Math.round(hrValues.reduce((a,b)=>a+b,0)/hrValues.length):0;
     const distKm=distanceM>0?+(distanceM/1000).toFixed(2):0;
 
+    // Debug: Log datos obtenidos
+    console.log('[Google Fit Sync] Datos obtenidos:', {
+      steps, kcalBurned, sleepMin, sleepHours: +(sleepMin/60).toFixed(1),
+      sleepDeepMin, sleepRemMin, sleepLightMin, avgHR, distKm, weightKg,
+      sleepBedtime: sleepBedtime ? new Date(sleepBedtime).toLocaleString('es-ES') : null,
+      sleepWakeTime: sleepWakeTime ? new Date(sleepWakeTime).toLocaleString('es-ES') : null
+    });
+
     // Limpiar logs de sync anteriores para hoy Y ayer (sueño nocturno de ayer)
     S.logs = S.logs.filter(l => {
       if(l.fecha !== d && l.fecha !== yestStr) return true; // otros días: conservar
@@ -7380,14 +7391,14 @@ window.syncGoogleFit=async(silent=false)=>{
       if(l.fitSync) return false;                           // sync anterior de hoy: eliminar
       if(steps > 0    && l.tipo === 'pasos')            return false; // manual sustituido por Fit
       if(kcalBurned>50 && l.tipo === 'kcalQuemadas')    return false;
-      if(sleepMin>30  && l.tipo === 'sueno')            return false;
+      if(sleepMin>10  && l.tipo === 'sueno')            return false;
       if(avgHR>40     && l.tipo === 'frecuenciaCardiaca') return false;
       if(distKm>0     && l.tipo === 'distancia')        return false;
       return true; // resto de tipos (peso manual, agua, comidas): conservar
     });
     if(steps>0)       S.logs.push({id:uid(),tipo:'pasos',          valor:Math.round(steps),         fecha:d,fitSync:true});
     if(kcalBurned>50) S.logs.push({id:uid(),tipo:'kcalQuemadas',   valor:Math.round(kcalBurned),    fecha:d,fitSync:true});
-    if(sleepMin>30)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:yestStr,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
+    if(sleepMin>10)   S.logs.push({id:uid(),tipo:'sueno',          valor:+(sleepMin/60).toFixed(1), fecha:d,fitSync:true, deepMin:Math.round(sleepDeepMin), remMin:Math.round(sleepRemMin), lightMin:Math.round(sleepLightMin), bedtime:sleepBedtime, wakeTime:sleepWakeTime});
     if(avgHR>40)      S.logs.push({id:uid(),tipo:'frecuenciaCardiaca',valor:avgHR,                  fecha:d,fitSync:true});
     if(distKm>0)      S.logs.push({id:uid(),tipo:'distancia',      valor:distKm,                    fecha:d,fitSync:true});
     if(weightKg>20)   S.logs.push({id:uid(),tipo:'peso',           valor:+weightKg.toFixed(1),      fecha:d,fitSync:true});
@@ -7400,7 +7411,7 @@ window.syncGoogleFit=async(silent=false)=>{
       distKm?`${distKm} km`:'',
       avgHR?`FC ${avgHR} bpm`:'',
       kcalBurned>50?`${Math.round(kcalBurned)} kcal`:'',
-      sleepMin>30?`${(sleepMin/60).toFixed(1)}h sueño`:'',
+      sleepMin>10?`${(sleepMin/60).toFixed(1)}h sueño`:'',
     ].filter(Boolean);
     if(!silent) toast(parts.length?`Sincronizado: ${parts.slice(0,3).join(', ')}`:'Sin datos nuevos hoy');
     render();
