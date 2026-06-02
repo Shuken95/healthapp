@@ -3,7 +3,7 @@
 // Offline completo + Push Notifications
 // ═══════════════════════════════════════════════
 
-const CACHE_NAME = 'nura-v10';
+const CACHE_NAME = 'nura-v1.0';
 const OFFLINE_URL = './index.html';
 
 // Recursos críticos que se cachean en el install
