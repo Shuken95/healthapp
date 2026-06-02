@@ -7447,7 +7447,37 @@ window.disconnectGoogleFit=()=>{
 window.debugGoogleFitSync = async () => {
   if(!S.googleFit?.connected) { toast('Google Fit no conectado'); return; }
   const token = S.googleFit.accessToken;
-  if(!token) { toast('Sin token de acceso'); return; }
+  
+  // Si no hay token, intentar obtenerlo del hash
+  if(!token) {
+    toast('⚠️ Sin token de acceso. Intenta reconectar Google Fit.');
+    // Mostrar info de debug básica
+    const html = `
+      <div style="padding:16px">
+        <h3 style="font-size:16px;font-weight:800;margin-bottom:16px">🔍 Debug Google Fit</h3>
+        <div style="background:rgba(217,79,61,.1);border:1.5px solid rgba(217,79,61,.25);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--red)">⚠️ Sin Token de Acceso</div>
+          <div style="font-size:11px;color:var(--text)">
+            El token de Google Fit no está disponible. Esto puede pasar si:<br><br>
+            • La conexión expiró<br>
+            • Falta autorización<br>
+            • Se necesita reconectar<br><br>
+            <strong>Solución:</strong> Desconecta y vuelve a conectar Google Fit desde Ajustes.
+          </div>
+        </div>
+        <button onclick="closeDebugModal()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">
+          Cerrar
+        </button>
+      </div>
+    `;
+    const modal = document.createElement('div');
+    modal.id = 'debug-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+    modal.innerHTML = `<div style="background:var(--surface);border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow:hidden">${html}</div>`;
+    document.body.appendChild(modal);
+    window.closeDebugModal = () => { document.getElementById('debug-modal')?.remove(); };
+    return;
+  }
   
   toast('🔍 Obteniendo datos de Google Fit...');
   
@@ -7477,7 +7507,30 @@ window.debugGoogleFitSync = async () => {
     });
     
     if(!res.ok) {
+      const errorText = await res.text().catch(() => 'Sin detalles');
       toast(`Error ${res.status}: ${res.statusText}`);
+      
+      const html = `
+        <div style="padding:16px">
+          <h3 style="font-size:16px;font-weight:800;margin-bottom:16px">🔍 Debug Google Fit</h3>
+          <div style="background:rgba(217,79,61,.1);border:1.5px solid rgba(217,79,61,.25);border-radius:12px;padding:12px;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--red)">⚠️ Error ${res.status}</div>
+            <div style="font-size:11px;color:var(--text)">${errorText}</div>
+          </div>
+          <button onclick="closeDebugModal();disconnectGoogleFit();setTimeout(()=>connectGoogleFit(),500)" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
+            Reconectar Google Fit
+          </button>
+          <button onclick="closeDebugModal()" style="width:100%;padding:12px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">
+            Cerrar
+          </button>
+        </div>
+      `;
+      const modal = document.createElement('div');
+      modal.id = 'debug-modal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+      modal.innerHTML = `<div style="background:var(--surface);border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow:hidden">${html}</div>`;
+      document.body.appendChild(modal);
+      window.closeDebugModal = () => { document.getElementById('debug-modal')?.remove(); };
       return;
     }
     
@@ -7554,13 +7607,25 @@ window.debugGoogleFitSync = async () => {
           `).join('')}
         </div>
         ` : `
-        <div style="background:rgba(217,79,61,.1);border:1.5px solid rgba(217,79,61,.25);border-radius:12px;padding:12px;text-align:center;color:var(--red)">
-          <div style="font-size:13px;font-weight:700;margin-bottom:4px">⚠️ No se encontraron datos de sueño</div>
-          <div style="font-size:11px">Google Fit no devolvió segmentos de sueño para las últimas 48h</div>
+        <div style="background:rgba(217,79,61,.1);border:1.5px solid rgba(217,79,61,.25);border-radius:12px;padding:12px;margin-bottom:12px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--red)">⚠️ No se encontraron datos de sueño</div>
+          <div style="font-size:11px;line-height:1.6;color:var(--text)">
+            Google Fit no devolvió segmentos de sueño para las últimas 48h.<br><br>
+            <strong>Posibles causas:</strong><br>
+            • OHealth no está sincronizando sueño con Google Fit<br>
+            • Falta permiso de lectura de sueño<br>
+            • Los datos de sueño están en otro formato<br><br>
+            <strong>Solución:</strong><br>
+            1. Verifica que OHealth sincroniza con Google Fit<br>
+            2. Reconecta Google Fit para solicitar permisos de nuevo
+          </div>
         </div>
+        <button onclick="closeDebugModal();disconnectGoogleFit();setTimeout(()=>connectGoogleFit(),500)" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
+          Reconectar Google Fit
+        </button>
         `}
         
-        <button onclick="closeDebugModal()" style="width:100%;margin-top:12px;padding:12px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">
+        <button onclick="closeDebugModal()" style="width:100%;padding:12px;background:${sleepSegments.length > 0 ? 'var(--primary)' : 'var(--surface2)'};color:${sleepSegments.length > 0 ? 'white' : 'var(--text)'};border:${sleepSegments.length > 0 ? 'none' : '1.5px solid var(--border)'};border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">
           Cerrar
         </button>
       </div>
